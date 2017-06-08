@@ -28,14 +28,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 @EnableWebMvc
 public class HomeControllerTest {
 
-  public MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
+  private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
       MediaType.APPLICATION_JSON.getSubtype(),
       Charset.forName("utf8"));
 
-  public MockMvc mockMvc;
+  private MockMvc mockMvc;
 
   @Autowired
-  public WebApplicationContext webApplicationContext;
+  private WebApplicationContext webApplicationContext;
 
   @Before
   public void setup() throws Exception {
