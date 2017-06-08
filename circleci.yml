@@ -6,3 +6,7 @@ machine:
   override:
     - chmod +x gradlew
     - ./gradlew dependencies
+ test:
+  override:
+    - chmod +x grailsw
+    - ./grailsw test-app --non-interactive
