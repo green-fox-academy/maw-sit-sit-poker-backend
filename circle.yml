@@ -3,3 +3,7 @@
   override:
     - chmod +x gradlew
     - ./gradlew dependencies
+
+test:
+  override:
+    - junit test/java/com.greenfox.poker
