@@ -24,10 +24,10 @@ public class RestController {
   }
 
   @RequestMapping(value = "/login", method = RequestMethod.POST)
-  public ResponseEntity<?> login(@RequestBody @Valid PokerUser userRegister) {
-    if(userService.validateUserRegistration(userRegister)){
-      return new ResponseEntity(userService.registerNewUser(userRegister), HttpStatus.OK );
+  public ResponseEntity<?> login(@RequestBody @Valid PokerUser userLogin) {
+    if(userService.validateUserLogin(userLogin)){
+      return new ResponseEntity(userService.loginUser(userLogin), HttpStatus.OK );
     }else
-      return new ResponseEntity(userService.registerNewUser(userRegister), HttpStatus.BAD_REQUEST);
+      return new ResponseEntity(userService.respondToLoginError("login elbaszva"), HttpStatus.BAD_REQUEST);
   }
 }
