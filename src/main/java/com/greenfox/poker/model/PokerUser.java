@@ -1,10 +1,19 @@
 package com.greenfox.poker.model;
 
 
+import com.sun.istack.internal.Nullable;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,15 +23,18 @@ public class PokerUser {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private long id;
 
-//  @NotBlank(message = "you cannot leave this field blank")
+  @NotNull
   private String username;
 
-//  @NotBlank(message = "you cannot leave this field blank")
+  @NotNull
   private String password;
 
-//  @NotBlank(message = "you cannot leave this field blank")
+  @NotBlank
+  @Email
   private String email;
 
+  @URL
+  @Nullable
   private String avatar;
   private long cash;
 
