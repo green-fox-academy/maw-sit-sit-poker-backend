@@ -52,6 +52,7 @@ public class UserService {
 
   private boolean validateAvatar(PokerUser userRegister) {
     return true;
+  }
 
   public RegisterResponse mockResponse() {
     return new RegisterResponse(1, "Bond", "james@bond.uk", null);
