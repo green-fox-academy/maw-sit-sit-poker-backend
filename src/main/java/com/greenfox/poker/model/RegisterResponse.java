@@ -13,7 +13,7 @@ public class RegisterResponse {
   private String password;
   private String email;
   private long cash;
-  private String avatar;
+  private String avatar; JsonInclude ALWAYS;
   private String status;
   private String message;
 
