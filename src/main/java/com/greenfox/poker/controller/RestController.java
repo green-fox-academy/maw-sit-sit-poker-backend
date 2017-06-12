@@ -22,4 +22,12 @@ public class RestController {
     }else
     return new ResponseEntity(userService.registerNewUser(userRegister), HttpStatus.BAD_REQUEST);
   }
+
+  @RequestMapping(value = "/login", method = RequestMethod.POST)
+  public ResponseEntity<?> login(@RequestBody @Valid PokerUser userRegister) {
+    if(userService.validateUserRegistration(userRegister)){
+      return new ResponseEntity(userService.registerNewUser(userRegister), HttpStatus.OK );
+    }else
+      return new ResponseEntity(userService.registerNewUser(userRegister), HttpStatus.BAD_REQUEST);
+  }
 }

@@ -46,4 +46,7 @@ public class UserService {
   public RegisterResponse respondToRegisterError(PokerUser newUserToRegister) {
     return new RegisterResponse("message");
   }
+
+
+
 }
