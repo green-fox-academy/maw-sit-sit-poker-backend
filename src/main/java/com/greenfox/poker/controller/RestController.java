@@ -18,7 +18,7 @@ public class RestController {
   @RequestMapping(value = "/register", method = RequestMethod.POST)
   public ResponseEntity<?> register(@RequestBody @Valid PokerUser userRegister) {
     if(userService.validateUserRegistration(userRegister)){
-      return new ResponseEntity(userService.registerNewUser(userRegister), HttpStatus.OK );
+      return new ResponseEntity(userService.mockResponse(), HttpStatus.OK );
     }else
     return new ResponseEntity(userService.respondToRegisterError("mivan"), HttpStatus.BAD_REQUEST);
   }
