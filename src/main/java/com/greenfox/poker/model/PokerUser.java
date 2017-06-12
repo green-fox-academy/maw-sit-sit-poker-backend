@@ -29,7 +29,7 @@ public class PokerUser {
   @NotNull
   private String password;
 
-  @NotBlank
+  @NotNull
   @Email
   private String email;
 
