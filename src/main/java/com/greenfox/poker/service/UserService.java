@@ -35,7 +35,9 @@ public class UserService {
     return true;
   }
 
-
+  public RegisterResponse mockResponse(){
+    return new RegisterResponse(1, "Bond", "james@bond.uk", null);
+  }
 
   public RegisterResponse registerNewUser(PokerUser newUserToRegister) {
     return new RegisterResponse(newUserToRegister.getId(), newUserToRegister.getUsername(),
