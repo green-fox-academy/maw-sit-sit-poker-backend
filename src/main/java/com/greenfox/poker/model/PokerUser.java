@@ -34,7 +34,6 @@ public class PokerUser {
   private String email;
 
   @URL
-  @Nullable
   private String avatar;
   private long cash;
 
