@@ -39,12 +39,11 @@ public class UserService {
 
   public RegisterResponse registerNewUser(PokerUser newUserToRegister) {
     return new RegisterResponse(newUserToRegister.getId(), newUserToRegister.getUsername(),
-            newUserToRegister.getEmail(), newUserToRegister.getCash(),
-            newUserToRegister.getAvatar());
+            newUserToRegister.getEmail(), newUserToRegister.getAvatar());
   }
 
-  public RegisterResponse respondToRegisterError(PokerUser newUserToRegister) {
-    return new RegisterResponse("message");
+  public RegisterResponse respondToRegisterError(String message) {
+    return new RegisterResponse(message);
   }
 
 

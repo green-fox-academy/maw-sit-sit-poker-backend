@@ -16,11 +16,11 @@ public class RestController {
   UserService userService;
 
   @RequestMapping(value = "/register", method = RequestMethod.POST)
-  public ResponseEntity<?> login(@RequestBody @Valid PokerUser userRegister) {
+  public ResponseEntity<?> register(@RequestBody @Valid PokerUser userRegister) {
     if(userService.validateUserRegistration(userRegister)){
       return new ResponseEntity(userService.registerNewUser(userRegister), HttpStatus.OK );
     }else
-    return new ResponseEntity(userService.registerNewUser(userRegister), HttpStatus.BAD_REQUEST);
+    return new ResponseEntity(userService.respondToRegisterError("mivan"), HttpStatus.BAD_REQUEST);
   }
 
   @RequestMapping(value = "/login", method = RequestMethod.POST)
