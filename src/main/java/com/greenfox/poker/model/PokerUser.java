@@ -1,11 +1,18 @@
 package com.greenfox.poker.model;
 
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserRegister {
+public class PokerUser {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private long id;
 
   @NotBlank(message = "you cannot leave this field blank")
   private String username;
@@ -17,8 +24,26 @@ public class UserRegister {
   private String email;
 
   private String avatar;
+  private long cash;
 
-  public UserRegister() {
+  public PokerUser() {
+    this.cash = 10000;
+  }
+
+  public PokerUser(String username, String password, String email, String avatar) {
+    this.username = username;
+    this.password = password;
+    this.email = email;
+    this.avatar = avatar;
+    this.cash = 10000;
+  }
+
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
   }
 
   public String getUsername() {
@@ -51,5 +76,13 @@ public class UserRegister {
 
   public void setAvatar(String avatar) {
     this.avatar = avatar;
+  }
+
+  public long getCash() {
+    return cash;
+  }
+
+  public void setCash(long cash) {
+    this.cash = cash;
   }
 }

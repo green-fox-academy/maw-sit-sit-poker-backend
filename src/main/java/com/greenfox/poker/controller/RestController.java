@@ -1,8 +1,7 @@
 package com.greenfox.poker.controller;
 
-import com.greenfox.poker.model.User;
+import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.model.UserRegister;
-import com.greenfox.poker.model.ResponseDataObject;
 import com.greenfox.poker.service.UserService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ public class RestController {
   UserService userService;
 
   @RequestMapping(value = "/login", method = RequestMethod.POST)
-  public ResponseEntity<?> login(@RequestBody @Valid UserRegister userRegister) {
+  public ResponseEntity<?> login(@RequestBody @Valid PokerUser userRegister) {
     return new ResponseEntity(userService.registerNewUser(userRegister), HttpStatus.OK );
   }
 }
