@@ -1,7 +1,6 @@
 package com.greenfox.poker.service;
 
 import com.greenfox.poker.model.PokerUser;
-import com.greenfox.poker.model.UserRegister;
 import org.springframework.stereotype.Component;
 
 @Component
