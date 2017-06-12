@@ -1,6 +1,7 @@
 package com.greenfox.poker.service;
 
 import com.greenfox.poker.model.PokerUser;
+import com.greenfox.poker.model.RegisterResponse;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -9,8 +10,11 @@ public class UserService {
   public UserService() {
   }
 
-  public PokerUser registerNewUser(PokerUser newUserToRegister){
-    PokerUser pokerUser = new PokerUser(newUserToRegister.getUsername(), newUserToRegister.getPassword(),newUserToRegister.getEmail(),newUserToRegister.getAvatar());
-    return pokerUser;
+  public RegisterResponse registerNewUser(PokerUser newUserToRegister){
+    return new RegisterResponse(newUserToRegister.getId(), newUserToRegister.getUsername(), newUserToRegister.getEmail(), newUserToRegister.getCash(), newUserToRegister.getAvatar());
+  }
+
+  public RegisterResponse respondToRegisterError(PokerUser newUserToRegister){
+    return new RegisterResponse("message");
   }
 }
