@@ -52,6 +52,7 @@ public class UserService {
 
   private boolean validateAvatar(PokerUser userRegister) {
     return true;
+  }
 
   public RegisterResponse mockResponse() {
     return new RegisterResponse(1, "Bond", "james@bond.uk", null);
@@ -61,7 +62,7 @@ public class UserService {
     return new RegisterResponse(newUserToRegister.getId(), newUserToRegister.getUsername(),
             newUserToRegister.getEmail(), newUserToRegister.getAvatar());
   }
-  
+
   public RegisterResponse respondToRegisterError(String message) {
     return new RegisterResponse(message);
   }
