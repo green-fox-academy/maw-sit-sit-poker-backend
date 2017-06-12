@@ -20,11 +20,11 @@ public class RegisterResponse {
   public RegisterResponse() {
   }
 
-  public RegisterResponse(long id, String username, String email, long cash, String avatar) {
+  public RegisterResponse(long id, String username, String email, String avatar) {
     this.id = id;
     this.username = username;
     this.email = email;
-    this.cash = cash;
+    this.cash = 10000;
     this.avatar = avatar;
   }
 
