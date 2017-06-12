@@ -1,15 +1,21 @@
 package com.greenfox.poker.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import org.springframework.stereotype.Component;
 
 @Component
+@JsonInclude(Include.NON_NULL)
 public class RegisterResponse {
 
   private long id;
   private String username;
+  private String password;
   private String email;
   private long cash;
   private String avatar;
+  private String status;
+  private String message;
 
   public RegisterResponse() {
   }
@@ -20,6 +26,11 @@ public class RegisterResponse {
     this.email = email;
     this.cash = cash;
     this.avatar = avatar;
+  }
+
+  public RegisterResponse(String message) {
+    this.message = message;
+    this.status = "error";
   }
 
   public long getId() {
@@ -36,6 +47,14 @@ public class RegisterResponse {
 
   public void setUsername(String username) {
     this.username = username;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
   }
 
   public String getEmail() {
@@ -60,5 +79,21 @@ public class RegisterResponse {
 
   public void setAvatar(String avatar) {
     this.avatar = avatar;
+  }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
+  }
+
+  public String getMessage() {
+    return message;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
   }
 }
