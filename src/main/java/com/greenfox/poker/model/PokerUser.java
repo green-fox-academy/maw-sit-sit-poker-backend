@@ -14,13 +14,13 @@ public class PokerUser {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private long id;
 
-  @NotBlank(message = "you cannot leave this field blank")
+//  @NotBlank(message = "you cannot leave this field blank")
   private String username;
 
-  @NotBlank(message = "you cannot leave this field blank")
+//  @NotBlank(message = "you cannot leave this field blank")
   private String password;
 
-  @NotBlank(message = "you cannot leave this field blank")
+//  @NotBlank(message = "you cannot leave this field blank")
   private String email;
 
   private String avatar;

@@ -15,8 +15,11 @@ public class RestController {
   @Autowired
   UserService userService;
 
-  @RequestMapping(value = "/login", method = RequestMethod.POST)
+  @RequestMapping(value = "/register", method = RequestMethod.POST)
   public ResponseEntity<?> login(@RequestBody @Valid PokerUser userRegister) {
-    return new ResponseEntity(userService.registerNewUser(userRegister), HttpStatus.OK );
+    if(userService.validateUserRegistration(userRegister)){
+      return new ResponseEntity(userService.registerNewUser(userRegister), HttpStatus.OK );
+    }else
+    return new ResponseEntity(userService.registerNewUser(userRegister), HttpStatus.BAD_REQUEST);
   }
 }

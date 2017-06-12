@@ -10,11 +10,40 @@ public class UserService {
   public UserService() {
   }
 
-  public RegisterResponse registerNewUser(PokerUser newUserToRegister){
-    return new RegisterResponse(newUserToRegister.getId(), newUserToRegister.getUsername(), newUserToRegister.getEmail(), newUserToRegister.getCash(), newUserToRegister.getAvatar());
+  public boolean validateUserRegistration(PokerUser userRegister){
+    boolean validUserRegistration = true;
+    if (!validateUsername(userRegister)){validUserRegistration = false;}
+    if (!validatePassword(userRegister)){validUserRegistration = false;}
+    if (!validateEmail(userRegister)){validUserRegistration = false;}
+    if (!validateAvatar(userRegister)){validUserRegistration = false;}
+    return validUserRegistration;
   }
 
-  public RegisterResponse respondToRegisterError(PokerUser newUserToRegister){
+  private boolean validateUsername(PokerUser userRegister){
+    return true;
+  }
+
+  private boolean validatePassword(PokerUser userRegister){
+    return true;
+  }
+
+  private boolean validateEmail(PokerUser userRegister){
+    return true;
+  }
+
+  private boolean validateAvatar(PokerUser userRegister){
+    return true;
+  }
+
+
+
+  public RegisterResponse registerNewUser(PokerUser newUserToRegister) {
+    return new RegisterResponse(newUserToRegister.getId(), newUserToRegister.getUsername(),
+            newUserToRegister.getEmail(), newUserToRegister.getCash(),
+            newUserToRegister.getAvatar());
+  }
+
+  public RegisterResponse respondToRegisterError(PokerUser newUserToRegister) {
     return new RegisterResponse("message");
   }
 }
