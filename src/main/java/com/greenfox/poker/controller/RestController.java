@@ -26,7 +26,7 @@ public class RestController {
   @RequestMapping(value = "/login", method = RequestMethod.POST)
   public ResponseEntity<?> login(@RequestBody @Valid PokerUser userLogin) {
     if(userService.validateUserLogin(userLogin)){
-      return new ResponseEntity(userService.loginUser(userLogin), HttpStatus.OK );
+      return new ResponseEntity(userService.mockResponse(), HttpStatus.OK );
     }else
       return new ResponseEntity(userService.respondToLoginError("login elbaszva"), HttpStatus.BAD_REQUEST);
   }
