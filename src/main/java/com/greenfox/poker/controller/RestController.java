@@ -24,4 +24,8 @@ public class RestController {
   public ResponseEntity<?> login(@RequestBody @Valid PokerUser userLogin, BindingResult bindingResult) {
     return userService.createResponseJson(bindingResult);
   }
+
+  public void motherfucker(){
+    System.out.println("yay");
+  }
 }
