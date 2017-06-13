@@ -2,57 +2,15 @@ package com.greenfox.poker.service;
 
 import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.model.RegisterResponse;
+import com.greenfox.poker.model.StatusError;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 
 @Component
 public class UserService {
-
-  public UserService() {
-  }
-
-  public boolean validateUserRegistration(PokerUser userRegister) {
-    boolean validUserRegistration = true;
-    if (!validateUsername(userRegister)) {
-      validUserRegistration = false;
-    }
-    if (!validatePassword(userRegister)) {
-      validUserRegistration = false;
-    }
-    if (!validateEmail(userRegister)) {
-      validUserRegistration = false;
-    }
-    if (!validateAvatar(userRegister)) {
-      validUserRegistration = false;
-    }
-    return validUserRegistration;
-  }
-
-  public boolean validateUserLogin(PokerUser userLogin) {
-    boolean validateUserLogin = true;
-    if (!validateUsername(userLogin)) {
-      validateUserLogin = false;
-    }
-    if (!validatePassword(userLogin)) {
-      validateUserLogin = false;
-    }
-    return validateUserLogin;
-  }
-
-  private boolean validateUsername(PokerUser userRegister) {
-    return true;
-  }
-
-  private boolean validatePassword(PokerUser userRegister) {
-    return true;
-  }
-
-  private boolean validateEmail(PokerUser userRegister) {
-    return true;
-  }
-
-  private boolean validateAvatar(PokerUser userRegister) {
-    return true;
-  }
 
   public RegisterResponse mockResponse() {
     return new RegisterResponse(1, "Bond", "james@bond.uk", null);
@@ -60,18 +18,19 @@ public class UserService {
 
   public RegisterResponse registerNewUser(PokerUser newUserToRegister) {
     return new RegisterResponse(newUserToRegister.getId(), newUserToRegister.getUsername(),
-            newUserToRegister.getEmail(), newUserToRegister.getAvatar());
+        newUserToRegister.getEmail(), newUserToRegister.getAvatar());
   }
 
-  public RegisterResponse respondToRegisterError(String message) {
-    return new RegisterResponse(message);
-  }
-
-  public RegisterResponse loginUser(PokerUser userLogin) {
-    return mockResponse();
-  }
-
-  public RegisterResponse respondToLoginError(String message) {
-    return new RegisterResponse(message);
+  public ResponseEntity<?> createResponseJson(BindingResult bindingResult) {
+    if (bindingResult.hasErrors()) {
+      String missingFields = new String();
+      for (FieldError fielderror : bindingResult.getFieldErrors()) {
+        missingFields += fielderror.getField() + ", ";
+      }
+      missingFields =
+          "Missing paramater(s): " + missingFields.substring(0, missingFields.length() - 2) + "!";
+      return new ResponseEntity(new StatusError(missingFields), HttpStatus.BAD_REQUEST);
+    }
+    return new ResponseEntity(mockResponse(), HttpStatus.OK);
   }
 }
