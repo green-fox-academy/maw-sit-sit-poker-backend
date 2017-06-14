@@ -1,11 +1,15 @@
 package com.greenfox.poker.model;
 
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import org.springframework.stereotype.Component;
 
+@Entity
 @Component
 public class GamePlayer {
 
+  @Id
   private long id;
   private String username;
   private String email;
@@ -13,6 +17,14 @@ public class GamePlayer {
   private int chips;
 
   public GamePlayer() {
+  }
+
+  public GamePlayer(long id, String username, String email, String avatar, int chips) {
+    this.id = id;
+    this.username = username;
+    this.email = email;
+    this.avatar = avatar;
+    this.chips = chips;
   }
 
   public long getId() {
