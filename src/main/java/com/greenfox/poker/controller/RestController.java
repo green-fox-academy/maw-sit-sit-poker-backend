@@ -18,16 +18,13 @@ public class RestController {
 
   @RequestMapping(value = "/register", method = RequestMethod.POST)
   public ResponseEntity<?> register(@RequestBody @Valid PokerUser userRegister,
-          BindingResult bindingResult) {
+      BindingResult bindingResult) {
     return userService.createResponseJson(bindingResult);
   }
 
   @RequestMapping(value = "/login", method = RequestMethod.POST)
   public ResponseEntity<?> login(@RequestBody @Valid PokerUser userLogin,
-          BindingResult bindingResult) {
+      BindingResult bindingResult) {
     return userService.createResponseJson(bindingResult);
-  }
-
-  public void fatherfucker() {
   }
 }
