@@ -1,4 +1,5 @@
 package com.greenfox.poker.controller;
+import com.greenfox.poker.model.LoginRequest;
 import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.service.UserService;
 import javax.validation.Valid;
@@ -16,16 +17,20 @@ public class RestController {
   UserService userService;
 
   @RequestMapping(value = "/register", method = RequestMethod.POST)
-  public ResponseEntity<?> register(@RequestBody @Valid PokerUser userRegister, BindingResult bindingResult) {
-    return userService.createResponseJson(bindingResult);
+  public ResponseEntity<?> register(@RequestBody @Valid PokerUser userRegister,
+      BindingResult bindingResult) {
+    if (bindingResult.hasErrors()) {
+      return userService.respondToMissingOrInvalidFields(bindingResult);
+    }
+    return userService.respondToRegister(bindingResult, userRegister);
   }
 
   @RequestMapping(value = "/login", method = RequestMethod.POST)
-  public ResponseEntity<?> login(@RequestBody @Valid PokerUser userLogin, BindingResult bindingResult) {
-    return userService.createResponseJson(bindingResult);
-  }
-
-  public void motherfucker(){
-    System.out.println("yay");
+  public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest,
+      BindingResult bindingResult) {
+    if (bindingResult.hasErrors()) {
+      return userService.respondToMissingOrInvalidFields(bindingResult);
+    }
+    return userService.respondToLogin(bindingResult, loginRequest);
   }
 }

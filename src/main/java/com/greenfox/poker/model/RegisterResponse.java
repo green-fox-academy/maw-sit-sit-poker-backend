@@ -1,28 +1,37 @@
 package com.greenfox.poker.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RegisterResponse {
 
+  private String result;
+  private String token;
   private long id;
-  private String username;
-  @JsonIgnore
-  private String password;
-  private String email;
-  private long cash;
-  private String avatar;
 
   public RegisterResponse() {
   }
 
-  public RegisterResponse(long id, String username, String email, String avatar) {
+  public RegisterResponse(String result, String token, long id) {
+    this.result = result;
+    this.token = token;
     this.id = id;
-    this.username = username;
-    this.email = email;
-    this.cash = 10000;
-    this.avatar = avatar;
+  }
+
+  public String getResult() {
+    return result;
+  }
+
+  public void setResult(String result) {
+    this.result = result;
+  }
+
+  public String getToken() {
+    return token;
+  }
+
+  public void setToken(String token) {
+    this.token = token;
   }
 
   public long getId() {
@@ -32,44 +41,7 @@ public class RegisterResponse {
   public void setId(long id) {
     this.id = id;
   }
-
-  public String getUsername() {
-    return username;
-  }
-
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
-  }
-
-  public long getCash() {
-    return cash;
-  }
-
-  public void setCash(long cash) {
-    this.cash = cash;
-  }
-
-  public String getAvatar() {
-    return avatar;
-  }
-
-  public void setAvatar(String avatar) {
-    this.avatar = avatar;
-  }
 }
+
+
+
