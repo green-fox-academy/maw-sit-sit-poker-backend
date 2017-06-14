@@ -2,7 +2,7 @@ package com.greenfox.poker.model;
 
 public class StatusError {
 
-  private String status = "error";
+  private String result;
   private String message;
 
   public StatusError() {
@@ -12,12 +12,13 @@ public class StatusError {
     this.message = message;
   }
 
-  public String getStatus() {
-    return status;
+  public String getResult() {
+    return result;
   }
 
-  public void setStatus(String status) {
-    this.status = status;
+  public StatusError(String result, String message) {
+    this.result = result;
+    this.message = message;
   }
 
   public String getMessage() {
