@@ -9,25 +9,23 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-@org.springframework.web.bind.annotation.RestController
-public class RestController {
+@RestController
+public class MainRestController {
 
   @Autowired
   UserService userService;
 
   @RequestMapping(value = "/register", method = RequestMethod.POST)
   public ResponseEntity<?> register(@RequestBody @Valid PokerUser userRegister,
-          BindingResult bindingResult) {
+      BindingResult bindingResult) {
     return userService.createResponseJson(bindingResult);
   }
 
   @RequestMapping(value = "/login", method = RequestMethod.POST)
   public ResponseEntity<?> login(@RequestBody @Valid PokerUser userLogin,
-          BindingResult bindingResult) {
+      BindingResult bindingResult) {
     return userService.createResponseJson(bindingResult);
-  }
-
-  public void fatherfucker() {
   }
 }
