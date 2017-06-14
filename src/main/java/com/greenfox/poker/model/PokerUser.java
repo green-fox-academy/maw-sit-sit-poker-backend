@@ -1,5 +1,6 @@
 package com.greenfox.poker.model;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -8,6 +9,7 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.stereotype.Component;
 
+@Entity
 @Component
 public class PokerUser {
 
@@ -24,12 +26,11 @@ public class PokerUser {
   @Email
   private String email;
 
-  @URL
   private String avatar;
-  private long cash;
+  private long chips;
 
   public PokerUser() {
-    this.cash = 10000;
+    this.chips = 10000;
   }
 
   public PokerUser(String username, String password, String email, String avatar) {
@@ -37,7 +38,7 @@ public class PokerUser {
     this.password = password;
     this.email = email;
     this.avatar = avatar;
-    this.cash = 10000;
+    this.chips = 10000;
   }
 
   public long getId() {
@@ -80,11 +81,11 @@ public class PokerUser {
     this.avatar = avatar;
   }
 
-  public long getCash() {
-    return cash;
+  public long getChips() {
+    return chips;
   }
 
-  public void setCash(long cash) {
-    this.cash = cash;
+  public void setChips(long chips) {
+    this.chips = chips;
   }
 }
