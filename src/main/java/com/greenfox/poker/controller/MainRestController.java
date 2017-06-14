@@ -1,4 +1,5 @@
 package com.greenfox.poker.controller;
+
 import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.service.UserService;
 import javax.validation.Valid;
@@ -17,12 +18,17 @@ public class MainRestController {
   UserService userService;
 
   @RequestMapping(value = "/register", method = RequestMethod.POST)
-  public ResponseEntity<?> register(@RequestBody @Valid PokerUser userRegister, BindingResult bindingResult) {
+  public ResponseEntity<?> register(@RequestBody @Valid PokerUser userRegister,
+          BindingResult bindingResult) {
     return userService.createResponseJson(bindingResult);
   }
 
   @RequestMapping(value = "/login", method = RequestMethod.POST)
-  public ResponseEntity<?> login(@RequestBody @Valid PokerUser userLogin, BindingResult bindingResult) {
+  public ResponseEntity<?> login(@RequestBody @Valid PokerUser userLogin,
+          BindingResult bindingResult) {
     return userService.createResponseJson(bindingResult);
+  }
+
+  public void fatherfucker() {
   }
 }
