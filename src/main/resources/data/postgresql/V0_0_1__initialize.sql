@@ -7,5 +7,10 @@ CREATE TABLE Poker_user (
   PRIMARY KEY (id)
 );
 
+
+/*
+ * Data
+ */
+
 INSERT INTO Poker_user (username, password, email, avatar)
 VALUES ('Ramin', '12345', 'example@mail.com', 'http://www.avatar.com');
