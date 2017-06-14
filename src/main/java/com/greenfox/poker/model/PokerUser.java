@@ -21,6 +21,7 @@ public class PokerUser {
   @NotNull
   private String password;
 
+  @NotNull
   @Email
   private String email;
 

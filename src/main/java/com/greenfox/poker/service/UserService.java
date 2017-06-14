@@ -25,7 +25,7 @@ public class UserService {
       for (FieldError fielderror : bindingResult.getFieldErrors()) {
         listOfMissingFields.add(fielderror.getField());
       }
-      missingFields = "Missing paramater(s): " + listOfMissingFields.toString();
+      missingFields = "Missing parameter(s): " + listOfMissingFields.toString();
       return new ResponseEntity(new StatusError("fail", missingFields ), HttpStatus.BAD_REQUEST);
   }
 
