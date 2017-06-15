@@ -9,7 +9,7 @@ public class GameState {
   private List<PokerUserDTO> players;
   private long actorPlayerId;
   private long dealerPlayerId;
-  private Round round;
+  private String round;
   private List<Card> cardsOnTable;
   private int pot;
 
@@ -48,12 +48,12 @@ public class GameState {
     this.dealerPlayerId = dealerPlayerId;
   }
 
-  public Round getRound() {
+  public String getRound() {
     return round;
   }
 
   public void setRound(Round round) {
-    this.round = round;
+    this.round = round.toString();
   }
 
   public List<Card> getCardsOnTable() {

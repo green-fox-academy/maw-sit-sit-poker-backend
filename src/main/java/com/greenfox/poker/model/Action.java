@@ -16,6 +16,6 @@ public enum Action {
 
   @Override
   public String toString() {
-    return super.toString();
+    return actionName;
   }
 }

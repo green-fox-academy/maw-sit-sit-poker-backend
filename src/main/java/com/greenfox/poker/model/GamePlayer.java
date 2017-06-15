@@ -1,9 +1,8 @@
 package com.greenfox.poker.model;
 
 
-public class GamePlayer {
-
-  private Action lastAction;
+  public class GamePlayer {
+  private String lastAction;
   private PokerUser player;
   private int bet;
   private boolean isFolded;
@@ -11,22 +10,15 @@ public class GamePlayer {
   public GamePlayer() {
   }
 
-  public GamePlayer(Action lastAction, PokerUser player, int bet, boolean isFolded) {
-    this.lastAction = lastAction;
-    this.player = player;
-    this.bet = bet;
-    this.isFolded = isFolded;
-  }
+    public String getLasAction() {
+      return lastAction;
+    }
 
-  public Action getLastAction() {
-    return lastAction;
-  }
+    public void setLasAction(Action action) {
+      this.lastAction = action.toString();
+    }
 
-  public void setLastAction(Action lastAction) {
-    this.lastAction = lastAction;
-  }
-
-  public PokerUser getPlayer() {
+    public PokerUser getPlayer() {
     return player;
   }
 
