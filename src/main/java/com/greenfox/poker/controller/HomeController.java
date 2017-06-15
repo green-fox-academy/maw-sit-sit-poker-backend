@@ -1,6 +1,9 @@
 package com.greenfox.poker.controller;
 
+import com.greenfox.poker.model.Card;
 import com.greenfox.poker.model.PokerUser;
+import com.greenfox.poker.model.Rank;
+import com.greenfox.poker.model.Suit;
 import com.greenfox.poker.repository.PokerUserRepo;
 import com.greenfox.poker.service.GamePlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
