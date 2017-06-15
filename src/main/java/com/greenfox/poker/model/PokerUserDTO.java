@@ -1,8 +1,5 @@
 package com.greenfox.poker.model;
 
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor
 public class PokerUserDTO {
 
   private long id;

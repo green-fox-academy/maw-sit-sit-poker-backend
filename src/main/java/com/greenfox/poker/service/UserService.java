@@ -60,7 +60,7 @@ public class UserService {
     }
     if (!bindingResult.hasErrors() && (!loginRequest.getUsername().equals("Bond") || !loginRequest
         .getPassword().equals("password123"))) {
-      return respondToInvalidUsernameOrPassword("Invalid username or password");
+      return respondToInvalidUsernameOrPassword("invalid username or password");
     }
     return mockRespondToSuccessfulRegisterOrLogin();
   }
