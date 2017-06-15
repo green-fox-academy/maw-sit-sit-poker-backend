@@ -44,15 +44,6 @@ public class UserControllerTest {
     this.mockMvc = webAppContextSetup(webApplicationContext).build();
   }
 
-
-  @Test
-  public void homeTest() throws Exception {
-
-    mockMvc.perform(get("/"))
-        .andExpect(status().isOk())
-        .andExpect(content().string("Hello"));
-  }
-
   @Test
   public void loginWithCorrectDataTest() throws Exception{
     String login = "{\"username\" : \"Bond\", \"password\" : \"password123\"}";
