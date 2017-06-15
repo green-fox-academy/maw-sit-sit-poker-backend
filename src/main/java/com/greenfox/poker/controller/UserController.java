@@ -9,9 +9,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-@org.springframework.web.bind.annotation.RestController
-public class PokerRestController {
+@RestController
+public class UserController {
 
   @Autowired
   UserService userService;
@@ -19,12 +20,12 @@ public class PokerRestController {
   @RequestMapping(value = "/register", method = RequestMethod.POST)
   public ResponseEntity<?> register(@RequestBody @Valid PokerUser userRegister,
       BindingResult bindingResult) {
-    return userService.createResponseToRegister(userRegister, bindingResult);
+    return userService.register(userRegister, bindingResult);
   }
 
   @RequestMapping(value = "/login", method = RequestMethod.POST)
   public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest,
       BindingResult bindingResult) {
-    return userService.createResponseToLogin(bindingResult, loginRequest);
+    return userService.login(bindingResult, loginRequest);
   }
 }

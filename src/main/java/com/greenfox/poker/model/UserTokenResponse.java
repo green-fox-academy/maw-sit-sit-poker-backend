@@ -3,16 +3,16 @@ package com.greenfox.poker.model;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RegisterResponse {
+public class UserTokenResponse {
 
   private String result;
   private String token;
   private long id;
 
-  public RegisterResponse() {
+  public UserTokenResponse() {
   }
 
-  public RegisterResponse(String result, String token, long id) {
+  public UserTokenResponse(String result, String token, long id) {
     this.result = result;
     this.token = token;
     this.id = id;

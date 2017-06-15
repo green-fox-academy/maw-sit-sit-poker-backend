@@ -6,8 +6,8 @@ public enum Suit {
 
   private final String suitName;
 
-  private Suit(String s) {
-    suitName = s;
+  private Suit(String suitName) {
+    this.suitName = suitName;
   }
 
   @Override

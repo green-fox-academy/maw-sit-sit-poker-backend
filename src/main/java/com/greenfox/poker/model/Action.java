@@ -6,7 +6,7 @@ public enum Action {
 
   private final String actionName;
 
-  Action(String s){
+  Action(String s) {
     this.actionName = s;
   }
 

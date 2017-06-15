@@ -3,32 +3,31 @@ package com.greenfox.poker.model;
 
 public class Card {
 
-  private Suit suit;
-  private Rank rank;
-
+  private String suit;
+  private String rank;
 
   public Card() {
   }
 
-  public Suit getSuit() {
+  public String getSuit() {
     return suit;
   }
 
   public void setSuit(Suit suit) {
-    this.suit = suit;
+    this.suit = suit.toString();
   }
 
-  public Rank getRank() {
+  public String getRank() {
     return rank;
   }
 
   public void setRank(Rank rank) {
-    this.rank = rank;
+    this.rank = rank.toString();
   }
 
   @Override
   public String toString() {
-    return suit.toString() + rank.toString();
+    return suit.concat(rank);
   }
 }
 
