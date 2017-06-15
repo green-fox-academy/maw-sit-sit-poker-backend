@@ -19,18 +19,12 @@ public class PokerRestController {
   @RequestMapping(value = "/register", method = RequestMethod.POST)
   public ResponseEntity<?> register(@RequestBody @Valid PokerUser userRegister,
       BindingResult bindingResult) {
-    if (bindingResult.hasErrors()) {
-      return userService.respondToMissingOrInvalidFields(bindingResult);
-    }
-    return userService.respondToRegister(bindingResult, userRegister);
+    return userService.createResponseToRegister(userRegister, bindingResult);
   }
 
   @RequestMapping(value = "/login", method = RequestMethod.POST)
   public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest,
       BindingResult bindingResult) {
-    if (bindingResult.hasErrors()) {
-      return userService.respondToMissingOrInvalidFields(bindingResult);
-    }
-    return userService.respondToLogin(bindingResult, loginRequest);
+    return userService.createResponseToLogin(bindingResult, loginRequest);
   }
 }
