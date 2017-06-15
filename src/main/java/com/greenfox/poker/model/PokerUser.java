@@ -6,7 +6,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.URL;
 import org.springframework.stereotype.Component;
 
 @Entity

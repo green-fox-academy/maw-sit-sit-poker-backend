@@ -6,7 +6,7 @@ public enum Action {
 
   private final String actionName;
 
-  Action(String s){
+  Action(String s) {
     this.actionName = s;
   }
 
@@ -14,8 +14,4 @@ public enum Action {
     return actionName;
   }
 
-  @Override
-  public String toString() {
-    return super.toString();
-  }
 }
