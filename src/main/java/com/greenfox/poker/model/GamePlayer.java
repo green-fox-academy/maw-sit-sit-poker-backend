@@ -1,69 +1,44 @@
 package com.greenfox.poker.model;
 
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import org.springframework.stereotype.Component;
-
-@Entity
-@Component
-public class GamePlayer {
-
-  @Id
-  private long id;
-  private String username;
-  private String email;
-  private String avatar;
-  private int chips;
+  public class GamePlayer {
+  private String lastAction;
+  private PokerUser player;
+  private int bet;
+  private boolean isFolded;
 
   public GamePlayer() {
   }
 
-  public GamePlayer(long id, String username, String email, String avatar, int chips) {
-    this.id = id;
-    this.username = username;
-    this.email = email;
-    this.avatar = avatar;
-    this.chips = chips;
+    public String getLasAction() {
+      return lastAction;
+    }
+
+    public void setLasAction(Action action) {
+      this.lastAction = action.toString();
+    }
+
+    public PokerUser getPlayer() {
+    return player;
   }
 
-  public long getId() {
-    return id;
+  public void setPlayer(PokerUser player) {
+    this.player = player;
   }
 
-  public void setId(long id) {
-    this.id = id;
+  public int getBet() {
+    return bet;
   }
 
-  public String getUsername() {
-    return username;
+  public void setBet(int bet) {
+    this.bet = bet;
   }
 
-  public void setUsername(String username) {
-    this.username = username;
+  public boolean isFolded() {
+    return isFolded;
   }
 
-  public String getEmail() {
-    return email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
-  }
-
-  public String getAvatar() {
-    return avatar;
-  }
-
-  public void setAvatar(String avatar) {
-    this.avatar = avatar;
-  }
-
-  public int getChips() {
-    return chips;
-  }
-
-  public void setChips(int chips) {
-    this.chips = chips;
+  public void setFolded(boolean folded) {
+    isFolded = folded;
   }
 }

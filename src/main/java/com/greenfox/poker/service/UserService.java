@@ -2,10 +2,13 @@ package com.greenfox.poker.service;
 
 import com.greenfox.poker.model.LoginRequest;
 import com.greenfox.poker.model.PokerUser;
-import com.greenfox.poker.model.RegisterResponse;
+import com.greenfox.poker.model.ResponseType;
+import com.greenfox.poker.model.UserTokenResponse;
 import com.greenfox.poker.model.StatusError;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -15,40 +18,31 @@ import org.springframework.validation.FieldError;
 @Component
 public class UserService {
 
-  public RegisterResponse mockRespondToSuccessfulRegisterOrLogin() {
-    return new RegisterResponse("success", "ABC123", 4321);
+  public ResponseType mockResponseToSuccessfulRegisterOrLogin() {
+    return new UserTokenResponse("success", "ABC123", 4321);
   }
 
-  public ResponseEntity<?> respondToMissingOrInvalidFields(BindingResult bindingResult) {
-    List<String> listOfMissingFields = new ArrayList<>();
+  public ResponseType respondToMissingParameters(BindingResult bindingResult) {
+    List<String> missing = new ArrayList<>();
     String missingFields = new String();
     for (FieldError fielderror : bindingResult.getFieldErrors()) {
-      listOfMissingFields.add(fielderror.getField());
+      missing.add(fielderror.getField());
     }
-    missingFields = "Missing parameter(s): " + listOfMissingFields.toString();
-    return new ResponseEntity(new StatusError("fail", missingFields), HttpStatus.BAD_REQUEST);
+    System.out.println(missingFields);
+    missingFields = "Missing parameter(s): " + missing.stream().collect(Collectors.joining(", ")) + "!";
+    return new StatusError("fail", missingFields);
   }
 
-  public ResponseEntity<?> respondToRegister(BindingResult bindingResult, PokerUser pokerUser) {
-    String occupiedField = new String();
-    if (!bindingResult.hasErrors() && isEmailOccupied(pokerUser)) {
-      return new ResponseEntity(new StatusError("fail", occupiedField + "email address already exists"),
-          HttpStatus.CONFLICT);
-    } else if (!bindingResult.hasErrors() && isUsernameOccupied(pokerUser)) {
-      return new ResponseEntity(new StatusError("fail", occupiedField + "username already exists"),
-          HttpStatus.CONFLICT);
-    } else {
-      return new ResponseEntity(mockRespondToSuccessfulRegisterOrLogin(), HttpStatus.OK);
-    }
+  public ResponseType registerWithOccupiedEmail() {
+   return new StatusError("fail", "email address already exists");
   }
 
-  public ResponseEntity<?> respondToLogin(BindingResult bindingResult, LoginRequest loginRequest) {
-    if (!bindingResult.hasErrors() && (!loginRequest.getUsername().equals("Bond") || !loginRequest
-        .getPassword().equals("password123"))) {
-      return new ResponseEntity(new StatusError("fail", "invalid username or password"),
-          HttpStatus.UNAUTHORIZED);
-    }
-    return new ResponseEntity(mockRespondToSuccessfulRegisterOrLogin(), HttpStatus.OK);
+  public ResponseType registerWithOccupiedUsername() {
+   return new StatusError("fail", "username already exists");
+  }
+
+  public ResponseType loginWithIvalidUsernameOrPassword() {
+    return new StatusError("fail", "invalid username or password");
   }
 
   public boolean isEmailOccupied(PokerUser pokerUser) {
