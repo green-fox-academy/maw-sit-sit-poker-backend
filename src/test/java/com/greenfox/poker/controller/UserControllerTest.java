@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = PokergameApplication.class)
 @WebAppConfiguration
 @EnableWebMvc
-public class HomeControllerTest {
+public class UserControllerTest {
 
   private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
       MediaType.APPLICATION_JSON.getSubtype(),
@@ -42,15 +42,6 @@ public class HomeControllerTest {
   @Before
   public void setup() throws Exception {
     this.mockMvc = webAppContextSetup(webApplicationContext).build();
-  }
-
-
-  @Test
-  public void homeTest() throws Exception {
-
-    mockMvc.perform(get("/"))
-        .andExpect(status().isOk())
-        .andExpect(content().string("Hello"));
   }
 
   @Test
@@ -73,7 +64,7 @@ public class HomeControllerTest {
         .contentType(contentType))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.result",is("fail")))
-        .andExpect(jsonPath("$.message",is("Missing parameter(s): [password]")));
+        .andExpect(jsonPath("$.message",is("Missing parameter(s): password!")));
   }
 
   @Test
@@ -107,7 +98,7 @@ public class HomeControllerTest {
         .contentType(contentType))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.result",is("fail")))
-        .andExpect(jsonPath("$.message",is("Missing parameter(s): [email]")));
+        .andExpect(jsonPath("$.message",is("Missing parameter(s): email!")));
   }
 
   @Test
