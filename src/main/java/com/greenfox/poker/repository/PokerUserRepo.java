@@ -8,4 +8,5 @@ import org.springframework.stereotype.Component;
 
 public interface PokerUserRepo extends CrudRepository<PokerUser, Long> {
   List<PokerUser> findAll();
+  List<PokerUser> findTop10ByOrderByChipsDesc();
 }
