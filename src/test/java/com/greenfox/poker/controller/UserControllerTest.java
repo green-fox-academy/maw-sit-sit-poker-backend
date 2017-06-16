@@ -64,7 +64,7 @@ public class UserControllerTest {
         .contentType(contentType))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.result",is("fail")))
-        .andExpect(jsonPath("$.message",is("Missing parameter(s): [password]")));
+        .andExpect(jsonPath("$.message",is("Missing parameter(s): password!")));
   }
 
   @Test
@@ -98,7 +98,7 @@ public class UserControllerTest {
         .contentType(contentType))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.result",is("fail")))
-        .andExpect(jsonPath("$.message",is("Missing parameter(s): [email]")));
+        .andExpect(jsonPath("$.message",is("Missing parameter(s): email!")));
   }
 
   @Test
