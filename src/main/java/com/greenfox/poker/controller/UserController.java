@@ -1,9 +1,11 @@
 package com.greenfox.poker.controller;
 import com.greenfox.poker.model.LoginRequest;
 import com.greenfox.poker.model.PokerUser;
+import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.service.UserService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,14 +20,28 @@ public class UserController {
   UserService userService;
 
   @RequestMapping(value = "/register", method = RequestMethod.POST)
-  public ResponseEntity<?> register(@RequestBody @Valid PokerUser userRegister,
+  public ResponseEntity<?> registerUser(@RequestBody @Valid PokerUser userRegister,
       BindingResult bindingResult) {
-    return userService.register(userRegister, bindingResult);
+    if (bindingResult.hasErrors()){
+      return new ResponseEntity(userService.respondToMissingParameters(bindingResult), HttpStatus.BAD_REQUEST);
+    } else if (userService.isEmailOccupied(userRegister)) {
+        return new ResponseEntity(userService.registerWithOccupiedEmail(), HttpStatus.CONFLICT);
+      } else if (userService.isUsernameOccupied(userRegister)) {
+        return new ResponseEntity(userService.registerWithOccupiedUsername(), HttpStatus.CONFLICT);
+    }
+    return new ResponseEntity(userService.mockResponseToSuccessfulRegisterOrLogin(),HttpStatus.OK);
   }
 
   @RequestMapping(value = "/login", method = RequestMethod.POST)
-  public ResponseEntity<?> login(@RequestBody @Valid LoginRequest loginRequest,
+  public ResponseEntity<?> loginUser(@RequestBody @Valid LoginRequest loginRequest,
       BindingResult bindingResult) {
-    return userService.login(bindingResult, loginRequest);
+    if (bindingResult.hasErrors()) {
+      return new ResponseEntity(userService.respondToMissingParameters(bindingResult),
+          HttpStatus.BAD_REQUEST);
+    } else if (!loginRequest.getUsername().equals("Bond") || !loginRequest
+          .getPassword().equals("password123")) {
+        return new ResponseEntity(userService.loginWithIvalidUsernameOrPassword(), HttpStatus.UNAUTHORIZED);
+    }
+    return new ResponseEntity(userService.mockResponseToSuccessfulRegisterOrLogin(), HttpStatus.OK);
   }
 }

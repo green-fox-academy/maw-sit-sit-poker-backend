@@ -3,7 +3,7 @@ package com.greenfox.poker.model;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserTokenResponse {
+public class UserTokenResponse implements ResponseType {
 
   private String result;
   private String token;
