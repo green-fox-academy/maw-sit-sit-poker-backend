@@ -22,25 +22,27 @@ public class UserService {
   public ResponseEntity<?> respondToMissingOrInvalidFields(BindingResult bindingResult) {
     List<String> listOfMissingFields = new ArrayList<>();
     String missingFields = new String();
-      for (FieldError fielderror : bindingResult.getFieldErrors()) {
-        listOfMissingFields.add(fielderror.getField());
-      }
-      missingFields = "Missing parameter(s): " + listOfMissingFields.toString();
-      return new ResponseEntity(new StatusError("fail", missingFields ), HttpStatus.BAD_REQUEST);
+    for (FieldError fielderror : bindingResult.getFieldErrors()) {
+      listOfMissingFields.add(fielderror.getField());
+    }
+    missingFields = "Missing parameter(s): " + listOfMissingFields.toString();
+    return new ResponseEntity(new StatusError("fail", missingFields), HttpStatus.BAD_REQUEST);
   }
 
   public ResponseEntity<?> respondToRegister(BindingResult bindingResult, PokerUser pokerUser) {
     String occupiedField = new String();
-    if (!bindingResult.hasErrors() && isEmailOccupied(pokerUser)){
+    if (!bindingResult.hasErrors() && isEmailOccupied(pokerUser)) {
       return new ResponseEntity(new StatusError("fail", occupiedField + "email address already exists"),
           HttpStatus.CONFLICT);
-    } else if (!bindingResult.hasErrors() && isUsernameOccupied(pokerUser)){
+    } else if (!bindingResult.hasErrors() && isUsernameOccupied(pokerUser)) {
       return new ResponseEntity(new StatusError("fail", occupiedField + "username already exists"),
           HttpStatus.CONFLICT);
-    } else return new ResponseEntity(mockRespondToSuccessfulRegisterOrLogin(), HttpStatus.OK);
+    } else {
+      return new ResponseEntity(mockRespondToSuccessfulRegisterOrLogin(), HttpStatus.OK);
+    }
   }
 
-  public ResponseEntity<?> respondToLogin(BindingResult bindingResult,LoginRequest loginRequest) {
+  public ResponseEntity<?> respondToLogin(BindingResult bindingResult, LoginRequest loginRequest) {
     if (!bindingResult.hasErrors() && (!loginRequest.getUsername().equals("Bond") || !loginRequest
         .getPassword().equals("password123"))) {
       return new ResponseEntity(new StatusError("fail", "invalid username or password"),
@@ -49,14 +51,14 @@ public class UserService {
     return new ResponseEntity(mockRespondToSuccessfulRegisterOrLogin(), HttpStatus.OK);
   }
 
-  public boolean isEmailOccupied(PokerUser pokerUser){
+  public boolean isEmailOccupied(PokerUser pokerUser) {
     if (pokerUser.getEmail().equals("occupied@email.com")) {
       return true;
     }
     return false;
   }
 
-  public boolean isUsernameOccupied(PokerUser pokerUser){
+  public boolean isUsernameOccupied(PokerUser pokerUser) {
     if (pokerUser.getUsername().equals("occupiedUserName")) {
       return true;
     }

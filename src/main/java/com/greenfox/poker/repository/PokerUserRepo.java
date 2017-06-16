@@ -7,4 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface PokerUserRepo extends CrudRepository<PokerUser, Long> {
   List<PokerUser> findAll();
+  List<PokerUser> findTop10ByOrderByChipsDesc();
 }
