@@ -1,9 +1,14 @@
 package com.greenfox.poker.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 public class Game {
@@ -11,10 +16,16 @@ public class Game {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private long id;
+
+  @NotNull
   private String name;
-  private int bigBlind;
-  private int maxPlayers;
-  private int currentPlayers;
+
+  @NotNull
+  private Integer bigBlind;
+
+  @NotNull
+  private Integer maxPlayers;
+  private Integer currentPlayers;
 
   public Game() {
   }
@@ -35,27 +46,30 @@ public class Game {
     this.name = name;
   }
 
+  @JsonProperty("big_blind")
   public int getBigBlind() {
     return bigBlind;
   }
 
-  public void setBigBlind(int bigBlind) {
+  public void setBigBlind(Integer bigBlind) {
     this.bigBlind = bigBlind;
   }
 
+  @JsonProperty("max_players")
   public int getMaxPlayers() {
     return maxPlayers;
   }
 
-  public void setMaxPlayers(int maxPlayers) {
+  public void setMaxPlayers(Integer maxPlayers) {
     this.maxPlayers = maxPlayers;
   }
 
+  @JsonProperty("current_players")
   public int getCurrentPlayers() {
     return currentPlayers;
   }
 
-  public void setCurrentPlayers(int currentPlayers) {
+  public void setCurrentPlayers(Integer currentPlayers) {
     this.currentPlayers = currentPlayers;
   }
 }
