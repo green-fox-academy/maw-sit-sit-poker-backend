@@ -13,9 +13,8 @@ public class Game {
   private long id;
   private String name;
   private int bigBlind;
-  private int maxPlayersNum;
-  private Integer currentPlayersNum;
-
+  private int maxPlayers;
+  private int currentPlayers;
 
   public Game() {
   }
@@ -44,20 +43,20 @@ public class Game {
     this.bigBlind = bigBlind;
   }
 
-  public int getMaxPlayersNum() {
-    return maxPlayersNum;
+  public int getMaxPlayers() {
+    return maxPlayers;
   }
 
-  public void setMaxPlayersNum(int maxPlayersNum) {
-    this.maxPlayersNum = maxPlayersNum;
+  public void setMaxPlayers(int maxPlayers) {
+    this.maxPlayers = maxPlayers;
   }
 
-  public int getCurrentPlayersNum() {
-    return currentPlayersNum;
+  public int getCurrentPlayers() {
+    return currentPlayers;
   }
 
-  public void setCurrentPlayersNum(int currentPlayersNum) {
-    this.currentPlayersNum = currentPlayersNum;
+  public void setCurrentPlayers(int currentPlayers) {
+    this.currentPlayers = currentPlayers;
   }
 }
 
