@@ -1,8 +1,22 @@
 package com.greenfox.poker.model;
 
-/**
- * Created by kispista on 2017.06.19..
- */
+
+import java.util.List;
+import org.springframework.stereotype.Component;
+
+@Component
 public class GamesList {
 
+  private List<Game> games;
+
+  public GamesList() {
+  }
+
+  public List<Game> getGames() {
+    return games;
+  }
+
+  public void setGames(List<Game> games) {
+    this.games = games;
+  }
 }

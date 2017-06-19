@@ -12,7 +12,7 @@ INSERT INTO game (id, name, big_blind, max_players, current_players)
 VALUES ('1', 'BigBoss Ramins favourite table', '500', '6', '2');
 
 INSERT INTO game (id, name, big_blind, max_players, current_players)
-VALUES ('2', 'Lucky Gabors winning table', '200', '4', NULL);
+VALUES ('2', 'Lucky Gabors winning table', '200', '4', '4');
 
 INSERT INTO game (id, name, big_blind, max_players, current_players)
 VALUES ('3', 'Norberts table', '100', '2', '1');
