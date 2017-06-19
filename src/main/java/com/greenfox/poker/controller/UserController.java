@@ -1,11 +1,8 @@
 package com.greenfox.poker.controller;
 import com.greenfox.poker.model.LoginRequest;
 import com.greenfox.poker.model.PokerUser;
-import com.greenfox.poker.model.PokerUserDTO;
-import com.greenfox.poker.model.ResponseType;
 import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.service.UserService;
-import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,7 +46,7 @@ public class UserController {
     return new ResponseEntity(userService.responseToSuccessfulLogin(loginRequest), HttpStatus.OK);
   }
 
-  @GetMapping("/user/{userid}")
+  @GetMapping("/user/{id}")
   public ResponseEntity<?> getUserInfo(@PathVariable("id") long id) {
     if (userService.isUserExistsInDB(id)) {
       return new ResponseEntity(userService.getUserDTO(id), HttpStatus.OK);
