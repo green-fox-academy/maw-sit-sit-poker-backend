@@ -43,8 +43,7 @@ public class UserController {
     if (bindingResult.hasErrors()) {
       return new ResponseEntity(userService.respondToMissingParameters(bindingResult),
           HttpStatus.BAD_REQUEST);
-    } else if (!loginRequest.getUsername().equals("Bond") || !loginRequest
-          .getPassword().equals("password123")) {
+    } else if (!userService.isLoginValid(loginRequest)) {
         return new ResponseEntity(userService.loginWithIvalidUsernameOrPassword(), HttpStatus.UNAUTHORIZED);
     }
     return new ResponseEntity(userService.responseToSuccessfulLogin(loginRequest), HttpStatus.OK);

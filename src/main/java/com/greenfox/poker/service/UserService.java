@@ -24,20 +24,16 @@ public class UserService {
   @Autowired
   TokenService tokenService;
 
-  public ResponseType responseToSuccessfulRegister(PokerUser userRegister) {
-    pokerUserRepo.save(userRegister);
-    String token = tokenService.generateToken(userRegister);
-    return new UserTokenResponse("success", token, userRegister.getId());
+  public ResponseType responseToSuccessfulRegister(PokerUser pokerUser) {
+    pokerUserRepo.save(pokerUser);
+    String token = tokenService.generateToken(pokerUser);
+    return new UserTokenResponse("success", token, pokerUser.getId());
   }
 
   public ResponseType responseToSuccessfulLogin(LoginRequest loginRequest) {
-    PokerUser pokerUserFromDatabase = pokerUserRepo.findByUsername(loginRequest.getUsername());
-    String passwordOfUsernameFromDatabase = pokerUserFromDatabase.getPassword();
-    if (loginRequest.getPassword().equals(passwordOfUsernameFromDatabase)) {
-      String token = tokenService.generateToken(pokerUserFromDatabase);
-      return new UserTokenResponse("success", token, pokerUserFromDatabase.getId());
-    }
-    return loginWithIvalidUsernameOrPassword();
+    PokerUser pokerUserFromDatabase = pokerUserRepo.findByUsername(loginRequest.getUsername()).get(0);
+    String token = tokenService.generateToken(pokerUserFromDatabase);
+    return new UserTokenResponse("success", token, pokerUserFromDatabase.getId());
   }
 
   public ResponseType respondToMissingParameters(BindingResult bindingResult) {
@@ -60,19 +56,29 @@ public class UserService {
     return new StatusError("fail", "username already exists");
   }
 
+  public boolean isLoginValid(LoginRequest loginRequest){
+    List<PokerUser> users = pokerUserRepo.findByUsername(loginRequest.getUsername());
+    if (users.size() > 0 && users.get(0).getPassword().equals(loginRequest.getPassword())){
+      return true;
+    }
+    return false;
+  }
+
   public ResponseType loginWithIvalidUsernameOrPassword() {
     return new StatusError("fail", "invalid username or password");
   }
 
   public boolean isEmailOccupied(PokerUser pokerUser) {
-    if (!pokerUserRepo.findByEmail(pokerUser.getEmail()).equals(null)) {
+    List<PokerUser> users = pokerUserRepo.findByEmail(pokerUser.getEmail());
+    if (users.size() > 0){
       return true;
     }
     return false;
   }
 
   public boolean isUsernameOccupied(PokerUser pokerUser) {
-    if ((!pokerUserRepo.findByUsername(pokerUser.getUsername()).equals(null))){
+    List<PokerUser> users = pokerUserRepo.findByUsername(pokerUser.getUsername());
+    if (users.size() > 0){
       return true;
     }
     return false;
