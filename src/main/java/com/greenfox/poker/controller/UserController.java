@@ -51,7 +51,7 @@ public class UserController {
   }
 
   @GetMapping("/user/{userid}")
-  public ResponseEntity<?> getUserInfo(@PathVariable("userid") long id) {
+  public ResponseEntity<?> getUserInfo(@PathVariable("id") long id) {
     if (userService.isUserExistsInDB(id)) {
       return new ResponseEntity(userService.getUserDTO(id), HttpStatus.OK);
     }
