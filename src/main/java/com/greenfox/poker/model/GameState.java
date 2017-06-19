@@ -6,10 +6,10 @@ import java.util.List;
 public class GameState {
 
   private Game game;
-  private List<PokerUserDTO> players;
+  private List<GamePlayer> players;
   private long actorPlayerId;
   private long dealerPlayerId;
-  private String round;
+  private Round round;
   private List<Card> cardsOnTable;
   private int pot;
 
@@ -24,12 +24,20 @@ public class GameState {
     this.game = game;
   }
 
-  public List<PokerUserDTO> getPlayers() {
+  public List<GamePlayer> getPlayers() {
     return players;
   }
 
-  public void setPlayers(List<PokerUserDTO> players) {
+  public void setPlayers(List<GamePlayer> players) {
     this.players = players;
+  }
+
+  public Round getRound() {
+    return round;
+  }
+
+  public void setRound(Round round) {
+    this.round = round;
   }
 
   public long getActorPlayerId() {
@@ -46,14 +54,6 @@ public class GameState {
 
   public void setDealerPlayerId(long dealerPlayerId) {
     this.dealerPlayerId = dealerPlayerId;
-  }
-
-  public String getRound() {
-    return round;
-  }
-
-  public void setRound(Round round) {
-    this.round = round.toString();
   }
 
   public List<Card> getCardsOnTable() {
