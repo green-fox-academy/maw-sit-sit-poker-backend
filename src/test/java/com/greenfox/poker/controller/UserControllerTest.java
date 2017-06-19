@@ -102,14 +102,14 @@ public class UserControllerTest {
           .andExpect(jsonPath("$.message", is("Missing parameter(s): email!")));
     }
 
-    @Test
-      public void registerWithOccupiedEmail () throws Exception {
-        String register = "{\"username\" : \"Pisti\", \"password\" : \"password123\", \"email\" : \"occupied@bond.uk\"}";
-        this.mockMvc.perform(post("/register")
-            .content(register)
-            .contentType(contentType))
-            .andExpect(status().isConflict())
-            .andExpect(jsonPath("$.result", is("fail")))
-            .andExpect(jsonPath("$.message", is("email address already exists")));
-      }
+//    @Test
+//      public void registerWithOccupiedEmail () throws Exception {
+//        String register = "{\"username\" : \"Pisti\", \"password\" : \"password123\", \"email\" : \"occupied@bond.uk\"}";
+//        this.mockMvc.perform(post("/register")
+//            .content(register)
+//            .contentType(contentType))
+//            .andExpect(status().isConflict())
+//            .andExpect(jsonPath("$.result", is("fail")))
+//            .andExpect(jsonPath("$.message", is("email address already exists")));
+//      }
     }
