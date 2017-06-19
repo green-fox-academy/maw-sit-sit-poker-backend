@@ -65,14 +65,14 @@ public class UserService {
   }
 
   public boolean isEmailOccupied(PokerUser pokerUser) {
-    if (pokerUser.getEmail().equals("occupied@email.com")) {
+    if (!pokerUserRepo.findByEmail(pokerUser.getEmail()).equals(null)) {
       return true;
     }
     return false;
   }
 
   public boolean isUsernameOccupied(PokerUser pokerUser) {
-    if (pokerUser.getUsername().equals("occupiedUserName")) {
+    if ((!pokerUserRepo.findByUsername(pokerUser.getUsername()).equals(null))){
       return true;
     }
     return false;

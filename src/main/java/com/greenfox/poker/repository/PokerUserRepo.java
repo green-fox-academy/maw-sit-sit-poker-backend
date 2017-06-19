@@ -9,4 +9,5 @@ public interface PokerUserRepo extends CrudRepository<PokerUser, Long> {
   List<PokerUser> findAll();
   List<PokerUser> findTop10ByOrderByChipsDesc();
   PokerUser findByUsername(String username);
+  PokerUser findByEmail(String email);
 }

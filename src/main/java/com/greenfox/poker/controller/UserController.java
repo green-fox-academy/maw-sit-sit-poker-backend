@@ -50,8 +50,8 @@ public class UserController {
     return new ResponseEntity(userService.responseToSuccessfulLogin(loginRequest), HttpStatus.OK);
   }
 
-  @GetMapping("/user/{id}")
-  public ResponseEntity<?> getUserInfo(@PathVariable("id") long id) {
+  @GetMapping("/user/{userid}")
+  public ResponseEntity<?> getUserInfo(@PathVariable("userid") long id) {
     if (userService.isUserExistsInDB(id)) {
       return new ResponseEntity(userService.getUserDTO(id), HttpStatus.OK);
     }
