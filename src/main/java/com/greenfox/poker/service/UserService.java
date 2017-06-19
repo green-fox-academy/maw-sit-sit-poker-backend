@@ -2,6 +2,7 @@ package com.greenfox.poker.service;
 
 import com.greenfox.poker.model.LoginRequest;
 import com.greenfox.poker.model.PokerUser;
+import com.greenfox.poker.model.PokerUserDTO;
 import com.greenfox.poker.model.ResponseType;
 import com.greenfox.poker.model.UserTokenResponse;
 import com.greenfox.poker.model.StatusError;
@@ -75,5 +76,31 @@ public class UserService {
       return true;
     }
     return false;
+  }
+
+  public boolean isUserExistsInDB(long id){
+    if (pokerUserRepo.exists(id)){
+      return true;
+    } else
+    return false;
+  }
+
+  public PokerUserDTO getUserDTO(long id){
+      PokerUserDTO pokerUserDTO = new PokerUserDTO();
+      PokerUser pokerUser = pokerUserRepo.findOne(id);
+      pokerUserDTO.setId(id);
+      pokerUserDTO.setUsername(pokerUser.getUsername());
+      pokerUserDTO.setAvatar(pokerUser.getAvatar());
+      pokerUserDTO.setChips(pokerUser.getChips());
+      return pokerUserDTO;
+  }
+
+  public List<PokerUserDTO> getTopTenLeaderboard(){
+    List<PokerUser> topTenList = pokerUserRepo.findTop10ByOrderByChipsDesc();
+    List<PokerUserDTO> topTenDTO = new ArrayList<>();
+    for (PokerUser user : topTenList) {
+      topTenDTO.add(getUserDTO(user.getId()));
+    }
+    return topTenDTO;
   }
 }

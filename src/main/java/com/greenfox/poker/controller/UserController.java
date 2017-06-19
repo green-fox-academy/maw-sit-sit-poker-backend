@@ -1,12 +1,18 @@
 package com.greenfox.poker.controller;
 import com.greenfox.poker.model.LoginRequest;
 import com.greenfox.poker.model.PokerUser;
+import com.greenfox.poker.model.PokerUserDTO;
+import com.greenfox.poker.model.ResponseType;
+import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.service.UserService;
+import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,5 +48,18 @@ public class UserController {
         return new ResponseEntity(userService.loginWithIvalidUsernameOrPassword(), HttpStatus.UNAUTHORIZED);
     }
     return new ResponseEntity(userService.responseToSuccessfulLogin(loginRequest), HttpStatus.OK);
+  }
+
+  @GetMapping("/user/{id}")
+  public ResponseEntity<?> getUserInfo(@PathVariable("id") long id) {
+    if (userService.isUserExistsInDB(id)) {
+      return new ResponseEntity(userService.getUserDTO(id), HttpStatus.OK);
+    }
+    return new ResponseEntity(new StatusError("fail", "user doesn't exist"), HttpStatus.NOT_FOUND);
+  }
+
+  @GetMapping("/leaderboard")
+  public ResponseEntity<?> getLeaderboard(){
+    return new ResponseEntity(userService.getTopTenLeaderboard(), HttpStatus.OK);
   }
 }

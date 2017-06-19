@@ -1,6 +1,6 @@
 package com.greenfox.poker.model;
 
-public class PokerUserDTO {
+public class PokerUserDTO implements ResponseType{
 
   private long id;
   private String username;

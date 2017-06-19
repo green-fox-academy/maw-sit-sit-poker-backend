@@ -57,7 +57,7 @@ public class UserControllerTest {
   }
 
   @Test
-  public void loginWithMissingParameter() throws Exception{
+  public void loginWithMissingPassword() throws Exception{
     String login = "{\"username\" : \"Bond\"}";
     this.mockMvc.perform(post("/login")
         .content(login)
@@ -91,7 +91,7 @@ public class UserControllerTest {
   }
 
   @Test
-  public void registerWithMissingParameters() throws Exception{
+  public void registerWithMissingEmail() throws Exception{
     String register = "{\"username\" : \"Pisti\", \"password\" : \"password123\"}";
     this.mockMvc.perform(post("/register")
         .content(register)
@@ -102,7 +102,7 @@ public class UserControllerTest {
   }
 
   @Test
-  public void registerWithOccupiedParameter() throws Exception{
+  public void registerWithOccupiedEmail() throws Exception{
     String register = "{\"username\" : \"Pisti\", \"password\" : \"password123\", \"email\" : \"occupied@email.com\"}";
     this.mockMvc.perform(post("/register")
         .content(register)
