@@ -20,6 +20,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import static org.hamcrest.core.Is.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = PokergameApplication.class)
@@ -45,70 +46,70 @@ public class UserControllerTest {
   }
 
   @Test
-  public void loginWithCorrectDataTest() throws Exception{
+  public void loginWithCorrectDataTest() throws Exception {
     String login = "{\"username\" : \"Bond\", \"password\" : \"password123\"}";
     this.mockMvc.perform(post("/login")
         .content(login)
         .contentType(contentType))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.result",is("success")))
-        .andExpect(jsonPath("$.token",is("ABC123")))
-        .andExpect(jsonPath("$.id", is(4321)));
+        .andExpect(jsonPath("$.result", is("success")))
+        .andExpect(jsonPath("$.token").exists())
+        .andExpect(jsonPath("$.id").exists());
   }
 
   @Test
-  public void loginWithMissingPassword() throws Exception{
+  public void loginWithMissingPassword() throws Exception {
     String login = "{\"username\" : \"Bond\"}";
     this.mockMvc.perform(post("/login")
         .content(login)
         .contentType(contentType))
         .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.result",is("fail")))
-        .andExpect(jsonPath("$.message",is("Missing parameter(s): password!")));
+        .andExpect(jsonPath("$.result", is("fail")))
+        .andExpect(jsonPath("$.message", is("Missing parameter(s): password!")));
   }
 
   @Test
-  public void loginWithAnInvalidParameter() throws Exception{
+  public void loginWithAnInvalidParameter() throws Exception {
     String login = "{\"username\" : \"Pisti\", \"password\" : \"password123\"}";
     this.mockMvc.perform(post("/login")
         .content(login)
         .contentType(contentType))
         .andExpect(status().isUnauthorized())
-        .andExpect(jsonPath("$.result",is("fail")))
-        .andExpect(jsonPath("$.message",is("invalid username or password")));
+        .andExpect(jsonPath("$.result", is("fail")))
+        .andExpect(jsonPath("$.message", is("invalid username or password")));
   }
 
   @Test
-  public void registerWithCorrectParameters() throws Exception{
+  public void registerWithCorrectParameters() throws Exception {
     String register = "{\"username\" : \"Pisti\", \"password\" : \"password123\", \"email\" :\"james@bond.com\"}";
     this.mockMvc.perform(post("/register")
         .content(register)
         .contentType(contentType))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.result",is("success")))
-        .andExpect(jsonPath("$.token",is("ABC123")))
-        .andExpect(jsonPath("$.id", is(4321)));
+        .andExpect(jsonPath("$.result", is("success")))
+        .andExpect(jsonPath("$.token").exists())
+        .andExpect(jsonPath("$.id").exists());
   }
 
   @Test
-  public void registerWithMissingEmail() throws Exception{
-    String register = "{\"username\" : \"Pisti\", \"password\" : \"password123\"}";
-    this.mockMvc.perform(post("/register")
-        .content(register)
-        .contentType(contentType))
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.result",is("fail")))
-        .andExpect(jsonPath("$.message",is("Missing parameter(s): email!")));
-  }
+    public void registerWithMissingEmail () throws Exception {
+      String register = "{\"username\" : \"Pisti\", \"password\" : \"password123\"}";
+      this.mockMvc.perform(post("/register")
+          .content(register)
+          .contentType(contentType))
+          .andExpect(status().isBadRequest())
+          .andExpect(jsonPath("$.result", is("fail")))
+          .andExpect(jsonPath("$.message", is("Missing parameter(s): email!")));
+    }
 
-  @Test
-  public void registerWithOccupiedEmail() throws Exception{
-    String register = "{\"username\" : \"Pisti\", \"password\" : \"password123\", \"email\" : \"occupied@email.com\"}";
-    this.mockMvc.perform(post("/register")
-        .content(register)
-        .contentType(contentType))
-        .andExpect(status().isConflict())
-        .andExpect(jsonPath("$.result",is("fail")))
-        .andExpect(jsonPath("$.message",is("email address already exists")));
-  }
-}
+    @Test
+      public void registerWithOccupiedEmail () throws Exception {
+        String register = "{\"username\" : \"Pisti\", \"password\" : \"password123\", \"email\" : \"occupied@email.com\"}";
+        this.mockMvc.perform(post("/register")
+            .content(register)
+            .contentType(contentType))
+            .andExpect(status().isConflict())
+            .andExpect(jsonPath("$.result", is("fail")))
+            .andExpect(jsonPath("$.message", is("email address already exists")));
+      }
+    }

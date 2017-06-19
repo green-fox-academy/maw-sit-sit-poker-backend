@@ -24,7 +24,7 @@ public class UserService {
   @Autowired
   TokenService tokenService;
 
-  public ResponseType responseToSuccessfulRegister(PokerUser userRegister){
+  public ResponseType responseToSuccessfulRegister(PokerUser userRegister) {
     pokerUserRepo.save(userRegister);
     String token = tokenService.generateToken(userRegister);
     return new UserTokenResponse("success", token, userRegister.getId());
@@ -35,9 +35,9 @@ public class UserService {
     String passwordOfUsernameFromDatabase = pokerUserFromDatabase.getPassword();
     if (loginRequest.getPassword().equals(passwordOfUsernameFromDatabase)) {
       String token = tokenService.generateToken(pokerUserFromDatabase);
-    return new UserTokenResponse("success", token, pokerUserFromDatabase.getId());
+      return new UserTokenResponse("success", token, pokerUserFromDatabase.getId());
     }
-    return null;
+    return loginWithIvalidUsernameOrPassword();
   }
 
   public ResponseType respondToMissingParameters(BindingResult bindingResult) {
