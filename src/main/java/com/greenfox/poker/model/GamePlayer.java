@@ -3,42 +3,42 @@ package com.greenfox.poker.model;
 
   public class GamePlayer {
   private String lastAction;
-  private PokerUser player;
+  private PokerUserDTO player;
   private int bet;
   private boolean isFolded;
 
-  public GamePlayer() {
-  }
+    public GamePlayer() {
+    }
 
-    public String getLasAction() {
+    public String getLastAction() {
       return lastAction;
     }
 
-    public void setLasAction(Action action) {
-      this.lastAction = action.toString();
+    public void setLastAction(String lastAction) {
+      this.lastAction = lastAction;
     }
 
-    public PokerUser getPlayer() {
-    return player;
-  }
+    public PokerUserDTO getPlayer() {
+      return player;
+    }
 
-  public void setPlayer(PokerUser player) {
-    this.player = player;
-  }
+    public void setPlayer(PokerUserDTO player) {
+      this.player = player;
+    }
 
-  public int getBet() {
-    return bet;
-  }
+    public int getBet() {
+      return bet;
+    }
 
-  public void setBet(int bet) {
-    this.bet = bet;
-  }
+    public void setBet(int bet) {
+      this.bet = bet;
+    }
 
-  public boolean isFolded() {
-    return isFolded;
-  }
+    public boolean isFolded() {
+      return isFolded;
+    }
 
-  public void setFolded(boolean folded) {
-    isFolded = folded;
+    public void setFolded(boolean folded) {
+      isFolded = folded;
+    }
   }
-}
