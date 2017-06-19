@@ -31,7 +31,7 @@ public class UserService {
   }
 
   public ResponseType responseToSuccessfulLogin(LoginRequest loginRequest) {
-    PokerUser pokerUserFromDatabase = pokerUserRepo.findByUsername(loginRequest.getUsername());
+    PokerUser pokerUserFromDatabase = pokerUserRepo.findByUsername(loginRequest.getUsername()).get(0);
     String passwordOfUsernameFromDatabase = pokerUserFromDatabase.getPassword();
     if (loginRequest.getPassword().equals(passwordOfUsernameFromDatabase)) {
       String token = tokenService.generateToken(pokerUserFromDatabase);
@@ -65,37 +65,36 @@ public class UserService {
   }
 
   public boolean isEmailOccupied(PokerUser pokerUser) {
-    if (!pokerUserRepo.findByEmail(pokerUser.getEmail()).equals(null)) {
-      return true;
-    }
-    return false;
+    boolean isEmailOccupied = false;
+    isEmailOccupied = pokerUserRepo.existsByEmail(pokerUser.getEmail());
+    return isEmailOccupied;
   }
 
   public boolean isUsernameOccupied(PokerUser pokerUser) {
-    if ((!pokerUserRepo.findByUsername(pokerUser.getUsername()).equals(null))){
+    boolean isUsernameOccupied = false;
+    isUsernameOccupied = pokerUserRepo.existsByUsername(pokerUser.getUsername());
+    return isUsernameOccupied;
+  }
+
+  public boolean isUserExistsInDB(long id) {
+    if (pokerUserRepo.exists(id)) {
       return true;
+    } else {
+      return false;
     }
-    return false;
   }
 
-  public boolean isUserExistsInDB(long id){
-    if (pokerUserRepo.exists(id)){
-      return true;
-    } else
-    return false;
+  public PokerUserDTO getUserDTO(long id) {
+    PokerUserDTO pokerUserDTO = new PokerUserDTO();
+    PokerUser pokerUser = pokerUserRepo.findOne(id);
+    pokerUserDTO.setId(id);
+    pokerUserDTO.setUsername(pokerUser.getUsername());
+    pokerUserDTO.setAvatar(pokerUser.getAvatar());
+    pokerUserDTO.setChips(pokerUser.getChips());
+    return pokerUserDTO;
   }
 
-  public PokerUserDTO getUserDTO(long id){
-      PokerUserDTO pokerUserDTO = new PokerUserDTO();
-      PokerUser pokerUser = pokerUserRepo.findOne(id);
-      pokerUserDTO.setId(id);
-      pokerUserDTO.setUsername(pokerUser.getUsername());
-      pokerUserDTO.setAvatar(pokerUser.getAvatar());
-      pokerUserDTO.setChips(pokerUser.getChips());
-      return pokerUserDTO;
-  }
-
-  public List<PokerUserDTO> getTopTenLeaderboard(){
+  public List<PokerUserDTO> getTopTenLeaderboard() {
     List<PokerUser> topTenList = pokerUserRepo.findTop10ByOrderByChipsDesc();
     List<PokerUserDTO> topTenDTO = new ArrayList<>();
     for (PokerUser user : topTenList) {

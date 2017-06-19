@@ -6,8 +6,14 @@ import java.util.List;
 import org.springframework.data.repository.CrudRepository;
 
 public interface PokerUserRepo extends CrudRepository<PokerUser, Long> {
+
   List<PokerUser> findAll();
+
   List<PokerUser> findTop10ByOrderByChipsDesc();
-  PokerUser findByUsername(String username);
-  PokerUser findByEmail(String email);
+
+  List<PokerUser> findByUsername(String username);
+
+  boolean existsByUsername(String username);
+
+  boolean existsByEmail(String email);
 }
