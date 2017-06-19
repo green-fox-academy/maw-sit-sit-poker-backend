@@ -8,11 +8,11 @@ CREATE TABLE game (
   PRIMARY KEY (id)
 );
 
-INSERT INTO game (id, name, big_blind, max_players_num, current_players_num)
-VALUES ('1', 'BigBoss Ramins favourite table', '500', '6', '2');
+INSERT INTO game (name, big_blind, max_players_num, current_players_num)
+VALUES ('BigBoss Ramins favourite table', '500', '6', '2');
 
-INSERT INTO game (id, name, big_blind, max_players_num, current_players_num)
-VALUES ('2', 'Lucky Gabors winning table', '200', '4', NULL);
+INSERT INTO game (name, big_blind, max_players_num, current_players_num)
+VALUES ('Lucky Gabors winning table', '200', '4', NULL);
 
-INSERT INTO game (id, name, big_blind, max_players_num, current_players_num)
-VALUES ('3', 'Norberts table', '100', '2', '1');
+INSERT INTO game (name, big_blind, max_players_num, current_players_num)
+VALUES ('Norberts table', '100', '2', '1');

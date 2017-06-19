@@ -14,7 +14,7 @@ public class Game {
   private String name;
   private int bigBlind;
   private int maxPlayersNum;
-  private int currentPlayersNum;
+  private Integer currentPlayersNum;
 
 
   public Game() {
