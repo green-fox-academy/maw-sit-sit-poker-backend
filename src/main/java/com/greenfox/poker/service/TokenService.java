@@ -8,6 +8,7 @@ import io.jsonwebtoken.MissingClaimException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.crypto.MacProvider;
 
+import io.jsonwebtoken.lang.Assert;
 import java.security.Key;
 import java.util.*;
 import java.lang.*;

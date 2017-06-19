@@ -1,7 +1,6 @@
 package com.greenfox.poker.controller;
 import com.greenfox.poker.model.LoginRequest;
 import com.greenfox.poker.model.PokerUser;
-import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.service.UserService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ public class UserController {
       } else if (userService.isUsernameOccupied(userRegister)) {
         return new ResponseEntity(userService.registerWithOccupiedUsername(), HttpStatus.CONFLICT);
     }
-    return new ResponseEntity(userService.mockResponseToSuccessfulRegisterOrLogin(),HttpStatus.OK);
+    return new ResponseEntity(userService.responseToSuccessfulRegister(userRegister),HttpStatus.OK);
   }
 
   @RequestMapping(value = "/login", method = RequestMethod.POST)
@@ -42,6 +41,6 @@ public class UserController {
           .getPassword().equals("password123")) {
         return new ResponseEntity(userService.loginWithIvalidUsernameOrPassword(), HttpStatus.UNAUTHORIZED);
     }
-    return new ResponseEntity(userService.mockResponseToSuccessfulRegisterOrLogin(), HttpStatus.OK);
+    return new ResponseEntity(userService.responseToSuccessfulLogin(loginRequest), HttpStatus.OK);
   }
 }
