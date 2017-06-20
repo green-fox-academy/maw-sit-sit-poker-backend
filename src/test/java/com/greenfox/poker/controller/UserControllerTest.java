@@ -40,10 +40,11 @@ public class UserControllerTest {
   @Autowired
   private WebApplicationContext webApplicationContext;
 
-  @Before
-  public void setup() throws Exception {
-    this.mockMvc = webAppContextSetup(webApplicationContext).build();
-  }
+//  @Before
+//  public void setup() throws Exception {
+//    this.mockMvc = webAppContextSetup(webApplicationContext).build();
+//  }
+
 
 //  @Test
 //  public void loginWithCorrectDataTest() throws Exception {
