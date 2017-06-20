@@ -2,6 +2,7 @@ package com.greenfox.poker.controller;
 import com.greenfox.poker.model.LoginRequest;
 import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.model.StatusError;
+import com.greenfox.poker.service.Access;
 import com.greenfox.poker.service.UserService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ public class UserController {
   @Autowired
   UserService userService;
 
+  @Access(restricted = true)
   @RequestMapping(value = "/register", method = RequestMethod.POST)
   public ResponseEntity<?> registerUser(@RequestBody @Valid PokerUser userRegister,
       BindingResult bindingResult) {
