@@ -24,20 +24,16 @@ public class UserService {
   @Autowired
   TokenService tokenService;
 
-  public ResponseType responseToSuccessfulRegister(PokerUser userRegister) {
-    pokerUserRepo.save(userRegister);
-    String token = tokenService.generateToken(userRegister);
-    return new UserTokenResponse("success", token, userRegister.getId());
+  public ResponseType responseToSuccessfulRegister(PokerUser pokerUser) {
+    pokerUserRepo.save(pokerUser);
+    String token = tokenService.generateToken(pokerUser);
+    return new UserTokenResponse("success", token, pokerUser.getId());
   }
 
   public ResponseType responseToSuccessfulLogin(LoginRequest loginRequest) {
-    PokerUser pokerUserFromDatabase = pokerUserRepo.findByUsername(loginRequest.getUsername());
-    String passwordOfUsernameFromDatabase = pokerUserFromDatabase.getPassword();
-    if (loginRequest.getPassword().equals(passwordOfUsernameFromDatabase)) {
-      String token = tokenService.generateToken(pokerUserFromDatabase);
-      return new UserTokenResponse("success", token, pokerUserFromDatabase.getId());
-    }
-    return loginWithIvalidUsernameOrPassword();
+    PokerUser pokerUserFromDatabase = pokerUserRepo.findByUsername(loginRequest.getUsername()).get(0);
+    String token = tokenService.generateToken(pokerUserFromDatabase);
+    return new UserTokenResponse("success", token, pokerUserFromDatabase.getId());
   }
 
   public ResponseType respondToMissingParameters(BindingResult bindingResult) {
@@ -60,42 +56,49 @@ public class UserService {
     return new StatusError("fail", "username already exists");
   }
 
+  public boolean isLoginValid(LoginRequest loginRequest){
+    List<PokerUser> users = pokerUserRepo.findByUsername(loginRequest.getUsername());
+    if (users.size() > 0 && users.get(0).getPassword().equals(loginRequest.getPassword())){
+      return true;
+    }
+    return false;
+  }
+
   public ResponseType loginWithIvalidUsernameOrPassword() {
     return new StatusError("fail", "invalid username or password");
   }
 
   public boolean isEmailOccupied(PokerUser pokerUser) {
-    if (!pokerUserRepo.findByEmail(pokerUser.getEmail()).equals(null)) {
-      return true;
-    }
-    return false;
+    boolean isEmailOccupied = false;
+    isEmailOccupied = pokerUserRepo.existsByEmail(pokerUser.getEmail());
+    return isEmailOccupied;
   }
 
   public boolean isUsernameOccupied(PokerUser pokerUser) {
-    if ((!pokerUserRepo.findByUsername(pokerUser.getUsername()).equals(null))){
+    boolean isUsernameOccupied = false;
+    isUsernameOccupied = pokerUserRepo.existsByUsername(pokerUser.getUsername());
+    return isUsernameOccupied;
+  }
+
+  public boolean isUserExistsInDB(long id) {
+    if (pokerUserRepo.exists(id)) {
       return true;
+    } else {
+      return false;
     }
-    return false;
   }
 
-  public boolean isUserExistsInDB(long id){
-    if (pokerUserRepo.exists(id)){
-      return true;
-    } else
-    return false;
+  public PokerUserDTO getUserDTO(long id) {
+    PokerUserDTO pokerUserDTO = new PokerUserDTO();
+    PokerUser pokerUser = pokerUserRepo.findOne(id);
+    pokerUserDTO.setId(id);
+    pokerUserDTO.setUsername(pokerUser.getUsername());
+    pokerUserDTO.setAvatar(pokerUser.getAvatar());
+    pokerUserDTO.setChips(pokerUser.getChips());
+    return pokerUserDTO;
   }
 
-  public PokerUserDTO getUserDTO(long id){
-      PokerUserDTO pokerUserDTO = new PokerUserDTO();
-      PokerUser pokerUser = pokerUserRepo.findOne(id);
-      pokerUserDTO.setId(id);
-      pokerUserDTO.setUsername(pokerUser.getUsername());
-      pokerUserDTO.setAvatar(pokerUser.getAvatar());
-      pokerUserDTO.setChips(pokerUser.getChips());
-      return pokerUserDTO;
-  }
-
-  public List<PokerUserDTO> getTopTenLeaderboard(){
+  public List<PokerUserDTO> getTopTenLeaderboard() {
     List<PokerUser> topTenList = pokerUserRepo.findTop10ByOrderByChipsDesc();
     List<PokerUserDTO> topTenDTO = new ArrayList<>();
     for (PokerUser user : topTenList) {
