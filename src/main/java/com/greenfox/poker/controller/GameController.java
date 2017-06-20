@@ -24,7 +24,7 @@ public class GameController {
   @Autowired
   UserService userService;
 
-  @RequestMapping(value = "/games", method = RequestMethod.POST)
+  @RequestMapping(value = "/games", method = RequestMethod.GET)
   public GamesList getGamesList() {
     return gameService.getAllGamesOrderedByBigBlind();
   }
