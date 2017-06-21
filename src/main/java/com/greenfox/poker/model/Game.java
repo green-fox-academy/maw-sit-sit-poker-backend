@@ -26,8 +26,18 @@ public class Game {
   @NotNull
   private Integer maxPlayers;
   private Integer currentPlayers;
+  private long gamestate_id;
+
 
   public Game() {
+  }
+
+  public long getGamestate_id() {
+    return gamestate_id;
+  }
+
+  public void setGamestate_id(long gamestate_id) {
+    this.gamestate_id = gamestate_id;
   }
 
   public long getId() {

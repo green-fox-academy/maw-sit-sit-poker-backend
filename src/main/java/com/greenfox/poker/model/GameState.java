@@ -5,7 +5,7 @@ import java.util.List;
 
 public class GameState {
 
-  private Game game;
+  private long id;
   private List<GamePlayer> players;
   private long actorPlayerId;
   private long dealerPlayerId;
@@ -16,12 +16,12 @@ public class GameState {
   public GameState() {
   }
 
-  public Game getGame() {
-    return game;
+  public long getId() {
+    return id;
   }
 
-  public void setGame(Game game) {
-    this.game = game;
+  public void setId(long id) {
+    this.id = id;
   }
 
   public List<GamePlayer> getPlayers() {

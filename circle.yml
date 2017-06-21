@@ -1,6 +1,17 @@
 
- dependencies:
-  override:
-    - chmod +x gradlew
-    - ./gradlew dependencies
+ machine:
+
+  services:
+    -postgresql
+
+  enviroment:
+    CIRCLE_ENV: test
+    SPRING_DATASOURCE_URL: jdbc:postgresql://127.0.0.1/circle_test
+    SPRING_DATASOURCE_USERNAME: ubuntu
+    SPRING_DATASOURCE_PASSWORD:
+
+  dependencies:
+    override:
+      - chmod +x gradlew
+      - ./gradlew dependencies
 
