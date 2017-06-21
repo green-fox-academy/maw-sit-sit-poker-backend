@@ -21,7 +21,7 @@ public class TokenService {
 
   public String generateToken(PokerUser pokerUser) {
     HashMap<String, Object> claims = new HashMap<>();
-    //   claims.put("id", pokerUser.getId());
+    claims.put("id", pokerUser.getId());
     claims.put("username", pokerUser.getUsername());
     return generateToken(claims);
   }

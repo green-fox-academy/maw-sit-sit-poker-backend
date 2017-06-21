@@ -18,10 +18,14 @@ public class Game {
   private String name;
 
   @NotNull
+  @JsonProperty("big_blind")
   private Integer bigBlind;
 
   @NotNull
+  @JsonProperty("max_players")
   private Integer maxPlayers;
+
+  @JsonProperty("current_players")
   private Integer currentPlayers;
   private long gamestate_id;
 
@@ -53,7 +57,7 @@ public class Game {
     this.name = name;
   }
 
-  @JsonProperty("big_blind")
+
   public int getBigBlind() {
     return bigBlind;
   }
@@ -62,7 +66,7 @@ public class Game {
     this.bigBlind = bigBlind;
   }
 
-  @JsonProperty("max_players")
+
   public int getMaxPlayers() {
     return maxPlayers;
   }
@@ -71,7 +75,7 @@ public class Game {
     this.maxPlayers = maxPlayers;
   }
 
-  @JsonProperty("current_players")
+
   public int getCurrentPlayers() {
     return currentPlayers;
   }
