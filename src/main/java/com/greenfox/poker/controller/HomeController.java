@@ -20,6 +20,8 @@ public class HomeController {
     System.out.println(newDeckToTestHere.toString());
     deckService.shuffleDeck(newDeckToTestHere);
     System.out.println(newDeckToTestHere.toString());
+    System.out.println(deckService.drawCardFromDeck(newDeckToTestHere).toString());;
+    System.out.println(newDeckToTestHere);
     return "Hello";
   }
 }
