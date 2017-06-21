@@ -17,13 +17,9 @@ public class GameService {
   List<GameState> gameStateList = new ArrayList<>();
 
   public Game saveGame(Game game){
-    Game newGame = new Game();
-    newGame.setName(game.getName());
-    newGame.setBigBlind(game.getBigBlind());
-    newGame.setMaxPlayers(game.getMaxPlayers());
-    newGame.setCurrentPlayers(0);
-    gameRepo.save(newGame);
-    return newGame;
+    game.setCurrentPlayers(0);
+    gameRepo.save(game);
+    return game;
   }
 
   public List<Game> getAllGamesOrderedByBigBlind(){

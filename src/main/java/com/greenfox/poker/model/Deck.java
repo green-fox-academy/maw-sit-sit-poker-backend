@@ -1,20 +1,14 @@
 package com.greenfox.poker.model;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import org.springframework.stereotype.Component;
 
 
-@Component
 public class Deck {
-
-  private static AtomicInteger nextId = new AtomicInteger(0);
 
   private long id;
   private List<Card> cards;
 
   public Deck() {
-    id = nextId.incrementAndGet();
   }
 
   public long getId() {
@@ -32,4 +26,13 @@ public class Deck {
   public void setCards(List<Card> cards) {
     this.cards = cards;
   }
+
+  @Override
+  public String toString() {
+    return "Deck{" +
+            "id=" + id +
+            ", cards=" + cards +
+            '}';
+  }
 }
+
