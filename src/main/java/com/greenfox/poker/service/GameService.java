@@ -1,7 +1,8 @@
 package com.greenfox.poker.service;
 
 import com.greenfox.poker.model.Game;
-import com.greenfox.poker.model.GamesList;
+import com.greenfox.poker.model.GameState;
+import com.greenfox.poker.model.GameInfoList;
 import com.greenfox.poker.repository.GameRepo;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ public class GameService {
   GameRepo gameRepo;
 
   @Autowired
-  GamesList gamesList;
+  GameInfoList gameInfoList;
 
   public Game saveGame(Game game){
     Game newGame = new Game();
@@ -27,10 +28,21 @@ public class GameService {
     return newGame;
   }
 
-  public GamesList getAllGamesOrderedByBigBlind(){
+  public GameInfoList getAllGamesOrderedByBigBlind(){
     List<Game> temporalGameList = new ArrayList<>();
     temporalGameList = gameRepo.findAllByOrderByBigBlindDesc();
-    gamesList.setGames(temporalGameList);
-    return gamesList;
+    gameInfoList.setGames(temporalGameList);
+    return gameInfoList;
+  }
+
+  public boolean isGameExist(long id){
+    if (gameRepo.exists(id)) {
+      return true;
+    }
+    return false;
+  }
+
+  public GameState getGameState(long id){
+    return gameInfoList.getGameStates().get(Math.toIntExact(id));
   }
 }
