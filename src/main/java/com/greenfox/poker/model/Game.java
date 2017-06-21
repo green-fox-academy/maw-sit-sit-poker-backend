@@ -1,14 +1,11 @@
 package com.greenfox.poker.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.concurrent.atomic.AtomicInteger;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 public class Game {
@@ -26,8 +23,18 @@ public class Game {
   @NotNull
   private Integer maxPlayers;
   private Integer currentPlayers;
+  private long gamestate_id;
+
 
   public Game() {
+  }
+
+  public long getGamestate_id() {
+    return gamestate_id;
+  }
+
+  public void setGamestate_id(long gamestate_id) {
+    this.gamestate_id = gamestate_id;
   }
 
   public long getId() {

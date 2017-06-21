@@ -22,6 +22,9 @@ public class UserService {
   PokerUserRepo pokerUserRepo;
 
   @Autowired
+  PokerUserDTO pokerUserDTO;
+
+  @Autowired
   TokenService tokenService;
 
   public ResponseType responseToSuccessfulRegister(PokerUser pokerUser) {
@@ -80,6 +83,10 @@ public class UserService {
     return isUsernameOccupied;
   }
 
+  public long getUserIdFromUsername(String username){
+    return pokerUserRepo.findByUsername(username).get(0).getId();
+  }
+
   public boolean isUserExistsInDB(long id) {
     if (pokerUserRepo.exists(id)) {
       return true;
@@ -89,7 +96,6 @@ public class UserService {
   }
 
   public PokerUserDTO getUserDTO(long id) {
-    PokerUserDTO pokerUserDTO = new PokerUserDTO();
     PokerUser pokerUser = pokerUserRepo.findOne(id);
     pokerUserDTO.setId(id);
     pokerUserDTO.setUsername(pokerUser.getUsername());
