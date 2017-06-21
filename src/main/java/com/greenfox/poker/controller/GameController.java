@@ -3,7 +3,6 @@ package com.greenfox.poker.controller;
 
 import com.greenfox.poker.model.ChipsToJoinGame;
 import com.greenfox.poker.model.Game;
-import com.greenfox.poker.model.GameState;
 import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.service.GameService;
 import com.greenfox.poker.service.TokenService;
@@ -16,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,6 +57,14 @@ public class GameController {
     } else {
       return new ResponseEntity(gameService.saveGame(game), HttpStatus.OK);
     }
+  }
+
+  @PostMapping("/game/{id}/join")
+  public ResponseEntity<?> joinTable(@PathVariable long id, @RequestBody ChipsToJoinGame chips, @RequestHeader("X-poker-token") String token){
+    String username = tokenService.getUsernameFromToken(token);
+    Game game = gameService.getGamebyId(id);
+    long gameStateId = game.getGamestate_id();
+    return new ResponseEntity(gameService.getGameState(gameStateId), HttpStatus.OK);
   }
 }
 
