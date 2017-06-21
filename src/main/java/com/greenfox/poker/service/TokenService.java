@@ -2,6 +2,7 @@ package com.greenfox.poker.service;
 
 import com.greenfox.poker.model.PokerUser;
 
+import com.greenfox.poker.repository.PokerUserRepo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MissingClaimException;
@@ -12,10 +13,14 @@ import java.security.Key;
 import java.util.*;
 import java.lang.*;
 import javax.validation.constraints.Null;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TokenService {
+
+  @Autowired
+  PokerUserRepo pokerUserRepo;
 
   private Key key;
 
@@ -56,15 +61,21 @@ public class TokenService {
     return username;
   }
 
-  public String getIdFromToken(String token) {
-    String id;
+  public long getIdFromToken(String token) {
+    long id;
     try {
       Claims claims = getClaimsFromToken(token);
-      id = (String) claims.get("id");
+      id = (Integer) claims.get("id");
     } catch (MissingClaimException e) {
-      id = null;
+      id = -1L;
     }
     return id;
+  }
+
+  public PokerUser getPokerUserFromToken(String token) {
+    long idFromToken = getIdFromToken(token);
+    PokerUser pokerUserFromToken = pokerUserRepo.findOne(idFromToken);
+    return pokerUserFromToken;
   }
 }
 
