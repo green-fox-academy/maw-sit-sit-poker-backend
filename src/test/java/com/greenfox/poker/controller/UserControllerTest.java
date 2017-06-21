@@ -30,8 +30,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserControllerTest {
 
   private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
-          MediaType.APPLICATION_JSON.getSubtype(),
-          Charset.forName("utf8"));
+      MediaType.APPLICATION_JSON.getSubtype(),
+      Charset.forName("utf8"));
 
   private MockMvc mockMvc;
 
@@ -44,16 +44,16 @@ public class UserControllerTest {
   @Autowired
   private WebApplicationContext webApplicationContext;
 
-  long testUserId;
-  PokerUser testPokerUser;
-
 
   @Before
   public void setup() throws Exception {
     this.mockMvc = webAppContextSetup(webApplicationContext).build();
   }
 
-  public void createTestPokerUser(){
+  private long testUserId;
+  private PokerUser testPokerUser;
+
+  public void createTestPokerUser() {
     testPokerUser = new PokerUser();
     testPokerUser.setUsername("TestJeno");
     testPokerUser.setPassword("jenopass");
@@ -61,9 +61,10 @@ public class UserControllerTest {
     pokerUserRepo.save(testPokerUser);
   }
 
-  public void deleteTestPokerUser(){
-    long idToDelete = testPokerUser.getId();
-    pokerUserRepo.delete(idToDelete);
+  public void deleteTestPokerUser() {
+    long testUserId = pokerUserRepo.findByUsername("TestJeno").get(0).getId();
+    System.out.println(testUserId);
+    pokerUserRepo.delete(testUserId);
   }
 
   @Test
@@ -71,94 +72,76 @@ public class UserControllerTest {
     createTestPokerUser();
     String login = "{\"username\" : \"TestJeno\", \"password\" : \"jenopass\"}";
     this.mockMvc.perform(post("/login")
-            .content(login)
-            .contentType(contentType))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result", is("success")))
-            .andExpect(jsonPath("$.token").exists())
-            .andExpect(jsonPath("$.id").exists());
+        .content(login)
+        .contentType(contentType))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.result", is("success")))
+        .andExpect(jsonPath("$.token").exists())
+        .andExpect(jsonPath("$.id").exists());
+    deleteTestPokerUser();
+  }
+
+
+  @Test
+  public void loginWithMissingPassword() throws Exception {
+    createTestPokerUser();
+    String login = "{\"username\" : \"TestJeno\"}";
+    this.mockMvc.perform(post("/login")
+        .content(login)
+        .contentType(contentType))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.result", is("fail")))
+        .andExpect(jsonPath("$.message", is("Missing parameter(s): password!")));
     deleteTestPokerUser();
   }
 
   @Test
-  public void testPokerUserLoginWithMissingUsername() throws Exception {
+  public void loginWithAnInvalidParameter() throws Exception {
     createTestPokerUser();
-    String login = "{\"username\" : , \"password\" : \"jenopass\"}";
+    String login = "{\"username\" : \"TestJeno\", \"password\" : \"password123\"}";
     this.mockMvc.perform(post("/login")
-            .content(login)
-            .contentType(contentType))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result", is("success")))
-            .andExpect(jsonPath("$.token").exists())
-            .andExpect(jsonPath("$.id").exists());
+        .content(login)
+        .contentType(contentType))
+        .andExpect(status().isUnauthorized())
+        .andExpect(jsonPath("$.result", is("fail")))
+        .andExpect(jsonPath("$.message", is("invalid username or password")));
     deleteTestPokerUser();
   }
-//
-//  @Test
-//  public void loginWithCorrectDataTest() throws Exception {
-//    String login = "{\"username\" : \"Bond\", \"password\" : \"password123\"}";
-//    this.mockMvc.perform(post("/login")
-//            .content(login)
-//            .contentType(contentType))
-//            .andExpect(status().isOk())
-//            .andExpect(jsonPath("$.result", is("success")))
-//            .andExpect(jsonPath("$.token").exists())
-//            .andExpect(jsonPath("$.id").exists());
-//  }
-//
-//  @Test
-//  public void loginWithMissingPassword() throws Exception {
-//    String login = "{\"username\" : \"Bond\"}";
-//    this.mockMvc.perform(post("/login")
-//            .content(login)
-//            .contentType(contentType))
-//            .andExpect(status().isBadRequest())
-//            .andExpect(jsonPath("$.result", is("fail")))
-//            .andExpect(jsonPath("$.message", is("Missing parameter(s): password!")));
-//  }
-//
-//  @Test
-//  public void loginWithAnInvalidParameter() throws Exception {
-//    String login = "{\"username\" : \"Pisti\", \"password\" : \"password123\"}";
-//    this.mockMvc.perform(post("/login")
-//            .content(login)
-//            .contentType(contentType))
-//            .andExpect(status().isUnauthorized())
-//            .andExpect(jsonPath("$.result", is("fail")))
-//            .andExpect(jsonPath("$.message", is("invalid username or password")));
-//  }
-//
-//  @Test
-//  public void registerWithCorrectParameters() throws Exception {
-//    String register = "{\"username\" : \"Bond\", \"password\" : \"password123\", \"email\" :\"james@bond.uk\"}";
-//    this.mockMvc.perform(post("/register")
-//            .content(register)
-//            .contentType(contentType))
-//            .andExpect(status().isOk())
-//            .andExpect(jsonPath("$.result", is("success")))
-//            .andExpect(jsonPath("$.token").exists())
-//            .andExpect(jsonPath("$.id").exists());
-//  }
-//
-//  @Test
-//  public void registerWithMissingEmail() throws Exception {
-//    String register = "{\"username\" : \"Bond\", \"password\" : \"password123\"}";
-//    this.mockMvc.perform(post("/register")
-//            .content(register)
-//            .contentType(contentType))
-//            .andExpect(status().isBadRequest())
-//            .andExpect(jsonPath("$.result", is("fail")))
-//            .andExpect(jsonPath("$.message", is("Missing parameter(s): email!")));
-//  }
-//
-//  @Test
-//  public void registerWithOccupiedEmail() throws Exception {
-//    String register = "{\"username\" : \"Pisti\", \"password\" : \"password123\", \"email\" : \"occupied@bond.uk\"}";
-//    this.mockMvc.perform(post("/register")
-//            .content(register)
-//            .contentType(contentType))
-//            .andExpect(status().isConflict())
-//            .andExpect(jsonPath("$.result", is("fail")))
-//            .andExpect(jsonPath("$.message", is("email address already exists")));
-//  }
+
+  @Test
+  public void registerWithCorrectParameters() throws Exception {
+    String register = "{\"username\" : \"TestJeno\", \"password\" : \"jenopass\", \"email\" :\"jeno@kovacs.hu\"}";
+    this.mockMvc.perform(post("/register")
+        .content(register)
+        .contentType(contentType))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.result", is("success")))
+        .andExpect(jsonPath("$.token").exists())
+        .andExpect(jsonPath("$.id").exists());
+    deleteTestPokerUser();
+  }
+
+  @Test
+  public void registerWithMissingEmail() throws Exception {
+    String register = "{\"username\" : \"TestJeno\", \"password\" : \"jenopass\"}";
+    this.mockMvc.perform(post("/register")
+        .content(register)
+        .contentType(contentType))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.result", is("fail")))
+        .andExpect(jsonPath("$.message", is("Missing parameter(s): email!")));
+  }
+
+  @Test
+  public void registerWithOccupiedEmail() throws Exception {
+    createTestPokerUser();
+    String register = "{\"username\" : \"TestJeno\", \"password\" : \"jenopass\", \"email\" : \"jeno@kovacs.hu\"}";
+    this.mockMvc.perform(post("/register")
+        .content(register)
+        .contentType(contentType))
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.result", is("fail")))
+        .andExpect(jsonPath("$.message", is("email address already exists")));
+    deleteTestPokerUser();
+  }
 }
