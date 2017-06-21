@@ -10,6 +10,4 @@ import org.springframework.stereotype.Component;
 public interface GameRepo extends CrudRepository<Game, Long> {
   List<Game> findAll();
   List<Game> findAllByOrderByBigBlindDesc();
-  List<Game> findAllGamesOrderByBigBlind();
-
 }
