@@ -83,7 +83,7 @@ public class UserControllerTest {
 
 
   @Test
-  public void loginWithMissingPassword() throws Exception {
+  public void testPokerUserLoginWithMissingPassword() throws Exception {
     createTestPokerUser();
     String login = "{\"username\" : \"TestJeno\"}";
     this.mockMvc.perform(post("/login")
@@ -96,15 +96,41 @@ public class UserControllerTest {
   }
 
   @Test
-  public void loginWithAnInvalidParameter() throws Exception {
+  public void testPokerUserLoginWithAnInvalidPassword() throws Exception {
     createTestPokerUser();
-    String login = "{\"username\" : \"TestJeno\", \"password\" : \"password123\"}";
+    String login = "{\"username\" : \"TestJeno\", \"password\" : \"invalidpassword\"}";
     this.mockMvc.perform(post("/login")
         .content(login)
         .contentType(contentType))
         .andExpect(status().isUnauthorized())
         .andExpect(jsonPath("$.result", is("fail")))
         .andExpect(jsonPath("$.message", is("invalid username or password")));
+    deleteTestPokerUser();
+  }
+
+  @Test
+  public void testPokerUserLoginWithMissingUsername() throws Exception {
+    createTestPokerUser();
+    String login = "{\"password\" : \"jenopass\"}";
+    this.mockMvc.perform(post("/login")
+            .content(login)
+            .contentType(contentType))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.result", is("fail")))
+            .andExpect(jsonPath("$.message", is("Missing parameter(s): username!")));
+    deleteTestPokerUser();
+  }
+
+  @Test
+  public void testPokerUserLoginWithAnInvalidUsername() throws Exception {
+    createTestPokerUser();
+    String login = "{\"username\" : \"InvalidTestJeno\", \"password\" : \"jenopass\"}";
+    this.mockMvc.perform(post("/login")
+            .content(login)
+            .contentType(contentType))
+            .andExpect(status().isUnauthorized())
+            .andExpect(jsonPath("$.result", is("fail")))
+            .andExpect(jsonPath("$.message", is("invalid username or password")));
     deleteTestPokerUser();
   }
 

@@ -47,12 +47,14 @@ public class DeckService {
     return deck;
   }
 
-  public Card returnRandomCard(Deck deck){
-    Card randomCard;
-    List<Card> cardsFromDeck = deck.getCards();
-    int randomCardId = new Random().nextInt(cardsFromDeck.size()) + 1;
-    randomCard = cardsFromDeck.get(randomCardId);
-    return randomCard;
+  public Card drawCardFromDeck(Deck deck){
+    Card topCardToDraw;
+    List<Card> cardsInDeck = deck.getCards();
+    int listSize = cardsInDeck.size();
+    topCardToDraw = cardsInDeck.get(listSize - 1);
+    cardsInDeck.remove(listSize - 1);
+    deck.setCards(cardsInDeck);
+    return topCardToDraw;
   }
 
 }
