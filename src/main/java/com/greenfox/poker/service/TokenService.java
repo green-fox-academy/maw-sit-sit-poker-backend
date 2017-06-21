@@ -11,6 +11,7 @@ import io.jsonwebtoken.impl.crypto.MacProvider;
 import java.security.Key;
 import java.util.*;
 import java.lang.*;
+import javax.validation.constraints.Null;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -55,13 +56,13 @@ public class TokenService {
     return username;
   }
 
-  public long getIdFromToken(String token) {
-    long id;
+  public String getIdFromToken(String token) {
+    String id;
     try {
       Claims claims = getClaimsFromToken(token);
-      id = (long) claims.get("id");
+      id = (String) claims.get("id");
     } catch (MissingClaimException e) {
-      id = 0L;
+      id = null;
     }
     return id;
   }
