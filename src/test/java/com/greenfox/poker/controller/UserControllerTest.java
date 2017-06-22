@@ -96,7 +96,7 @@ public class UserControllerTest {
   }
 
   @Test
-  public void testPokerUserLoginWithAnInvalidPassword() throws Exception {
+  public void testPokerUserLoginWithInvalidPassword() throws Exception {
     createTestPokerUser();
     String login = "{\"username\" : \"TestJeno\", \"password\" : \"invalidpassword\"}";
     this.mockMvc.perform(post("/login")
@@ -122,7 +122,7 @@ public class UserControllerTest {
   }
 
   @Test
-  public void testPokerUserLoginWithAnInvalidUsername() throws Exception {
+  public void testPokerUserLoginWithInvalidUsername() throws Exception {
     createTestPokerUser();
     String login = "{\"username\" : \"InvalidTestJeno\", \"password\" : \"jenopass\"}";
     this.mockMvc.perform(post("/login")
