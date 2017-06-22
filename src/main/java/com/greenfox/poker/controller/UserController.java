@@ -3,6 +3,7 @@ import com.greenfox.poker.model.LoginRequest;
 import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.service.Access;
+import com.greenfox.poker.service.DtoService;
 import com.greenfox.poker.service.UserService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class UserController {
 
   @Autowired
   UserService userService;
+
+  @Autowired
+  DtoService dtoService;
 
   @Access(restricted = true)
   @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -53,7 +57,7 @@ public class UserController {
   @GetMapping("/user/{id}")
   public ResponseEntity<?> getUserInfo(@PathVariable("id") long id) {
     if (userService.isUserExistsInDB(id)) {
-      return new ResponseEntity(userService.getUserDTO(id), HttpStatus.OK);
+      return new ResponseEntity(dtoService.makePokerUserDTO(id), HttpStatus.OK);
     }
     return new ResponseEntity(new StatusError("fail", "user doesn't exist"), HttpStatus.NOT_FOUND);
   }
