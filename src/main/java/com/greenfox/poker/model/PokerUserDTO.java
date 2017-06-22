@@ -13,6 +13,10 @@ public class PokerUserDTO implements ResponseType{
   public PokerUserDTO() {
   }
 
+  public PokerUserDTO(long chips){
+    this.chips = chips;
+  }
+
   public long getId() {
     return id;
   }

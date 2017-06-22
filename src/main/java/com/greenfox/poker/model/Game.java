@@ -25,8 +25,6 @@ public class Game {
   @JsonProperty("max_players")
   private Integer maxPlayers;
 
-  @JsonProperty("current_players")
-  private Integer currentPlayers;
   private long gamestate_id;
 
 
@@ -75,14 +73,6 @@ public class Game {
     this.maxPlayers = maxPlayers;
   }
 
-
-  public int getCurrentPlayers() {
-    return currentPlayers;
-  }
-
-  public void setCurrentPlayers(Integer currentPlayers) {
-    this.currentPlayers = currentPlayers;
-  }
 }
 
 

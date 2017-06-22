@@ -61,14 +61,19 @@ public class GameController {
   }
 
   @PostMapping("/game/{id}/join")
-  public ResponseEntity<?> joinTable(@PathVariable long id, @RequestBody ChipsToJoinGame chips, @RequestHeader("X-poker-token") String token){
+  public ResponseEntity<?> joinTable(@PathVariable("id") long gameId, @RequestBody ChipsToJoinGame chips, @RequestHeader("X-poker-token") String token){
     PokerUser user = tokenService.getPokerUserFromToken(token);
-    Game game = gameService.getGamebyId(id);
-    long gameStateId = game.getGamestate_id();
-    if (gameService.isPlayerAlreadyInTheGame()){
-      return new ResponseEntity(new StatusError("fail", user.getUsername() + " has already joined the " + game.getName()), HttpStatus.BAD_REQUEST);
+    if (gameService.isGameExist(gameId)) {
+      Game game = gameService.getGamebyId(gameId);
+      long gameStateId = game.getGamestate_id();
+      if (gameService.isPlayerAlreadyInTheGame(gameId, user.getId())){
+        return new ResponseEntity(new StatusError("fail", user.getUsername() + " has already joined the " + game.getName()), HttpStatus.BAD_REQUEST);
+      }
+      gameService.joinPlayerToGame(userService.getDTOWithChipsForGame(user.getId(), chips.getChips()), gameId);
+      userService.deductChipsToSitDownWithFromUser(chips.getChips(), user.getId());
+      return new ResponseEntity(gameService.getGameState(gameStateId), HttpStatus.OK);
     }
-    return new ResponseEntity(gameService.getGameState(gameStateId), HttpStatus.OK);
+    return new ResponseEntity(new StatusError("fail", "game id doesn't exist"), HttpStatus.NOT_FOUND);
   }
 }
 
