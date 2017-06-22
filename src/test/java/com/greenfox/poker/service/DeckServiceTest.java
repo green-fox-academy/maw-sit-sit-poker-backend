@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import com.greenfox.poker.model.Card;
 import com.greenfox.poker.model.Deck;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.Test;
@@ -33,7 +34,6 @@ public class DeckServiceTest {
     cardsInTestDeck = null;
   }
 
-
   @Test
   public void TestIfDeckContainsTheRightAmountOfCards() throws Exception {
     createTestDeckAndCardsList();
@@ -41,10 +41,44 @@ public class DeckServiceTest {
     setDeckAndCardsListToNull();
   }
 
-  public void TestIfAllCardsAreDifferent() throws Exception {
+  @Test
+  public void TestIfDeckContainsAllTheCards() throws Exception {
     createTestDeckAndCardsList();
+    List<String> validatedListOfCards = validCardList;
+    List<String> actualListOfCards = new ArrayList<>();
+    for (Card card : cardsInTestDeck) {
+      actualListOfCards.add(card.toString());
+    }
+    java.util.Collections.sort(validatedListOfCards);
+    java.util.Collections.sort(actualListOfCards);
 
+    for (int i = 0; i < 52; i++) {
+      assertEquals(validatedListOfCards.get(i), actualListOfCards.get(i));
+    }
     setDeckAndCardsListToNull();
   }
 
+  @Test
+  public void TestShuffleMethod() throws Exception {
+    createTestDeckAndCardsList();
+    DeckService deckService = new DeckService();
+    Deck originalDeck = testDeck;
+    Deck shuffledDeck = deckService.shuffleDeck(testDeck);
+    List<Card> originalCards = originalDeck.getCards();
+    List<Card> shuffledCards = shuffledDeck.getCards();
+    List<String> originalCardsString = new ArrayList<>();
+    List<String> shuffledCardsString = new ArrayList<>();
+    for (Card card : originalCards) {
+      originalCardsString.add(card.toString());
+    }
+    for (Card card : shuffledCards) {
+      shuffledCardsString.add(card.toString());
+    }
+    java.util.Collections.sort(originalCardsString);
+    java.util.Collections.sort(shuffledCardsString);
+    for (int i = 0; i < 52; i++) {
+      assertEquals(originalCardsString.get(i), shuffledCardsString.get(i));
+    }
+    setDeckAndCardsListToNull();
+  }
 }
