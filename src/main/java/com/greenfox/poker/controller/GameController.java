@@ -3,6 +3,7 @@ package com.greenfox.poker.controller;
 
 import com.greenfox.poker.model.ChipsToJoinGame;
 import com.greenfox.poker.model.Game;
+import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.service.GameService;
 import com.greenfox.poker.service.TokenService;
@@ -61,9 +62,12 @@ public class GameController {
 
   @PostMapping("/game/{id}/join")
   public ResponseEntity<?> joinTable(@PathVariable long id, @RequestBody ChipsToJoinGame chips, @RequestHeader("X-poker-token") String token){
-    String username = tokenService.getUsernameFromToken(token);
+    PokerUser user = tokenService.getPokerUserFromToken(token);
     Game game = gameService.getGamebyId(id);
     long gameStateId = game.getGamestate_id();
+    if (gameService.isPlayerAlreadyInTheGame()){
+      return new ResponseEntity(new StatusError("fail", user.getUsername() + " has already joined the " + game.getName()), HttpStatus.BAD_REQUEST);
+    }
     return new ResponseEntity(gameService.getGameState(gameStateId), HttpStatus.OK);
   }
 }
