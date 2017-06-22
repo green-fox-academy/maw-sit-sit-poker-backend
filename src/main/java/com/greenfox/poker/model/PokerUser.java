@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class PokerUser {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
   @NotNull
