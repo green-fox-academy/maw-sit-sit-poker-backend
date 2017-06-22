@@ -33,7 +33,7 @@ public class GameService {
     return false;
   }
 
-  public Game getGameById(long id) {
+  public Game getGameById(long id){
     return gameRepo.findOne(id);
   }
 
