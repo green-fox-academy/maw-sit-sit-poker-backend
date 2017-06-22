@@ -43,7 +43,7 @@ public class GameController {
   @RequestMapping(value = "/game/{id}", method = RequestMethod.GET)
   public ResponseEntity<?> gameState(@PathVariable("id") long id) {
     if (gameService.isGameExist(id)) {
-      long currentStateId = gameService.getGamebyId(id).getGamestate_id();
+      long currentStateId = gameService.getGameById(id).getGamestate_id();
       return new ResponseEntity(gameService.getGameState(currentStateId), HttpStatus.OK);
     }
     return new ResponseEntity(new StatusError("fail", "game id doesn’t exist"), HttpStatus.NOT_FOUND);
@@ -62,7 +62,7 @@ public class GameController {
   @PostMapping("/game/{id}/join")
   public ResponseEntity<?> joinTable(@PathVariable long id, @RequestBody ChipsToJoinGame chips, @RequestHeader("X-poker-token") String token){
     String username = tokenService.getUsernameFromToken(token);
-    Game game = gameService.getGamebyId(id);
+    Game game = gameService.getGameById(id);
     long gameStateId = game.getGamestate_id();
     return new ResponseEntity(gameService.getGameState(gameStateId), HttpStatus.OK);
   }
