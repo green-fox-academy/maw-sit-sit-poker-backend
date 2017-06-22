@@ -111,11 +111,11 @@ public class UserControllerTest {
     createTestPokerUser();
     String login = "{\"password\" : \"jenopass\"}";
     this.mockMvc.perform(post("/login")
-            .content(login)
-            .contentType(contentType))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.result", is("fail")))
-            .andExpect(jsonPath("$.message", is("Missing parameter(s): username!")));
+        .content(login)
+        .contentType(contentType))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.result", is("fail")))
+        .andExpect(jsonPath("$.message", is("Missing parameter(s): username!")));
     deleteTestPokerUser();
   }
 
@@ -124,16 +124,16 @@ public class UserControllerTest {
     createTestPokerUser();
     String login = "{\"username\" : \"InvalidTestJeno\", \"password\" : \"jenopass\"}";
     this.mockMvc.perform(post("/login")
-            .content(login)
-            .contentType(contentType))
-            .andExpect(status().isUnauthorized())
-            .andExpect(jsonPath("$.result", is("fail")))
-            .andExpect(jsonPath("$.message", is("invalid username or password")));
+        .content(login)
+        .contentType(contentType))
+        .andExpect(status().isUnauthorized())
+        .andExpect(jsonPath("$.result", is("fail")))
+        .andExpect(jsonPath("$.message", is("invalid username or password")));
     deleteTestPokerUser();
   }
 
   @Test
-  public void registerWithCorrectParameters() throws Exception {
+  public void testRegisterWithValidParameters() throws Exception {
     String register = "{\"username\" : \"TestJeno\", \"password\" : \"jenopass\", \"email\" :\"jeno@kovacs.hu\"}";
     this.mockMvc.perform(post("/register")
             .content(register)
@@ -146,7 +146,42 @@ public class UserControllerTest {
   }
 
   @Test
-  public void registerWithMissingEmail() throws Exception {
+  public void testRegisterWithMissingUsername() throws Exception {
+    String register = "{\"password\" : \"jenopass\", \"email\" :\"jeno@kovacs.hu\"}";
+    this.mockMvc.perform(post("/register")
+        .content(register)
+        .contentType(contentType))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.result", is("fail")))
+        .andExpect(jsonPath("$.message", is("Missing parameter(s): username!")));
+  }
+
+  @Test
+  public void testRegisterWithOccupiedUsername() throws Exception {
+    createTestPokerUser();
+    String register = "{\"username\" : \"TestJeno\", \"password\" : \"jenopass\", \"email\" : \"jenoTwin@kovacs.hu\"}";
+    this.mockMvc.perform(post("/register")
+        .content(register)
+        .contentType(contentType))
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.result", is("fail")))
+        .andExpect(jsonPath("$.message", is("username already exists")));
+    deleteTestPokerUser();
+  }
+
+  @Test
+  public void testRegisterWithMissingPassword() throws Exception {
+    String register = "{\"username\" : \"TestJeno\", \"email\" : \"jeno@kovacs.hu\"}";
+    this.mockMvc.perform(post("/register")
+        .content(register)
+        .contentType(contentType))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.result", is("fail")))
+        .andExpect(jsonPath("$.message", is("Missing parameter(s): password!")));
+  }
+
+  @Test
+  public void testRegisterWithMissingEmail() throws Exception {
     String register = "{\"username\" : \"TestJeno\", \"password\" : \"jenopass\"}";
     this.mockMvc.perform(post("/register")
             .content(register)
@@ -157,7 +192,7 @@ public class UserControllerTest {
   }
 
   @Test
-  public void registerWithOccupiedEmail() throws Exception {
+  public void testRegisterWithOccupiedEmail() throws Exception {
     createTestPokerUser();
     String register = "{\"username\" : \"TestJeno\", \"password\" : \"jenopass\", \"email\" : \"jeno@kovacs.hu\"}";
     this.mockMvc.perform(post("/register")
@@ -168,4 +203,5 @@ public class UserControllerTest {
             .andExpect(jsonPath("$.message", is("email address already exists")));
     deleteTestPokerUser();
   }
+
 }
