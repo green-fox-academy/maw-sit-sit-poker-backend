@@ -2,20 +2,25 @@ package com.greenfox.poker.service;
 
 import com.greenfox.poker.model.PokerUser;
 
+import com.greenfox.poker.repository.PokerUserRepo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MissingClaimException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.crypto.MacProvider;
 
-import io.jsonwebtoken.lang.Assert;
 import java.security.Key;
 import java.util.*;
 import java.lang.*;
+import javax.validation.constraints.Null;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TokenService {
+
+  @Autowired
+  PokerUserRepo pokerUserRepo;
 
   private Key key;
 
@@ -23,10 +28,11 @@ public class TokenService {
     HashMap<String, Object> claims = new HashMap<>();
     claims.put("id", pokerUser.getId());
     claims.put("username", pokerUser.getUsername());
-    return generateToken(claims);
+    String token = generateTokenByClaims(claims);
+    return token;
   }
 
-  private String generateToken(HashMap<String, Object> claims) {
+  private String generateTokenByClaims(HashMap<String, Object> claims) {
     this.key = MacProvider.generateKey();
     String token = Jwts.builder()
         .setClaims(claims)
@@ -35,7 +41,7 @@ public class TokenService {
     return token;
   }
 
-  private Claims getClaimFromToken(String token) {
+  private Claims getClaimsFromToken(String token) {
     Claims claims;
     claims = Jwts.parser()
         .setSigningKey(key)
@@ -47,7 +53,7 @@ public class TokenService {
   public String getUsernameFromToken(String token) {
     String username;
     try {
-      Claims claims = getClaimFromToken(token);
+      Claims claims = getClaimsFromToken(token);
       username = (String) claims.get("username");
     } catch (MissingClaimException e) {
       username = null;
@@ -55,15 +61,21 @@ public class TokenService {
     return username;
   }
 
-  public String getIdFromToken(String token) {
-    String id;
+  public long getIdFromToken(String token) {
+    long id;
     try {
-      Claims claims = getClaimFromToken(token);
-      id = (String) claims.get("id");
+      Claims claims = getClaimsFromToken(token);
+      id = (Integer) claims.get("id");
     } catch (MissingClaimException e) {
-      id = null;
+      id = -1L;
     }
     return id;
+  }
+
+  public PokerUser getPokerUserFromToken(String token) {
+    long idFromToken = getIdFromToken(token);
+    PokerUser pokerUserFromToken = pokerUserRepo.findOne(idFromToken);
+    return pokerUserFromToken;
   }
 }
 
