@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS game (
   id              BIGSERIAL PRIMARY KEY,
   NAME            VARCHAR(255) NOT NULL,
   big_blind       INTEGER      NOT NULL,
-  max_players     INTEGER      NOT NULL,
+  max_players     INTEGER      NOT NULL
 );
 
 
