@@ -22,7 +22,7 @@ public class UserService {
   PokerUserRepo pokerUserRepo;
 
   @Autowired
-  PokerUserDTO pokerUserDTO;
+  DtoService dtoService;
 
   @Autowired
   TokenService tokenService;
@@ -34,24 +34,13 @@ public class UserService {
   }
 
   public ResponseType responseToSuccessfulLogin(LoginRequest loginRequest) {
-    PokerUser pokerUserFromDatabase = pokerUserRepo.findByUsername(loginRequest.getUsername()).get(0);
+    PokerUser pokerUserFromDatabase = pokerUserRepo.findByUsername(loginRequest.getUsername())
+        .get(0);
     String token = tokenService.generateToken(pokerUserFromDatabase);
     return new UserTokenResponse("success", token, pokerUserFromDatabase.getId());
   }
 
-  public ResponseType respondToMissingParameters(BindingResult bindingResult) {
-    List<String> missing = new ArrayList<>();
-    String missingFields = new String();
-    for (FieldError fielderror : bindingResult.getFieldErrors()) {
-      missing.add(fielderror.getField());
-    }
-    System.out.println(missingFields);
-    missingFields = "Missing parameter(s): " + missing.stream().collect(Collectors.joining(", ")) + "!";
-    return new StatusError("fail", missingFields);
-  }
-
   public ResponseType registerWithOccupiedEmail() {
-
     return new StatusError("fail", "email address already exists");
   }
 
@@ -59,15 +48,15 @@ public class UserService {
     return new StatusError("fail", "username already exists");
   }
 
-  public boolean isLoginValid(LoginRequest loginRequest){
-    List<PokerUser> users = pokerUserRepo.findByUsername(loginRequest.getUsername());
-    if (users.size() > 0 && users.get(0).getPassword().equals(loginRequest.getPassword())){
+  public boolean isLoginValid(LoginRequest loginRequest) {
+    if (pokerUserRepo.existsByUsername(loginRequest.getUsername()) &&
+        pokerUserRepo.existsByPassword(loginRequest.getPassword())) {
       return true;
     }
     return false;
   }
 
-  public ResponseType loginWithIvalidUsernameOrPassword() {
+  public ResponseType loginWithInvalidUsernameOrPassword() {
     return new StatusError("fail", "invalid username or password");
   }
 
@@ -83,7 +72,7 @@ public class UserService {
     return isUsernameOccupied;
   }
 
-  public long getUserIdFromUsername(String username){
+  public long getUserIdFromUsername(String username) {
     return pokerUserRepo.findByUsername(username).get(0).getId();
   }
 
@@ -95,20 +84,11 @@ public class UserService {
     }
   }
 
-  public PokerUserDTO getUserDTO(long id) {
-    PokerUser pokerUser = pokerUserRepo.findOne(id);
-    pokerUserDTO.setId(id);
-    pokerUserDTO.setUsername(pokerUser.getUsername());
-    pokerUserDTO.setAvatar(pokerUser.getAvatar());
-    pokerUserDTO.setChips(pokerUser.getChips());
-    return pokerUserDTO;
-  }
-
   public List<PokerUserDTO> getTopTenLeaderboard() {
     List<PokerUser> topTenList = pokerUserRepo.findTop10ByOrderByChipsDesc();
     List<PokerUserDTO> topTenDTO = new ArrayList<>();
     for (PokerUser user : topTenList) {
-      topTenDTO.add(getUserDTO(user.getId()));
+      topTenDTO.add(dtoService.makePokerUserDTO(user.getId()));
     }
     return topTenDTO;
   }

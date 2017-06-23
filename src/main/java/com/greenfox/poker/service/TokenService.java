@@ -50,18 +50,8 @@ public class TokenService {
     return claims;
   }
 
-  public String getUsernameFromToken(String token) {
-    String username;
-    try {
-      Claims claims = getClaimsFromToken(token);
-      username = (String) claims.get("username");
-    } catch (MissingClaimException e) {
-      username = null;
-    }
-    return username;
-  }
 
-  public long getIdFromToken(String token) {
+  private long getIdFromToken(String token) {
     long id;
     try {
       Claims claims = getClaimsFromToken(token);

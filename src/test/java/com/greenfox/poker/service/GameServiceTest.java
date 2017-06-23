@@ -57,34 +57,9 @@ public class GameServiceTest {
           MediaType.APPLICATION_JSON.getSubtype(),
           Charset.forName("utf8"));
 
-//
-//  private void createTestGame() {
-//    testGame = new Game();
-//    testGame.setId(9999);
-//    testGame.setName("testGameTable");
-//    testGame.setBigBlind(5555);
-//    testGame.setMaxPlayers(99);
-//    testGame.setCurrentPlayers(9);
-//    gameService.saveGame(testGame);
-////    updateTestGameIdForTheRealId();
-//  }
-
-//  private void updateTestGameIdForTheRealId() {
-//    long testGameIdInTheRepo = gameRepo.findByName("testGameTable").get(0).getId();
-//    testGame.setId(testGameIdInTheRepo);
-//  }
-//
-//  private void deleteTestGame() {
-//    long testGameIdToDelete = gameRepo.findByName("testGameTable").get(0).getId();
-//    gameRepo.delete(testGameIdToDelete);
-//  }
 
   @Test
   public void testGetGameById() throws Exception {
-//    createTestGame();
-
     assertEquals(1, 1);
-
-//    deleteTestGame();
   }
 }
