@@ -63,9 +63,9 @@ public class DeckServiceTest {
     createTestDeckAndCardsList();
     DeckService deckService = new DeckService();
     Deck originalDeck = testDeck;
-    Deck shuffledDeck = deckService.shuffleDeck(testDeck);
+    deckService.shuffleDeck(testDeck);
     List<Card> originalCards = originalDeck.getCards();
-    List<Card> shuffledCards = shuffledDeck.getCards();
+    List<Card> shuffledCards = testDeck.getCards();
     List<String> originalCardsString = new ArrayList<>();
     List<String> shuffledCardsString = new ArrayList<>();
     for (Card card : originalCards) {
