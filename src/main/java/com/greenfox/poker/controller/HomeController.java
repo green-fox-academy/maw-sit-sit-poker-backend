@@ -14,7 +14,6 @@ public class HomeController {
   @GetMapping("/")
   @ResponseBody
   public String home() {
-
     DeckService deckService = new DeckService();
     Deck newDeckToTestHere = deckService.getNewDeck();
     System.out.println(newDeckToTestHere.toString());

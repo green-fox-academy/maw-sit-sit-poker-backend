@@ -15,7 +15,7 @@ public class DeckService {
 
   private static AtomicLong nextId = new AtomicLong(0);
 
-  public Deck getNewDeck(){
+  public Deck getNewDeck() {
     Deck newDeck = new Deck();
     newDeck.setId(nextId.incrementAndGet());
     newDeck.setCards(setNewDeckCards());
@@ -24,7 +24,7 @@ public class DeckService {
 
   private List<Card> setNewDeckCards() {
     List<Card> newDeckCardList = new ArrayList<>();
-    for (int i = 0; i < 13 ; i++) {
+    for (int i = 0; i < 13; i++) {
       newDeckCardList.add(getOneCardForDeckBuilding(Suit.C, i));
       newDeckCardList.add(getOneCardForDeckBuilding(Suit.D, i));
       newDeckCardList.add(getOneCardForDeckBuilding(Suit.H, i));
@@ -46,7 +46,7 @@ public class DeckService {
     deck.setCards(cardsToShuffle);
   }
 
-  public Card drawCardFromDeck(Deck deck){
+  public Card drawCardFromDeck(Deck deck) {
     Card topCardToDraw;
     List<Card> cardsInDeck = deck.getCards();
     int listSize = cardsInDeck.size();

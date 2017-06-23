@@ -26,8 +26,8 @@ public class GameService {
   @Autowired
   ErrorMessageService errorMessageService;
 
-  //  List<GameState> gameStateList = new ArrayList<>();
-  HashMap<Integer, GameState> gameStateMap;
+  HashMap<Integer,GameState> gameStateHashMap;
+
 
   public Game saveGame(Game game) {
     gameRepo.save(game);
@@ -50,7 +50,7 @@ public class GameService {
   }
 
   public GameState getGameState(long id) {
-    return gameStateMap.get(id);
+    return gameStateHashMap.get(id);
   }
 
   public ResponseEntity<?> getGameStateById(long id) {
@@ -72,10 +72,11 @@ public class GameService {
   }
 
   public ResponseEntity<?> joinTable(long id, ChipsToJoinGame chips, String token) {
-    TokenService tokenService = new TokenService();
-    String username = tokenService.getUsernameFromToken(token);
+//    TokenService tokenService = new TokenService();
+//    String username = tokenService.getUsernameFromToken(token);
     Game game = getGameById(id);
     long gameStateId = game.getGamestateId();
     return new ResponseEntity(getGameState(gameStateId), HttpStatus.OK);
+
   }
 }

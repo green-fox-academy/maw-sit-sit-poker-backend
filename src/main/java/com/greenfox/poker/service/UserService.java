@@ -22,7 +22,7 @@ public class UserService {
   PokerUserRepo pokerUserRepo;
 
   @Autowired
-  PokerUserDTO pokerUserDTO;
+  DtoService dtoService;
 
   @Autowired
   TokenService tokenService;
@@ -50,7 +50,9 @@ public class UserService {
 
   public boolean isLoginValid(LoginRequest loginRequest) {
     List<PokerUser> users = pokerUserRepo.findByUsername(loginRequest.getUsername());
-    if (users.size() > 0 && users.get(0).getPassword().equals(loginRequest.getPassword())) {
+    int sizeOfValidUsersListFromUserRepo = users.size();
+    String passwordOfUserFromUserRepo = users.get(0).getPassword();
+    if (sizeOfValidUsersListFromUserRepo > 0 && passwordOfUserFromUserRepo.equals(loginRequest.getPassword())){
       return true;
     }
     return false;
@@ -84,20 +86,11 @@ public class UserService {
     }
   }
 
-  public PokerUserDTO getUserDTO(long id) {
-    PokerUser pokerUser = pokerUserRepo.findOne(id);
-    pokerUserDTO.setId(id);
-    pokerUserDTO.setUsername(pokerUser.getUsername());
-    pokerUserDTO.setAvatar(pokerUser.getAvatar());
-    pokerUserDTO.setChips(pokerUser.getChips());
-    return pokerUserDTO;
-  }
-
   public List<PokerUserDTO> getTopTenLeaderboard() {
     List<PokerUser> topTenList = pokerUserRepo.findTop10ByOrderByChipsDesc();
     List<PokerUserDTO> topTenDTO = new ArrayList<>();
     for (PokerUser user : topTenList) {
-      topTenDTO.add(getUserDTO(user.getId()));
+      topTenDTO.add(dtoService.makePokerUserDTO(user.getId()));
     }
     return topTenDTO;
   }
