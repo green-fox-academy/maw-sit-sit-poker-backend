@@ -81,4 +81,17 @@ public class DeckServiceTest {
     }
     setDeckAndCardsListToNull();
   }
+
+  @Test
+  public void TestDrawCardMethod() throws Exception {
+    DeckService deckService = new DeckService();
+    createTestDeckAndCardsList();
+    Deck originalDeck = testDeck;
+    Card drawnCard = deckService.drawCardFromDeck(originalDeck);
+    
+
+
+
+    setDeckAndCardsListToNull();
+  }
 }
