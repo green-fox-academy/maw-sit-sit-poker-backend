@@ -40,7 +40,7 @@ public class DeckService {
     return newCard;
   }
 
-  public void shuffleDeck(Deck deck) {
+  public void shuffleDeck(Deck deck){
     List<Card> cardsToShuffle = deck.getCards();
     Collections.shuffle(cardsToShuffle);
     deck.setCards(cardsToShuffle);

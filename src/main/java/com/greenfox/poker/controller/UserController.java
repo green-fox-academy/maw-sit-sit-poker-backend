@@ -4,6 +4,7 @@ import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.service.Access;
 import com.greenfox.poker.service.DtoService;
+import com.greenfox.poker.service.ErrorMessageService;
 import com.greenfox.poker.service.UserService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ public class UserController {
   UserService userService;
 
   @Autowired
+  ErrorMessageService errorMessageService;
+
+  @Autowired
   DtoService dtoService;
 
   @Access(restricted = true)
@@ -33,7 +37,7 @@ public class UserController {
   public ResponseEntity<?> registerUser(@RequestBody @Valid PokerUser userRegister,
       BindingResult bindingResult) {
     if (bindingResult.hasErrors()){
-      return new ResponseEntity(userService.respondToMissingParameters(bindingResult), HttpStatus.BAD_REQUEST);
+      return new ResponseEntity(errorMessageService.respondToMissingParameters(bindingResult), HttpStatus.BAD_REQUEST);
     } else if (userService.isEmailOccupied(userRegister)) {
         return new ResponseEntity(userService.registerWithOccupiedEmail(), HttpStatus.CONFLICT);
       } else if (userService.isUsernameOccupied(userRegister)) {
@@ -46,7 +50,7 @@ public class UserController {
   public ResponseEntity<?> loginUser(@RequestBody @Valid LoginRequest loginRequest,
       BindingResult bindingResult) {
     if (bindingResult.hasErrors()) {
-      return new ResponseEntity(userService.respondToMissingParameters(bindingResult),
+      return new ResponseEntity(errorMessageService.respondToMissingParameters(bindingResult),
           HttpStatus.BAD_REQUEST);
     } else if (!userService.isLoginValid(loginRequest)) {
         return new ResponseEntity(userService.loginWithInvalidUsernameOrPassword(), HttpStatus.UNAUTHORIZED);

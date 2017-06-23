@@ -32,9 +32,6 @@ public class GameController {
   @Autowired
   UserService userService;
 
-  @Autowired
-  TokenService tokenService;
-
   @RequestMapping(value = "/games", method = RequestMethod.GET)
   public List<Game> getGamesList() {
     return gameService.getAllGamesOrderedByBigBlind();
@@ -42,28 +39,18 @@ public class GameController {
 
   @RequestMapping(value = "/game/{id}", method = RequestMethod.GET)
   public ResponseEntity<?> gameState(@PathVariable("id") long id) {
-    if (gameService.isGameExist(id)) {
-      long currentStateId = gameService.getGameById(id).getGamestateId();
-      return new ResponseEntity(gameService.getGameState(currentStateId), HttpStatus.OK);
-    }
-    return new ResponseEntity(new StatusError("fail", "game id doesn’t exist"), HttpStatus.NOT_FOUND);
+    return gameService.getGameStateById(id);
   }
 
   @RequestMapping(value = "/savenewgames", method = RequestMethod.POST)
   public ResponseEntity<?> saveNewGame(@RequestBody @Valid Game game, BindingResult bindingResult) {
-    if (bindingResult.hasErrors()) {
-      return new ResponseEntity(userService.respondToMissingParameters(bindingResult),
-          HttpStatus.BAD_REQUEST);
-    } else {
-      return new ResponseEntity(gameService.saveGame(game), HttpStatus.OK);
-    }
+    return gameService.saveNewGame(game, bindingResult);
   }
 
   @PostMapping("/game/{id}/join")
-  public ResponseEntity<?> joinTable(@PathVariable long id, @RequestBody ChipsToJoinGame chips, @RequestHeader("X-poker-token") String token){
-    Game game = gameService.getGameById(id);
-    long gameStateId = game.getGamestateId();
-    return new ResponseEntity(gameService.getGameState(gameStateId), HttpStatus.OK);
+  public ResponseEntity<?> joinTable(@PathVariable long id, @RequestBody ChipsToJoinGame chips,
+          @RequestHeader("X-poker-token") String token) {
+    return gameService.joinTable(id, chips, token);
   }
 }
 

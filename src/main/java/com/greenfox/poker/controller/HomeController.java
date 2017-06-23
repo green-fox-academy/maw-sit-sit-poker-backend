@@ -14,6 +14,13 @@ public class HomeController {
   @GetMapping("/")
   @ResponseBody
   public String home() {
+    DeckService deckService = new DeckService();
+    Deck newDeckToTestHere = deckService.getNewDeck();
+    System.out.println(newDeckToTestHere.toString());
+    deckService.shuffleDeck(newDeckToTestHere);
+    System.out.println(newDeckToTestHere.toString());
+    System.out.println(deckService.drawCardFromDeck(newDeckToTestHere).toString());
+    System.out.println(newDeckToTestHere);
     return "Hello";
   }
 }

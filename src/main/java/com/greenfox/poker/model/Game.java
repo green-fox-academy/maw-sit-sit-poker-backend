@@ -25,6 +25,7 @@ public class Game {
   @JsonProperty("max_players")
   private Integer maxPlayers;
 
+  @NotNull
   @JsonProperty("gamestate_id")
   private long gamestateId;
 
@@ -56,7 +57,6 @@ public class Game {
     this.name = name;
   }
 
-
   public int getBigBlind() {
     return bigBlind;
   }
@@ -64,7 +64,6 @@ public class Game {
   public void setBigBlind(Integer bigBlind) {
     this.bigBlind = bigBlind;
   }
-
 
   public int getMaxPlayers() {
     return maxPlayers;

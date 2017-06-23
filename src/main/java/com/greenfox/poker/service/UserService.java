@@ -34,24 +34,13 @@ public class UserService {
   }
 
   public ResponseType responseToSuccessfulLogin(LoginRequest loginRequest) {
-    PokerUser pokerUserFromDatabase = pokerUserRepo.findByUsername(loginRequest.getUsername()).get(0);
+    PokerUser pokerUserFromDatabase = pokerUserRepo.findByUsername(loginRequest.getUsername())
+        .get(0);
     String token = tokenService.generateToken(pokerUserFromDatabase);
     return new UserTokenResponse("success", token, pokerUserFromDatabase.getId());
   }
 
-  public ResponseType respondToMissingParameters(BindingResult bindingResult) {
-    List<String> missing = new ArrayList<>();
-    String missingFields = new String();
-    for (FieldError fielderror : bindingResult.getFieldErrors()) {
-      missing.add(fielderror.getField());
-    }
-    System.out.println(missingFields);
-    missingFields = "Missing parameter(s): " + missing.stream().collect(Collectors.joining(", ")) + "!";
-    return new StatusError("fail", missingFields);
-  }
-
   public ResponseType registerWithOccupiedEmail() {
-
     return new StatusError("fail", "email address already exists");
   }
 

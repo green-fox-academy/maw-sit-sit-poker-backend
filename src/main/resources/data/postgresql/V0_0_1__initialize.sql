@@ -13,3 +13,4 @@ CREATE TABLE IF NOT EXISTS game (
   big_blind       INTEGER      NOT NULL,
   max_players     INTEGER      NOT NULL
 );
+
