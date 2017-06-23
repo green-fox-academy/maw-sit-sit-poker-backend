@@ -80,7 +80,6 @@ public class UserControllerTest {
     deleteTestPokerUser();
   }
 
-
   @Test
   public void testPokerUserLoginWithMissingPassword() throws Exception {
     createTestPokerUser();
