@@ -3,7 +3,7 @@ package com.greenfox.poker.model;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PokerUserDTO implements ResponseType{
+public class PokerUserDTO implements ResponseType {
 
   private long id;
   private String username;
