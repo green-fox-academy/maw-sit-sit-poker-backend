@@ -35,7 +35,7 @@ public class UserService {
 
   public ResponseType responseToSuccessfulLogin(LoginRequest loginRequest) {
     PokerUser pokerUserFromDatabase = pokerUserRepo.findByUsername(loginRequest.getUsername())
-        .get(0);
+            .get(0);
     String token = tokenService.generateToken(pokerUserFromDatabase);
     return new UserTokenResponse("success", token, pokerUserFromDatabase.getId());
   }
@@ -49,9 +49,13 @@ public class UserService {
   }
 
   public boolean isLoginValid(LoginRequest loginRequest) {
-    if (pokerUserRepo.existsByUsername(loginRequest.getUsername()) &&
-        pokerUserRepo.existsByPassword(loginRequest.getPassword())) {
-      return true;
+    List<PokerUser> users = pokerUserRepo.findByUsername(loginRequest.getUsername());
+    int sizeOfValidUsersListFromUserRepo = users.size();
+    if (sizeOfValidUsersListFromUserRepo == 1) {
+      long userId = users.get(0).getId();
+      if (loginRequest.getPassword().equals(pokerUserRepo.findOne(userId).getPassword())) {
+        return true;
+      }
     }
     return false;
   }
