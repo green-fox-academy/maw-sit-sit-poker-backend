@@ -2,12 +2,15 @@ package com.greenfox.poker.service;
 
 import com.greenfox.poker.model.LoginRequest;
 import com.greenfox.poker.model.PokerUser;
+import com.greenfox.poker.model.PokerUserDTO;
+import com.greenfox.poker.model.ResponseType;
 import com.greenfox.poker.model.UserTokenResponse;
 import com.greenfox.poker.model.StatusError;
+import com.greenfox.poker.repository.PokerUserRepo;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -15,64 +18,82 @@ import org.springframework.validation.FieldError;
 @Component
 public class UserService {
 
-  public ResponseEntity<?> mockRespondToSuccessfulRegisterOrLogin() {
-    return new ResponseEntity(new UserTokenResponse("success", "ABC123", 4321), HttpStatus.OK);
+  @Autowired
+  PokerUserRepo pokerUserRepo;
+
+  @Autowired
+  DtoService dtoService;
+
+  @Autowired
+  TokenService tokenService;
+
+  public ResponseType responseToSuccessfulRegister(PokerUser pokerUser) {
+    pokerUserRepo.save(pokerUser);
+    String token = tokenService.generateToken(pokerUser);
+    return new UserTokenResponse("success", token, pokerUser.getId());
   }
 
-  public ResponseEntity<?> respondToMissingParameters(BindingResult bindingResult) {
-    List<String> listOfMissingFields = new ArrayList<>();
-    String missingFields = new String();
-    for (FieldError fielderror : bindingResult.getFieldErrors()) {
-      listOfMissingFields.add(fielderror.getField());
+  public ResponseType responseToSuccessfulLogin(LoginRequest loginRequest) {
+    PokerUser pokerUserFromDatabase = pokerUserRepo.findByUsername(loginRequest.getUsername())
+            .get(0);
+    String token = tokenService.generateToken(pokerUserFromDatabase);
+    return new UserTokenResponse("success", token, pokerUserFromDatabase.getId());
+  }
+
+  public ResponseType registerWithOccupiedEmail() {
+    return new StatusError("fail", "email address already exists");
+  }
+
+  public ResponseType registerWithOccupiedUsername() {
+    return new StatusError("fail", "username already exists");
+  }
+
+  public boolean isLoginValid(LoginRequest loginRequest) {
+    List<PokerUser> users = pokerUserRepo.findByUsername(loginRequest.getUsername());
+    int sizeOfValidUsersListFromUserRepo = users.size();
+    if (sizeOfValidUsersListFromUserRepo == 1) {
+      long userId = users.get(0).getId();
+      if (loginRequest.getPassword().equals(pokerUserRepo.findOne(userId).getPassword())) {
+        return true;
+      }
     }
-    missingFields = "Missing parameter(s): " + listOfMissingFields.toString();
-    return new ResponseEntity(new StatusError("fail", missingFields), HttpStatus.BAD_REQUEST);
+    return false;
   }
 
-  public ResponseEntity<?> respondToOccupiedConflict(String errorMessage) {
-    StatusError statusError = new StatusError("fail", errorMessage);
-    return new ResponseEntity(statusError, HttpStatus.CONFLICT);
-  }
-
-  public ResponseEntity<?> respondToInvalidUsernameOrPassword(String errorMessage) {
-    StatusError statusError = new StatusError("fail", errorMessage);
-    return new ResponseEntity(statusError, HttpStatus.UNAUTHORIZED);
-  }
-
-  public ResponseEntity<?> register(PokerUser pokerUser,
-          BindingResult bindingResult) {
-    if (bindingResult.hasErrors()) {
-      return respondToMissingParameters(bindingResult);
-    } else if (isEmailOccupied(pokerUser)) {
-      return respondToOccupiedConflict("email address already exists");
-    } else if (isUsernameOccupied(pokerUser)) {
-      return respondToOccupiedConflict("username already exists");
-    }
-    return mockRespondToSuccessfulRegisterOrLogin();
-  }
-
-  public ResponseEntity<?> login(BindingResult bindingResult,
-          LoginRequest loginRequest) {
-    if (bindingResult.hasErrors()) {
-      return respondToMissingParameters(bindingResult);
-    } else if ((!loginRequest.getUsername().equals("Bond") || !loginRequest
-            .getPassword().equals("password123"))) {
-      return respondToInvalidUsernameOrPassword("invalid username or password");
-    }
-    return mockRespondToSuccessfulRegisterOrLogin();
+  public ResponseType loginWithInvalidUsernameOrPassword() {
+    return new StatusError("fail", "invalid username or password");
   }
 
   public boolean isEmailOccupied(PokerUser pokerUser) {
-    if (pokerUser.getEmail().equals("occupied@email.com")) {
-      return true;
-    }
-    return false;
+    boolean isEmailOccupied = false;
+    isEmailOccupied = pokerUserRepo.existsByEmail(pokerUser.getEmail());
+    return isEmailOccupied;
   }
 
   public boolean isUsernameOccupied(PokerUser pokerUser) {
-    if (pokerUser.getUsername().equals("occupiedUserName")) {
+    boolean isUsernameOccupied = false;
+    isUsernameOccupied = pokerUserRepo.existsByUsername(pokerUser.getUsername());
+    return isUsernameOccupied;
+  }
+
+  public long getUserIdFromUsername(String username) {
+    return pokerUserRepo.findByUsername(username).get(0).getId();
+  }
+
+  public boolean isUserExistsInDB(long id) {
+    if (pokerUserRepo.exists(id)) {
       return true;
+    } else {
+      return false;
     }
-    return false;
+  }
+
+  public List<PokerUserDTO> getTopTenLeaderboard() {
+    List<PokerUser> topTenList = pokerUserRepo.findTop10ByOrderByChipsDesc();
+    List<PokerUserDTO> topTenDTO = new ArrayList<>();
+    for (PokerUser user : topTenList) {
+      topTenDTO.add(dtoService.makePokerUserDTO(user.getId()));
+    }
+    return topTenDTO;
   }
 }

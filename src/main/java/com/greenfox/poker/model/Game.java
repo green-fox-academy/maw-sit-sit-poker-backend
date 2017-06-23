@@ -1,14 +1,44 @@
 package com.greenfox.poker.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
+
+@Entity
 public class Game {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
+
+  @NotNull
   private String name;
-  private int bigBlind;
-  private int maxPlayersNum;
-  private int currentPlayersNum;
+
+  @NotNull
+  @JsonProperty("big_blind")
+  private Integer bigBlind;
+
+  @NotNull
+  @JsonProperty("max_players")
+  private Integer maxPlayers;
+
+  @NotNull
+  @JsonProperty("gamestate_id")
+  private long gamestateId;
+
 
   public Game() {
+  }
+
+  public long getGamestateId() {
+    return gamestateId;
+  }
+
+  public void setGamestateId(long gamestateId) {
+    this.gamestateId = gamestateId;
   }
 
   public long getId() {
@@ -31,25 +61,18 @@ public class Game {
     return bigBlind;
   }
 
-  public void setBigBlind(int bigBlind) {
+  public void setBigBlind(Integer bigBlind) {
     this.bigBlind = bigBlind;
   }
 
-  public int getMaxPlayersNum() {
-    return maxPlayersNum;
+  public int getMaxPlayers() {
+    return maxPlayers;
   }
 
-  public void setMaxPlayersNum(int maxPlayersNum) {
-    this.maxPlayersNum = maxPlayersNum;
+  public void setMaxPlayers(Integer maxPlayers) {
+    this.maxPlayers = maxPlayers;
   }
 
-  public int getCurrentPlayersNum() {
-    return currentPlayersNum;
-  }
-
-  public void setCurrentPlayersNum(int currentPlayersNum) {
-    this.currentPlayersNum = currentPlayersNum;
-  }
 }
 
 

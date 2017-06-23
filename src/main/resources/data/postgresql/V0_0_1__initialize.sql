@@ -1,16 +1,19 @@
-CREATE TABLE Poker_user (
-  id       SERIAL,
+
+CREATE TABLE IF NOT EXISTS Poker_user (
+  id       BIGSERIAL PRIMARY KEY,
   username VARCHAR(255) NOT NULL,
   password VARCHAR(255) NOT NULL,
   avatar   VARCHAR(255),
   email    VARCHAR(255) NOT NULL,
-  PRIMARY KEY (id)
+  chips    INTEGER DEFAULT 10000
+);
+
+CREATE TABLE IF NOT EXISTS game (
+  id           BIGSERIAL PRIMARY KEY,
+  NAME         VARCHAR(255) NOT NULL,
+  big_blind    INTEGER      NOT NULL,
+  max_players  INTEGER      NOT NULL,
+  gamestate_id INTEGER      NOT NULL
 );
 
 
-/*
- * Data
- */
-
-INSERT INTO Poker_user (username, password, email, avatar)
-VALUES ('Ramin', '12345', 'example@mail.com', 'http://www.avatar.com');

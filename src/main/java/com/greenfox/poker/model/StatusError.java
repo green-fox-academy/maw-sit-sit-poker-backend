@@ -1,6 +1,6 @@
 package com.greenfox.poker.model;
 
-public class StatusError {
+public class StatusError implements ResponseType {
 
   private String result;
   private String message;
