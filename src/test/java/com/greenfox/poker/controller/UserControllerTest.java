@@ -79,10 +79,9 @@ public class UserControllerTest {
     deleteTestPokerUser();
   }
 
-
   @Test
   public void testPokerUserLoginWithMissingPassword() throws Exception {
-    createTestPokerUser();
+//    createTestPokerUser();
     String login = "{\"username\" : \"TestJeno\"}";
     this.mockMvc.perform(post("/login")
             .content(login)
@@ -90,7 +89,7 @@ public class UserControllerTest {
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.result", is("fail")))
             .andExpect(jsonPath("$.message", is("Missing parameter(s): password!")));
-    deleteTestPokerUser();
+//    deleteTestPokerUser();
   }
 
   @Test
@@ -111,11 +110,11 @@ public class UserControllerTest {
     createTestPokerUser();
     String login = "{\"password\" : \"jenopass\"}";
     this.mockMvc.perform(post("/login")
-        .content(login)
-        .contentType(contentType))
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.result", is("fail")))
-        .andExpect(jsonPath("$.message", is("Missing parameter(s): username!")));
+            .content(login)
+            .contentType(contentType))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.result", is("fail")))
+            .andExpect(jsonPath("$.message", is("Missing parameter(s): username!")));
     deleteTestPokerUser();
   }
 
@@ -124,11 +123,11 @@ public class UserControllerTest {
     createTestPokerUser();
     String login = "{\"username\" : \"InvalidTestJeno\", \"password\" : \"jenopass\"}";
     this.mockMvc.perform(post("/login")
-        .content(login)
-        .contentType(contentType))
-        .andExpect(status().isUnauthorized())
-        .andExpect(jsonPath("$.result", is("fail")))
-        .andExpect(jsonPath("$.message", is("invalid username or password")));
+            .content(login)
+            .contentType(contentType))
+            .andExpect(status().isUnauthorized())
+            .andExpect(jsonPath("$.result", is("fail")))
+            .andExpect(jsonPath("$.message", is("invalid username or password")));
     deleteTestPokerUser();
   }
 
@@ -149,11 +148,11 @@ public class UserControllerTest {
   public void testRegisterWithMissingUsername() throws Exception {
     String register = "{\"password\" : \"jenopass\", \"email\" :\"jeno@kovacs.hu\"}";
     this.mockMvc.perform(post("/register")
-        .content(register)
-        .contentType(contentType))
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.result", is("fail")))
-        .andExpect(jsonPath("$.message", is("Missing parameter(s): username!")));
+            .content(register)
+            .contentType(contentType))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.result", is("fail")))
+            .andExpect(jsonPath("$.message", is("Missing parameter(s): username!")));
   }
 
   @Test
@@ -161,11 +160,11 @@ public class UserControllerTest {
     createTestPokerUser();
     String register = "{\"username\" : \"TestJeno\", \"password\" : \"jenopass\", \"email\" : \"jenoTwin@kovacs.hu\"}";
     this.mockMvc.perform(post("/register")
-        .content(register)
-        .contentType(contentType))
-        .andExpect(status().isConflict())
-        .andExpect(jsonPath("$.result", is("fail")))
-        .andExpect(jsonPath("$.message", is("username already exists")));
+            .content(register)
+            .contentType(contentType))
+            .andExpect(status().isConflict())
+            .andExpect(jsonPath("$.result", is("fail")))
+            .andExpect(jsonPath("$.message", is("username already exists")));
     deleteTestPokerUser();
   }
 
@@ -173,11 +172,11 @@ public class UserControllerTest {
   public void testRegisterWithMissingPassword() throws Exception {
     String register = "{\"username\" : \"TestJeno\", \"email\" : \"jeno@kovacs.hu\"}";
     this.mockMvc.perform(post("/register")
-        .content(register)
-        .contentType(contentType))
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.result", is("fail")))
-        .andExpect(jsonPath("$.message", is("Missing parameter(s): password!")));
+            .content(register)
+            .contentType(contentType))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.result", is("fail")))
+            .andExpect(jsonPath("$.message", is("Missing parameter(s): password!")));
   }
 
   @Test

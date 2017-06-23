@@ -51,14 +51,16 @@ public class UserService {
   public boolean isLoginValid(LoginRequest loginRequest) {
     List<PokerUser> users = pokerUserRepo.findByUsername(loginRequest.getUsername());
     int sizeOfValidUsersListFromUserRepo = users.size();
-    String passwordOfUserFromUserRepo = users.get(0).getPassword();
-    if (sizeOfValidUsersListFromUserRepo > 0 && passwordOfUserFromUserRepo.equals(loginRequest.getPassword())){
-      return true;
+    if (sizeOfValidUsersListFromUserRepo == 1) {
+      long userId = users.get(0).getId();
+      if (loginRequest.getPassword().equals(pokerUserRepo.findOne(userId).getPassword())) {
+        return true;
+      }
     }
     return false;
   }
 
-  public ResponseType loginWithIvalidUsernameOrPassword() {
+  public ResponseType loginWithInvalidUsernameOrPassword() {
     return new StatusError("fail", "invalid username or password");
   }
 
