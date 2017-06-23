@@ -13,6 +13,6 @@ public interface PokerUserRepo extends CrudRepository<PokerUser, Long> {
   List<PokerUser> findByUsername(String username);
 
   boolean existsByUsername(String username);
-
+  boolean existsByPassword(String password);
   boolean existsByEmail(String email);
 }

@@ -49,7 +49,7 @@ public class UserController {
       return new ResponseEntity(userService.respondToMissingParameters(bindingResult),
           HttpStatus.BAD_REQUEST);
     } else if (!userService.isLoginValid(loginRequest)) {
-        return new ResponseEntity(userService.loginWithIvalidUsernameOrPassword(), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity(userService.loginWithInvalidUsernameOrPassword(), HttpStatus.UNAUTHORIZED);
     }
     return new ResponseEntity(userService.responseToSuccessfulLogin(loginRequest), HttpStatus.OK);
   }

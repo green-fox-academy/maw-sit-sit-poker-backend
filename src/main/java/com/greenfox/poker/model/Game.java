@@ -25,7 +25,7 @@ public class Game {
   @JsonProperty("max_players")
   private Integer maxPlayers;
 
-  @JsonProperty("gamestateId")
+  @JsonProperty("gamestate_id")
   private long gamestateId;
 
 

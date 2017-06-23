@@ -59,17 +59,15 @@ public class UserService {
     return new StatusError("fail", "username already exists");
   }
 
-  public boolean isLoginValid(LoginRequest loginRequest){
-    List<PokerUser> users = pokerUserRepo.findByUsername(loginRequest.getUsername());
-    int sizeOfValidUsersListFromUserRepo = users.size();
-    String passwordOfUserFromUserRepo = users.get(0).getPassword();
-    if (sizeOfValidUsersListFromUserRepo > 0 && passwordOfUserFromUserRepo.equals(loginRequest.getPassword())){
+  public boolean isLoginValid(LoginRequest loginRequest) {
+    if (pokerUserRepo.existsByUsername(loginRequest.getUsername()) &&
+        pokerUserRepo.existsByPassword(loginRequest.getPassword())) {
       return true;
     }
     return false;
   }
 
-  public ResponseType loginWithIvalidUsernameOrPassword() {
+  public ResponseType loginWithInvalidUsernameOrPassword() {
     return new StatusError("fail", "invalid username or password");
   }
 
@@ -85,7 +83,7 @@ public class UserService {
     return isUsernameOccupied;
   }
 
-  public long getUserIdFromUsername(String username){
+  public long getUserIdFromUsername(String username) {
     return pokerUserRepo.findByUsername(username).get(0).getId();
   }
 
