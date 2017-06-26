@@ -19,7 +19,6 @@ import org.springframework.validation.BindingResult;
 @Component
 public class GameService {
 
-  @Autowired
   GameRepo gameRepo;
 
   @Autowired
@@ -28,11 +27,20 @@ public class GameService {
   @Autowired
   UserService userService;
 
+  @Autowired
+  public GameService(GameRepo gameRepo) {
+    this.gameRepo = gameRepo;
+  }
+
   HashMap<Long, GameState> gameStateMap = new HashMap<>();
 
-  private Game saveGame(Game game) {
+  public Game saveGame(Game game) {
     gameRepo.save(game);
     return game;
+  }
+
+  public void deleteGame(Game game){
+    gameRepo.delete(game);
   }
 
   public List<Game> getAllGamesOrderedByBigBlind() {

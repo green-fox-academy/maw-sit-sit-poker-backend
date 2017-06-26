@@ -80,6 +80,16 @@ public class Game {
     this.maxPlayers = maxPlayers;
   }
 
+  @Override
+  public String toString() {
+    return "Game{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", bigBlind=" + bigBlind +
+            ", maxPlayers=" + maxPlayers +
+            ", gamestateId=" + gamestateId +
+            '}';
+  }
 }
 
 
