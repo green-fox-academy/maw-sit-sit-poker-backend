@@ -40,14 +40,11 @@ public class DeckServiceTest {
 
   @Test
   public void TestIfDeckContainsTheRightAmountOfCards() throws Exception {
-//    createTestDeckAndCardsList();
     assertEquals(52, cardsInTestDeck.size());
-//    setDeckAndCardsListToNull();
   }
 
   @Test
   public void TestIfDeckContainsAllTheCards() throws Exception {
-//    createTestDeckAndCardsList();
     List<String> validatedListOfCards = validCardList;
     List<String> actualListOfCards = new ArrayList<>();
     for (Card card : cardsInTestDeck) {
@@ -59,12 +56,10 @@ public class DeckServiceTest {
     for (int i = 0; i < 52; i++) {
       assertEquals(validatedListOfCards.get(i), actualListOfCards.get(i));
     }
-//    setDeckAndCardsListToNull();
   }
 
   @Test
   public void TestShuffleMethod() throws Exception {
-//    createTestDeckAndCardsList();
     DeckService deckService = new DeckService();
     Deck originalDeck = testDeck;
     deckService.shuffleDeck(testDeck);
@@ -83,15 +78,12 @@ public class DeckServiceTest {
     for (int i = 0; i < 52; i++) {
       assertEquals(originalCardsString.get(i), shuffledCardsString.get(i));
     }
-//    setDeckAndCardsListToNull();
   }
 
   @Test
   public void TestDrawCardMethod() throws Exception {
     DeckService deckService = new DeckService();
-//    createTestDeckAndCardsList();
     Deck originalDeck = testDeck;
     Card drawnCard = deckService.drawCardFromDeck(originalDeck);
-//    setDeckAndCardsListToNull();
   }
 }

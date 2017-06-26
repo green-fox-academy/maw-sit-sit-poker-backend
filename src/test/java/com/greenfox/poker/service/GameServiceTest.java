@@ -62,4 +62,11 @@ public class GameServiceTest {
   public void testGetGameById() throws Exception {
     assertEquals(1, 1);
   }
+
+  @Test
+  public void testGetGames() throws Exception{
+    this.mockMvc.perform(get("/games")
+            .contentType(contentType))
+            .andExpect(jsonPath("$.id").exists());
+  }
 }

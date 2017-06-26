@@ -33,6 +33,7 @@ public class GameController {
   @Autowired
   UserService userService;
 
+  @Autowired
   TokenService tokenService;
 
   @RequestMapping(value = "/games", method = RequestMethod.GET)
