@@ -35,7 +35,7 @@ public class UserControllerTest {
   private MockMvc mockMvc;
   private PokerUser testPokerUser;
   private long testGameId;
-  private String token = createValidTokenForTesting();
+  private String token;
   private Game testGame;
 
   @Autowired
@@ -79,8 +79,8 @@ public class UserControllerTest {
   }
 
   private String createValidTokenForTesting(){
-    return tokenService.generateToken(testPokerUser);
-
+    token = tokenService.generateToken(testPokerUser);
+    return token;
   }
 
   private void createTestGame(){
