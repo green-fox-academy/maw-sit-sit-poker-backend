@@ -61,7 +61,7 @@ public class UserControllerTest {
   }
 
   private void deleteTestPokerUser() {
-    long testUserId = pokerUserRepo.findByUsername("TestJeno").get(0).getId();
+    long testUserId = pokerUserRepo.findByUsername("TestJeno").getId();
     System.out.println(testUserId);
     pokerUserRepo.delete(testUserId);
   }

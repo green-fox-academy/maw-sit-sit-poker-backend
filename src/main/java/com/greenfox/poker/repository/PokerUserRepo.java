@@ -10,7 +10,7 @@ public interface PokerUserRepo extends CrudRepository<PokerUser, Long> {
   List<PokerUser> findAll();
 
   List<PokerUser> findTop10ByOrderByChipsDesc();
-  List<PokerUser> findByUsername(String username);
+  PokerUser findByUsername(String username);
 
   boolean existsByUsername(String username);
   boolean existsByPassword(String password);

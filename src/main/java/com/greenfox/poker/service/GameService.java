@@ -3,19 +3,15 @@ package com.greenfox.poker.service;
 import com.greenfox.poker.model.ChipsToJoinGame;
 import com.greenfox.poker.model.Game;
 import com.greenfox.poker.model.GameState;
-import com.greenfox.poker.model.ResponseType;
 import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.repository.GameRepo;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 
 @Component
 public class GameService {
@@ -26,10 +22,10 @@ public class GameService {
   @Autowired
   ErrorMessageService errorMessageService;
 
-  HashMap<Integer,GameState> gameStateHashMap;
+  HashMap<Integer, GameState> gameStateHashMap;
 
 
-  public Game saveGame(Game game) {
+  private Game saveGame(Game game) {
     gameRepo.save(game);
     return game;
   }
@@ -38,18 +34,15 @@ public class GameService {
     return gameRepo.findAllByOrderByBigBlindDesc();
   }
 
-  public boolean isGameExist(long id) {
-    if (gameRepo.exists(id)) {
-      return true;
-    }
-    return false;
+  private boolean isGameExist(long id) {
+    return (gameRepo.exists(id));
   }
 
-  public Game getGameById(long id) {
+  private Game getGameById(long id) {
     return gameRepo.findOne(id);
   }
 
-  public GameState getGameState(long id) {
+  private GameState getGameState(long id) {
     return gameStateHashMap.get(id);
   }
 

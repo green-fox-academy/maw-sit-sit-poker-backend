@@ -1,4 +1,5 @@
 package com.greenfox.poker.controller;
+
 import com.greenfox.poker.model.LoginRequest;
 import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.model.StatusError;
@@ -35,25 +36,28 @@ public class UserController {
   @Access(restricted = true)
   @RequestMapping(value = "/register", method = RequestMethod.POST)
   public ResponseEntity<?> registerUser(@RequestBody @Valid PokerUser userRegister,
-      BindingResult bindingResult) {
-    if (bindingResult.hasErrors()){
-      return new ResponseEntity(errorMessageService.respondToMissingParameters(bindingResult), HttpStatus.BAD_REQUEST);
+          BindingResult bindingResult) {
+    if (bindingResult.hasErrors()) {
+      return new ResponseEntity(errorMessageService.respondToMissingParameters(bindingResult),
+              HttpStatus.BAD_REQUEST);
     } else if (userService.isEmailOccupied(userRegister)) {
-        return new ResponseEntity(userService.registerWithOccupiedEmail(), HttpStatus.CONFLICT);
-      } else if (userService.isUsernameOccupied(userRegister)) {
-        return new ResponseEntity(userService.registerWithOccupiedUsername(), HttpStatus.CONFLICT);
+      return new ResponseEntity(userService.registerWithOccupiedEmail(), HttpStatus.CONFLICT);
+    } else if (userService.isUsernameOccupied(userRegister)) {
+      return new ResponseEntity(userService.registerWithOccupiedUsername(), HttpStatus.CONFLICT);
     }
-    return new ResponseEntity(userService.responseToSuccessfulRegister(userRegister),HttpStatus.OK);
+    return new ResponseEntity(userService.responseToSuccessfulRegister(userRegister),
+            HttpStatus.OK);
   }
 
   @RequestMapping(value = "/login", method = RequestMethod.POST)
   public ResponseEntity<?> loginUser(@RequestBody @Valid LoginRequest loginRequest,
-      BindingResult bindingResult) {
+          BindingResult bindingResult) {
     if (bindingResult.hasErrors()) {
       return new ResponseEntity(errorMessageService.respondToMissingParameters(bindingResult),
-          HttpStatus.BAD_REQUEST);
+              HttpStatus.BAD_REQUEST);
     } else if (!userService.isLoginValid(loginRequest)) {
-        return new ResponseEntity(userService.loginWithInvalidUsernameOrPassword(), HttpStatus.UNAUTHORIZED);
+      return new ResponseEntity(userService.loginWithInvalidUsernameOrPassword(),
+              HttpStatus.UNAUTHORIZED);
     }
     return new ResponseEntity(userService.responseToSuccessfulLogin(loginRequest), HttpStatus.OK);
   }
@@ -67,7 +71,7 @@ public class UserController {
   }
 
   @GetMapping("/leaderboard")
-  public ResponseEntity<?> getLeaderboard(){
+  public ResponseEntity<?> getLeaderboard() {
     return new ResponseEntity(userService.getTopTenLeaderboard(), HttpStatus.OK);
   }
 }

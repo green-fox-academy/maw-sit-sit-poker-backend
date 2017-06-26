@@ -34,8 +34,7 @@ public class UserService {
   }
 
   public ResponseType responseToSuccessfulLogin(LoginRequest loginRequest) {
-    PokerUser pokerUserFromDatabase = pokerUserRepo.findByUsername(loginRequest.getUsername())
-        .get(0);
+    PokerUser pokerUserFromDatabase = pokerUserRepo.findByUsername(loginRequest.getUsername());
     String token = tokenService.generateToken(pokerUserFromDatabase);
     return new UserTokenResponse("success", token, pokerUserFromDatabase.getId());
   }
@@ -73,7 +72,7 @@ public class UserService {
   }
 
   public long getUserIdFromUsername(String username) {
-    return pokerUserRepo.findByUsername(username).get(0).getId();
+    return pokerUserRepo.findByUsername(username).getId();
   }
 
   public boolean isUserExistsInDB(long id) {

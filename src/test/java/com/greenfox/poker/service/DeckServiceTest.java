@@ -7,6 +7,8 @@ import com.greenfox.poker.model.Deck;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 
@@ -17,7 +19,8 @@ public class DeckServiceTest {
   private List<String> validCardList;
 
 
-  private void createTestDeckAndCardsList() {
+  @Before
+  public void createTestDeckAndCardsList() {
     DeckService deckService = new DeckService();
     testDeck = deckService.getNewDeck();
     cardsInTestDeck = testDeck.getCards();
@@ -29,21 +32,22 @@ public class DeckServiceTest {
             );
   }
 
-  private void setDeckAndCardsListToNull() {
+  @After
+  public void setDeckAndCardsListToNull() {
     testDeck = null;
     cardsInTestDeck = null;
   }
 
   @Test
   public void TestIfDeckContainsTheRightAmountOfCards() throws Exception {
-    createTestDeckAndCardsList();
+//    createTestDeckAndCardsList();
     assertEquals(52, cardsInTestDeck.size());
-    setDeckAndCardsListToNull();
+//    setDeckAndCardsListToNull();
   }
 
   @Test
   public void TestIfDeckContainsAllTheCards() throws Exception {
-    createTestDeckAndCardsList();
+//    createTestDeckAndCardsList();
     List<String> validatedListOfCards = validCardList;
     List<String> actualListOfCards = new ArrayList<>();
     for (Card card : cardsInTestDeck) {
@@ -55,12 +59,12 @@ public class DeckServiceTest {
     for (int i = 0; i < 52; i++) {
       assertEquals(validatedListOfCards.get(i), actualListOfCards.get(i));
     }
-    setDeckAndCardsListToNull();
+//    setDeckAndCardsListToNull();
   }
 
   @Test
   public void TestShuffleMethod() throws Exception {
-    createTestDeckAndCardsList();
+//    createTestDeckAndCardsList();
     DeckService deckService = new DeckService();
     Deck originalDeck = testDeck;
     deckService.shuffleDeck(testDeck);
@@ -79,19 +83,15 @@ public class DeckServiceTest {
     for (int i = 0; i < 52; i++) {
       assertEquals(originalCardsString.get(i), shuffledCardsString.get(i));
     }
-    setDeckAndCardsListToNull();
+//    setDeckAndCardsListToNull();
   }
 
   @Test
   public void TestDrawCardMethod() throws Exception {
     DeckService deckService = new DeckService();
-    createTestDeckAndCardsList();
+//    createTestDeckAndCardsList();
     Deck originalDeck = testDeck;
     Card drawnCard = deckService.drawCardFromDeck(originalDeck);
-    
-
-
-
-    setDeckAndCardsListToNull();
+//    setDeckAndCardsListToNull();
   }
 }
