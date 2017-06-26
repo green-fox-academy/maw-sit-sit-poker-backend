@@ -64,9 +64,13 @@ public class GameServiceTest {
   }
 
   @Test
-  public void testGetGames() throws Exception{
+  public void testGetGames() throws Exception {
     this.mockMvc.perform(get("/games")
             .contentType(contentType))
-            .andExpect(jsonPath("$.id").exists());
+            .andExpect(jsonPath("$.[0].id").exists())
+            .andExpect(jsonPath("$.[0].name").exists())
+            .andExpect(jsonPath("$.[0].big_blind").exists())
+            .andExpect(jsonPath("$.[0].max_players").exists())
+            .andExpect(jsonPath("$.[0].gamestate_id").exists());
   }
 }
