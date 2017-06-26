@@ -10,6 +10,10 @@ package com.greenfox.poker.model;
     public GamePlayer() {
     }
 
+    public GamePlayer(PokerUserDTO pokerUserDTO){
+      this.player = pokerUserDTO;
+    }
+
     public String getLastAction() {
       return lastAction;
     }

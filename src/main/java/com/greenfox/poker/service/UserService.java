@@ -25,6 +25,9 @@ public class UserService {
   DtoService dtoService;
 
   @Autowired
+  PokerUser pokerUser;
+
+  @Autowired
   TokenService tokenService;
 
   public ResponseType responseToSuccessfulRegister(PokerUser pokerUser) {
@@ -90,5 +93,27 @@ public class UserService {
       topTenDTO.add(dtoService.makePokerUserDTO(user.getId()));
     }
     return topTenDTO;
+  }
+
+  public boolean hasPlayerEnoughChipsToPlay(long chipsToSitDownWith, long userId){
+    pokerUser = pokerUserRepo.findOne(userId);
+    if (pokerUser.getChips() < chipsToSitDownWith){
+      return false;
+    }
+    return true;
+  }
+
+  public void deductChipsToSitDownWithFromUser(long chipsToSitDownWith, long userId){
+    pokerUser = pokerUserRepo.findOne(userId);
+    long currentAmountOfChips = pokerUser.getChips();
+    long amountOfChipsAfterDeduction = currentAmountOfChips - chipsToSitDownWith;
+    pokerUser.setChips(amountOfChipsAfterDeduction);
+    pokerUserRepo.save(pokerUser);
+  }
+
+  public PokerUserDTO getDTOWithChipsForGame(long pokerUserId, long chipsToSitDownWith){
+    dtoService.pokerUserDTO = dtoService.makePokerUserDTO(pokerUserId);
+    dtoService.pokerUserDTO.setChips(chipsToSitDownWith);
+    return dtoService.pokerUserDTO;
   }
 }

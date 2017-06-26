@@ -45,8 +45,7 @@ public class UserController {
     } else if (userService.isUsernameOccupied(userRegister)) {
       return new ResponseEntity(userService.registerWithOccupiedUsername(), HttpStatus.CONFLICT);
     }
-    return new ResponseEntity(userService.responseToSuccessfulRegister(userRegister),
-            HttpStatus.OK);
+    return new ResponseEntity(userService.responseToSuccessfulRegister(userRegister), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/login", method = RequestMethod.POST)
