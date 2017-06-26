@@ -17,11 +17,12 @@ public class DeckServiceTest {
   private Deck testDeck;
   private List<Card> cardsInTestDeck;
   private List<String> validCardList;
+  private DeckService deckService;
 
 
   @Before
   public void createTestDeckAndCardsList() {
-    DeckService deckService = new DeckService();
+    deckService = new DeckService();
     testDeck = deckService.getNewDeck();
     cardsInTestDeck = testDeck.getCards();
     validCardList = Arrays
@@ -82,8 +83,10 @@ public class DeckServiceTest {
 
   @Test
   public void TestDrawCardMethod() throws Exception {
-    DeckService deckService = new DeckService();
-    Deck originalDeck = testDeck;
-    Card drawnCard = deckService.drawCardFromDeck(originalDeck);
+    for (int i = 51; i != 0; i--) {
+      String topCardInTheDeck = validCardList.get(i);
+      Card drawnCard = deckService.drawCardFromDeck(testDeck);
+      assertEquals(topCardInTheDeck, drawnCard.toString());
+    }
   }
 }
