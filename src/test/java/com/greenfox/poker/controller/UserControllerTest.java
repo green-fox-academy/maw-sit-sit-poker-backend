@@ -191,17 +191,16 @@ public class UserControllerTest {
         .andExpect(jsonPath("$.message", is("Missing parameter(s): email!")));
   }
 
-//  @Test
-//  public void testRegisterWithOccupiedEmail() throws Exception {
-//    createTestPokerUser();
-//    String register = "{\"username\" : \"TestJeno\", \"password\" : \"jenopass\", \"email\" : \"jeno@kovacs.hu\"}";
-//    this.mockMvc.perform(post("/register")
-//        .content(register)
-//        .contentType(contentType))
-//        .andExpect(status().isConflict())
-//        .andExpect(jsonPath("$.result", is("fail")))
-//        .andExpect(jsonPath("$.message", is("email address already exists")));
-//    deleteTestPokerUser();
-//  }
-
+  @Test
+  public void testRegisterWithOccupiedEmail() throws Exception {
+    createTestPokerUser();
+    String register = "{\"username\" : \"TestJeno\", \"password\" : \"jenopass\", \"email\" : \"jeno@kovacs.hu\"}";
+    this.mockMvc.perform(post("/register")
+        .content(register)
+        .contentType(contentType))
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.result", is("fail")))
+        .andExpect(jsonPath("$.message", is("email address already exists")));
+    deleteTestPokerUser();
+  }
 }
