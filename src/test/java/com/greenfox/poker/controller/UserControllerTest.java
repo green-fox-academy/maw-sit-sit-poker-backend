@@ -3,8 +3,11 @@ package com.greenfox.poker.controller;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 import com.greenfox.poker.PokergameApplication;
+import com.greenfox.poker.model.Game;
 import com.greenfox.poker.model.PokerUser;
+import com.greenfox.poker.repository.GameRepo;
 import com.greenfox.poker.repository.PokerUserRepo;
+import com.greenfox.poker.service.TokenService;
 import com.greenfox.poker.service.UserService;
 import java.nio.charset.Charset;
 import org.junit.Before;
@@ -31,12 +34,21 @@ public class UserControllerTest {
 
   private MockMvc mockMvc;
   private PokerUser testPokerUser;
+  private long testGameId;
+  private String token = createValidTokenForTesting();
+  private Game testGame;
 
   @Autowired
   UserService userService;
 
   @Autowired
   PokerUserRepo pokerUserRepo;
+
+  @Autowired
+  GameRepo gameRepo;
+
+  @Autowired
+  TokenService tokenService;
 
   @Autowired
   private WebApplicationContext webApplicationContext;
@@ -66,6 +78,21 @@ public class UserControllerTest {
     pokerUserRepo.delete(testUserId);
   }
 
+  private String createValidTokenForTesting(){
+    return tokenService.generateToken(testPokerUser);
+
+  }
+
+  private void createTestGame(){
+    testGame = new Game("test", 20, 3);
+    gameRepo.save(testGame);
+    testGameId = gameRepo.findOneByName("test").getId();
+  }
+
+  private void deleteTestGame(){
+    gameRepo.delete(testGameId);
+  }
+
   @Test
   public void testPokerUserLoginWithValidData() throws Exception {
     createTestPokerUser();
@@ -78,6 +105,7 @@ public class UserControllerTest {
         .andExpect(jsonPath("$.token").exists())
         .andExpect(jsonPath("$.id").exists());
     deleteTestPokerUser();
+
   }
 
   @Test
@@ -204,4 +232,17 @@ public class UserControllerTest {
     deleteTestPokerUser();
   }
 
+  public void testJoinWithExistingTable() throws Exception{
+    createTestGame();
+    String join = "{\"chips\" : \"2000\"}";
+    this.mockMvc.perform(post("/game/1/join")
+        .content(join)
+        .header("X-poker-token", token)
+        .contentType(contentType))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.result", is("success")))
+        .andExpect(jsonPath("$.message", is(testPokerUser.getUsername() + " joined game: " + testGame.getName())));
+    deleteTestPokerUser();
+
+  }
 }

@@ -33,6 +33,13 @@ public class Game {
   public Game() {
   }
 
+  public Game(String name, Integer bigBlind, Integer maxPlayers) {
+    this.name = name;
+    this.bigBlind = bigBlind;
+    this.maxPlayers = maxPlayers;
+    this.gamestateId = new GameState().getId();
+  }
+
   public long getGamestateId() {
     return gamestateId;
   }
