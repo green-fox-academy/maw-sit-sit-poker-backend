@@ -28,6 +28,12 @@ public class GameService {
   @Autowired
   DtoService dtoService;
 
+  @Autowired
+  public GameService(GameRepo gameRepo) {
+    this.gameRepo = gameRepo;
+  }
+
+
   HashMap<Long, GameState> gameStateMap = new HashMap<>();
 
   public void createNewGame(){
