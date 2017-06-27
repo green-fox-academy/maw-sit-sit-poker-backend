@@ -11,4 +11,6 @@ public interface GameRepo extends CrudRepository<Game, Long> {
   List<Game> findAll();
   List<Game> findAllByOrderByBigBlindDesc();
   Game findOneByName(String name);
+  List findAllByName(String name);
+  void deleteByName(String name);
 }

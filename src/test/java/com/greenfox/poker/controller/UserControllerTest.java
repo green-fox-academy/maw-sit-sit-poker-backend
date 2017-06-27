@@ -58,7 +58,6 @@ public class UserControllerTest {
     this.mockMvc = webAppContextSetup(webApplicationContext).build();
   }
 
-
   private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
           MediaType.APPLICATION_JSON.getSubtype(),
           Charset.forName("utf8"));
@@ -230,20 +229,5 @@ public class UserControllerTest {
             .andExpect(jsonPath("$.result", is("fail")))
             .andExpect(jsonPath("$.message", is("email address already exists")));
     deleteTestPokerUser();
-  }
-
-  public void testJoinWithExistingTable() throws Exception {
-    createTestGame();
-    String join = "{\"chips\" : \"2000\"}";
-    this.mockMvc.perform(post("/game/1/join")
-            .content(join)
-            .header("X-poker-token", token)
-            .contentType(contentType))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.result", is("success")))
-            .andExpect(jsonPath("$.message",
-                    is(testPokerUser.getUsername() + " joined game: " + testGame.getName())));
-    deleteTestPokerUser();
-
   }
 }

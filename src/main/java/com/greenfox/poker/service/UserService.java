@@ -34,6 +34,7 @@ public class UserService {
   public ResponseType responseToSuccessfulRegister(PokerUser pokerUser) {
     pokerUserRepo.save(pokerUser);
     String token = tokenService.generateToken(pokerUser);
+    dtoService.makePokerUserDTO(pokerUser.getId());
     return new UserTokenResponse("success", token, pokerUser.getId());
   }
 

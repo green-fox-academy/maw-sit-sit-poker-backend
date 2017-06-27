@@ -46,4 +46,8 @@ public class ErrorMessageService {
   public ResponseType joinGameWithNotEnoughChips() {
     return new StatusError("fail", "you dont have enough chips to play with");
   }
+
+  public ResponseType responseToAlreadyExistingGameNameInRepo(){
+    return new StatusError("fail", "This game name already exists");
+  }
 }
