@@ -6,18 +6,18 @@ import com.greenfox.poker.model.Round;
 import com.greenfox.poker.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class Waiting {
+public class Idle {
 
   GameService gameService;
 
   @Autowired
-  public Waiting(GameService gameService) {
+  public Idle(GameService gameService) {
     this.gameService = gameService;
   }
 
   public void checkForPlayersNumberToStartTheGame() {
     for (GameState gameStateValue : gameService.getGameStateMap().values()) {
-      if (gameStateValue.getRound() == Round.WAITING) {
+      if (gameStateValue.getRound() == Round.IDLE) {
         if (gameStateValue.getPlayers().size() >= 2) {
           gameStateValue.setRound(Round.BETTING);
         }
