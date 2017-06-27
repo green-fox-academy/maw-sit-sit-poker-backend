@@ -4,7 +4,6 @@ package com.greenfox.poker.model;
 import java.util.List;
 
 public class GameState {
-
   private long id;
   private List<GamePlayer> players;
   private long actorPlayerId;
@@ -14,6 +13,10 @@ public class GameState {
   private int pot;
 
   public GameState() {
+  }
+
+  public GameState(long id) {
+    this.id = id;
   }
 
   public long getId() {

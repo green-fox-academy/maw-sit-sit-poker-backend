@@ -29,8 +29,14 @@ public class Game {
   @JsonProperty("gamestate_id")
   private long gamestateId;
 
-
   public Game() {
+  }
+
+  public Game(String name, Integer bigBlind, Integer maxPlayers) {
+    this.name = name;
+    this.bigBlind = bigBlind;
+    this.maxPlayers = maxPlayers;
+    this.gamestateId = new GameState().getId();
   }
 
   public long getGamestateId() {
@@ -73,6 +79,16 @@ public class Game {
     this.maxPlayers = maxPlayers;
   }
 
+  @Override
+  public String toString() {
+    return "Game{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", bigBlind=" + bigBlind +
+            ", maxPlayers=" + maxPlayers +
+            ", gamestateId=" + gamestateId +
+            '}';
+  }
 }
 
 

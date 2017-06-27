@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import static org.junit.Assert.assertEquals;
@@ -61,5 +62,27 @@ public class GameServiceTest {
   @Test
   public void testGetGameById() throws Exception {
     assertEquals(1, 1);
+  }
+
+  @Test
+  public void testGetGames() throws Exception {
+    testGame = new Game();
+    testGame.setId(1l);
+    testGame.setName("TestJenoTable");
+    testGame.setBigBlind(500);
+    testGame.setMaxPlayers(5);
+    testGame.setGamestateId(55l);
+    System.out.println(testGame.toString());
+    gameService.saveGame(testGame);
+
+    this.mockMvc.perform(get("/games")
+            .contentType(contentType))
+            .andExpect(jsonPath("$.[0].id").exists())
+            .andExpect(jsonPath("$.[0].name").exists())
+            .andExpect(jsonPath("$.[0].big_blind").exists())
+            .andExpect(jsonPath("$.[0].max_players").exists())
+            .andExpect(jsonPath("$.[0].gamestate_id").exists());
+
+    gameService.deleteGame(testGame);
   }
 }

@@ -5,6 +5,8 @@ import com.greenfox.poker.model.ChipsToJoinGame;
 import com.greenfox.poker.model.Game;
 import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.model.StatusError;
+import com.greenfox.poker.service.DtoService;
+import com.greenfox.poker.service.ErrorMessageService;
 import com.greenfox.poker.service.GameService;
 import com.greenfox.poker.service.TokenService;
 import com.greenfox.poker.service.UserService;
@@ -33,7 +35,14 @@ public class GameController {
   @Autowired
   UserService userService;
 
+  @Autowired
   TokenService tokenService;
+
+  @Autowired
+  ErrorMessageService errorMessageService;
+
+  @Autowired
+  DtoService dtoService;
 
   @RequestMapping(value = "/games", method = RequestMethod.GET)
   public List<Game> getGamesList() {
@@ -53,17 +62,18 @@ public class GameController {
   @PostMapping("/game/{id}/join")
   public ResponseEntity<?> joinTable(@PathVariable("id") long gameId, @RequestBody ChipsToJoinGame chips, @RequestHeader("X-poker-token") String token){
     PokerUser user = tokenService.getPokerUserFromToken(token);
-    if (gameService.isGameExist(gameId)) {
-      Game game = gameService.getGameById(gameId);
-      long gameStateId = game.getGamestateId();
-      if (gameService.isPlayerAlreadyInTheGame(gameId, user.getId())){
-        return new ResponseEntity(new StatusError("fail", user.getUsername() + " has already joined the " + game.getName()), HttpStatus.BAD_REQUEST);
-      }
-      gameService.joinPlayerToGame(userService.getDTOWithChipsForGame(user.getId(), chips.getChips()), gameId);
-      userService.deductChipsToSitDownWithFromUser(chips.getChips(), user.getId());
-      return new ResponseEntity(gameService.getGameState(gameStateId), HttpStatus.OK);
+    if (gameService.isGameExist(gameId)){
+      return new ResponseEntity(errorMessageService.joinWithWrongGameId(), HttpStatus.NOT_FOUND );
     }
-    return new ResponseEntity(new StatusError("fail", "game id doesn't exist"), HttpStatus.NOT_FOUND);
+    if (gameService.isPlayerAlreadyInTheGame(gameId, user.getId())) {
+      return new ResponseEntity(
+          errorMessageService.joinToGameWhereUserPlaysAlready(gameId, user.getId()), HttpStatus.BAD_REQUEST);
+    }
+    if (!dtoService.hasPlayerEnoughChipsToPlay(chips.getChips(), user.getId())) {
+      return new ResponseEntity(errorMessageService.joinGameWithNotEnoughChips(),
+          HttpStatus.BAD_REQUEST);
+    }
+    return new ResponseEntity(gameService.joinPlayerToGame(user.getId(), gameId, chips.getChips()), HttpStatus.OK);
   }
 }
 

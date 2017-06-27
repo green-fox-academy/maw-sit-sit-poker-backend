@@ -1,5 +1,6 @@
 package com.greenfox.poker.service;
 
+import com.greenfox.poker.model.GamePlayer;
 import com.greenfox.poker.model.LoginRequest;
 import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.model.PokerUserDTO;
@@ -9,11 +10,8 @@ import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.repository.PokerUserRepo;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 
 @Component
 public class UserService {
@@ -24,13 +22,11 @@ public class UserService {
   PokerUserRepo pokerUserRepo;
 
   @Autowired
-  DtoService dtoService;
-
-  @Autowired
   PokerUser pokerUser;
 
   @Autowired
   TokenService tokenService;
+
 
   public String getToken() {
     return token;
@@ -39,6 +35,13 @@ public class UserService {
   public void setToken(String token) {
     this.token = token;
   }
+
+  @Autowired
+  DtoService dtoService;
+
+  @Autowired
+  GameService gameService;
+
 
   public ResponseType responseToSuccessfulRegister(PokerUser pokerUser) {
     pokerUserRepo.save(pokerUser);
@@ -49,6 +52,7 @@ public class UserService {
   public ResponseType responseToSuccessfulLogin(LoginRequest loginRequest) {
     PokerUser pokerUserFromDatabase = pokerUserRepo.findByUsername(loginRequest.getUsername());
     this.token = tokenService.generateToken(pokerUserFromDatabase);
+    dtoService.makePokerUserDTO(pokerUserFromDatabase.getId());
     return new UserTokenResponse("success", token, pokerUserFromDatabase.getId());
   }
 
@@ -105,14 +109,6 @@ public class UserService {
     return topTenDTO;
   }
 
-  public boolean hasPlayerEnoughChipsToPlay(long chipsToSitDownWith, long userId){
-    pokerUser = pokerUserRepo.findOne(userId);
-    if (pokerUser.getChips() < chipsToSitDownWith){
-      return false;
-    }
-    return true;
-  }
-
   public void deductChipsToSitDownWithFromUser(long chipsToSitDownWith, long userId){
     pokerUser = pokerUserRepo.findOne(userId);
     long currentAmountOfChips = pokerUser.getChips();
@@ -126,4 +122,8 @@ public class UserService {
     dtoService.pokerUserDTO.setChips(chipsToSitDownWith);
     return dtoService.pokerUserDTO;
   }
-}
+
+  public void updatePokerUserChipsInDBAfterEndOfGame(long chipsDifference, long playerId){
+      pokerUserRepo.findOne(playerId).setChips(chipsDifference);
+    }
+  }

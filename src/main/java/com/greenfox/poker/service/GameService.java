@@ -1,15 +1,15 @@
 package com.greenfox.poker.service;
 
-import com.greenfox.poker.model.ChipsToJoinGame;
 import com.greenfox.poker.model.Game;
 import com.greenfox.poker.model.GamePlayer;
 import com.greenfox.poker.model.GameState;
+import com.greenfox.poker.model.ResponseType;
 import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.model.PokerUserDTO;
 import com.greenfox.poker.repository.GameRepo;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import javax.xml.ws.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,6 @@ import org.springframework.validation.BindingResult;
 @Component
 public class GameService {
 
-  @Autowired
   GameRepo gameRepo;
 
   @Autowired
@@ -28,11 +27,41 @@ public class GameService {
   @Autowired
   UserService userService;
 
+  @Autowired
+  DtoService dtoService;
+
+  @Autowired
+  public GameService(GameRepo gameRepo) {
+    this.gameRepo = gameRepo;
+  }
+
+
   HashMap<Long, GameState> gameStateMap = new HashMap<>();
 
-  private Game saveGame(Game game) {
+
+  public void createNewGame() {
+    Game newGame = new Game();
+    newGame.setGamestateId(newGame.getId());
+    gameRepo.save(newGame);
+    gameStateMap.put(newGame.getId(), new GameState(newGame.getId()));
+  }
+
+  public HashMap<Long, GameState> getGameStateMap() {
+    return gameStateMap;
+  }
+
+  public void setGameStateMap(
+          HashMap<Long, GameState> gameStateMap) {
+    this.gameStateMap = gameStateMap;
+  }
+
+  public Game saveGame(Game game) {
     gameRepo.save(game);
     return game;
+  }
+
+  public void deleteGame(Game game) {
+    gameRepo.delete(game);
   }
 
   public List<Game> getAllGamesOrderedByBigBlind() {
@@ -68,29 +97,26 @@ public class GameService {
     return new ResponseEntity(saveGame(game), HttpStatus.OK);
   }
 
-  public List<PokerUserDTO> getUserDTOListFromGame(Game game){
-    long thisGameStateId = game.getGamestateId();
-    List<PokerUserDTO> currentPlayersInTheGame = new ArrayList<>();
-    List<GamePlayer> gamePlayers = gameStateMap.get(thisGameStateId).getPlayers();
-    for (GamePlayer player : gamePlayers){
-      currentPlayersInTheGame.add(player.getPlayer());
-    }
-    return currentPlayersInTheGame;
-  }
-
-
   public boolean isPlayerAlreadyInTheGame(long gameId, long userId){
-    for (PokerUserDTO userDto : getUserDTOListFromGame(gameRepo.findOne(gameId))){
-      if (userDto.getId() == userId){
+    for (GamePlayer player : gameStateMap.get(gameId).getPlayers()){
+      if (player.getId() == userId){
         return true;
       }
     }
     return false;
   }
 
-  public void joinPlayerToGame(PokerUserDTO pokerUserDTO, long gameId){
-    GamePlayer newPlayer = new GamePlayer(pokerUserDTO);
-    long stateId = gameRepo.findOne(gameId).getGamestateId();
-    getGameState(stateId).getPlayers().add(newPlayer);
+  public ResponseType joinPlayerToGame(long playerId, long gameId, long chipsToPlayWith){
+    PokerUserDTO player = dtoService.userDTOHashMap.get(playerId);
+    String gameName = gameRepo.findOne(gameId).getName();
+    String playerName = dtoService.userDTOHashMap.get(playerId).getUsername();
+    GamePlayer newPlayer = new GamePlayer(chipsToPlayWith, player);
+    dtoService.deductChipsFromAvailableChips(chipsToPlayWith, playerId);
+    getGameState(gameId).getPlayers().add(newPlayer);
+    return new StatusError("success", playerName + " joined game: " + gameName);
+  }
+
+  public int getTableBigBlind (long gameId){
+    return gameRepo.findOne(gameId).getBigBlind();
   }
 }
