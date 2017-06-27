@@ -78,8 +78,9 @@ public class Betting {
     int playersListSize = playerIdNumbersAroundTheTable.size();
     int indexOfCurrentPlayerId = playerIdNumbersAroundTheTable.indexOf(currentPlayerId);
     if (indexOfCurrentPlayerId + 1 == playersListSize) {
-      return playerIdNumbersAroundTheTable.get(0)
-    } return playerIdNumbersAroundTheTable.get(indexOfCurrentPlayerId + 1);
+      return playerIdNumbersAroundTheTable.get(0);
+    }
+    return playerIdNumbersAroundTheTable.get(indexOfCurrentPlayerId + 1);
   }
 
   private void autoBetSmallBlindBigBlind(long gameStateId) {
