@@ -2,7 +2,7 @@ package com.greenfox.poker.model;
 
 
 public enum Round {
-  WAITING("Waiting"), BETTING("Betting"), FLOP("Flop"), TURN("Turn"), RIVER("River"), SHOWDOWN("Showdown");
+  IDLE("idle"), BETTING("Betting"), FLOP("Flop"), TURN("Turn"), RIVER("River"), SHOWDOWN("Showdown");
 
   private final String roundName;
 

@@ -6,7 +6,7 @@ public class GamePlayer extends PokerUserDTO {
   private Action lastAction;
   private int bet;
   private boolean isFolded;
-  private boolean isActive;
+  private boolean isWaiting;
 
   public GamePlayer() {
   }
@@ -43,11 +43,11 @@ public class GamePlayer extends PokerUserDTO {
     isFolded = folded;
   }
 
-  public boolean isActive() {
-    return isActive;
+  public boolean isWaiting() {
+    return isWaiting;
   }
 
-  public void setActive(boolean active) {
-    isActive = active;
+  public void setWaiting(boolean waiting) {
+    isWaiting = waiting;
   }
 }
