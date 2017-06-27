@@ -18,6 +18,8 @@ import org.springframework.validation.FieldError;
 @Component
 public class UserService {
 
+  String token;
+
   @Autowired
   PokerUserRepo pokerUserRepo;
 
@@ -30,15 +32,23 @@ public class UserService {
   @Autowired
   TokenService tokenService;
 
+  public String getToken() {
+    return token;
+  }
+
+  public void setToken(String token) {
+    this.token = token;
+  }
+
   public ResponseType responseToSuccessfulRegister(PokerUser pokerUser) {
     pokerUserRepo.save(pokerUser);
-    String token = tokenService.generateToken(pokerUser);
+    this.token = tokenService.generateToken(pokerUser);
     return new UserTokenResponse("success", token, pokerUser.getId());
   }
 
   public ResponseType responseToSuccessfulLogin(LoginRequest loginRequest) {
     PokerUser pokerUserFromDatabase = pokerUserRepo.findByUsername(loginRequest.getUsername());
-    String token = tokenService.generateToken(pokerUserFromDatabase);
+    this.token = tokenService.generateToken(pokerUserFromDatabase);
     return new UserTokenResponse("success", token, pokerUserFromDatabase.getId());
   }
 
