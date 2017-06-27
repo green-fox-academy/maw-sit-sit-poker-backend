@@ -15,7 +15,7 @@ public class Waiting {
     this.gameService = gameService;
   }
 
-  public void checkForPlayersNumberToStartTheGame(GameState gameState) {
+  public void checkForPlayersNumberToStartTheGame() {
     for (GameState gameStateValue : gameService.getGameStateMap().values()) {
       if (gameStateValue.getRound() == Round.WAITING) {
         if (gameStateValue.getPlayers().size() >= 2) {
