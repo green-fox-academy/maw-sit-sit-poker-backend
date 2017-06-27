@@ -36,11 +36,21 @@ public class GameService {
 
   HashMap<Long, GameState> gameStateMap = new HashMap<>();
 
-  public void createNewGame(){
-    Game newGame  = new Game();
+
+  public void createNewGame() {
+    Game newGame = new Game();
     newGame.setGamestateId(newGame.getId());
     gameRepo.save(newGame);
     gameStateMap.put(newGame.getId(), new GameState(newGame.getId()));
+  }
+
+  public HashMap<Long, GameState> getGameStateMap() {
+    return gameStateMap;
+  }
+
+  public void setGameStateMap(
+          HashMap<Long, GameState> gameStateMap) {
+    this.gameStateMap = gameStateMap;
   }
 
   public Game saveGame(Game game) {
@@ -48,7 +58,7 @@ public class GameService {
     return game;
   }
 
-  public void deleteGame(Game game){
+  public void deleteGame(Game game) {
     gameRepo.delete(game);
   }
 
