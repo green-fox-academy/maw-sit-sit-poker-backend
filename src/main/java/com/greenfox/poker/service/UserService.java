@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserService {
 
+  String token;
+
   @Autowired
   PokerUserRepo pokerUserRepo;
 
@@ -25,21 +27,31 @@ public class UserService {
   @Autowired
   TokenService tokenService;
 
+
+  public String getToken() {
+    return token;
+  }
+
+  public void setToken(String token) {
+    this.token = token;
+  }
+
   @Autowired
   DtoService dtoService;
 
   @Autowired
   GameService gameService;
 
+
   public ResponseType responseToSuccessfulRegister(PokerUser pokerUser) {
     pokerUserRepo.save(pokerUser);
-    String token = tokenService.generateToken(pokerUser);
+    this.token = tokenService.generateToken(pokerUser);
     return new UserTokenResponse("success", token, pokerUser.getId());
   }
 
   public ResponseType responseToSuccessfulLogin(LoginRequest loginRequest) {
     PokerUser pokerUserFromDatabase = pokerUserRepo.findByUsername(loginRequest.getUsername());
-    String token = tokenService.generateToken(pokerUserFromDatabase);
+    this.token = tokenService.generateToken(pokerUserFromDatabase);
     dtoService.makePokerUserDTO(pokerUserFromDatabase.getId());
     return new UserTokenResponse("success", token, pokerUserFromDatabase.getId());
   }
