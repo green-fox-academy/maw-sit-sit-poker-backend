@@ -29,7 +29,6 @@ public class Game {
   @JsonProperty("gamestate_id")
   private long gamestateId;
 
-
   public Game() {
   }
 
