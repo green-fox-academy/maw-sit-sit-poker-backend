@@ -18,6 +18,19 @@ public class DtoService {
   @Autowired
   PokerUserRepo pokerUserRepo;
 
+  public boolean hasPlayerEnoughChipsToPlay(long chipsToPlayWith, long userId){
+    pokerUserDTO = userDTOHashMap.get(userId);
+    if (pokerUserDTO.getChips() < chipsToPlayWith){
+      return false;
+    }
+    return true;
+  }
+
+  public void deductChipsFromAvailableChips(long chipsToPlayWith, long playerId){
+    long chipsAvailableToDTOAfterJoiningTable = userDTOHashMap.get(playerId).getChips() - chipsToPlayWith;
+    userDTOHashMap.get(playerId).setChips(chipsAvailableToDTOAfterJoiningTable);
+  }
+
   public PokerUserDTO makePokerUserDTO(long id) {
     PokerUser pokerUser = pokerUserRepo.findOne(id);
     pokerUserDTO.setId(id);

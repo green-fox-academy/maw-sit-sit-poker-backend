@@ -1,5 +1,6 @@
 package com.greenfox.poker.service;
 
+import com.greenfox.poker.model.GamePlayer;
 import com.greenfox.poker.model.LoginRequest;
 import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.model.PokerUserDTO;
@@ -26,6 +27,9 @@ public class UserService {
 
   @Autowired
   DtoService dtoService;
+
+  @Autowired
+  GameService gameService;
 
   public ResponseType responseToSuccessfulRegister(PokerUser pokerUser) {
     pokerUserRepo.save(pokerUser);
@@ -93,14 +97,6 @@ public class UserService {
     return topTenDTO;
   }
 
-  public boolean hasPlayerEnoughChipsToPlay(long chipsToPlayWith, long userId){
-    pokerUser = pokerUserRepo.findOne(userId);
-    if (pokerUser.getChips() < chipsToPlayWith){
-      return false;
-    }
-    return true;
-  }
-
   public void deductChipsToSitDownWithFromUser(long chipsToSitDownWith, long userId){
     pokerUser = pokerUserRepo.findOne(userId);
     long currentAmountOfChips = pokerUser.getChips();
@@ -114,4 +110,8 @@ public class UserService {
     dtoService.pokerUserDTO.setChips(chipsToSitDownWith);
     return dtoService.pokerUserDTO;
   }
-}
+
+  public void updatePokerUserChipsInDBAfterEndOfGame(long chipsDifference, long playerId){
+      pokerUserRepo.findOne(playerId).setChips(chipsDifference);
+    }
+  }
