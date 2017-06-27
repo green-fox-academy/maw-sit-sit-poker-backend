@@ -121,4 +121,8 @@ public class GameService {
     getGameState(stateId).getPlayers().add(newPlayer);
     return new ResponseEntity(new StatusError("success", playerName + " joined game: " + gameName), HttpStatus.NOT_FOUND);
   }
+
+  public int getTableBigBlind (long gameId){
+    return gameRepo.findOne(gameId).getBigBlind();
+  }
 }
