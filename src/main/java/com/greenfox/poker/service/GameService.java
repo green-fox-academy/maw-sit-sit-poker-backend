@@ -34,12 +34,21 @@ public class GameService {
 
   HashMap<Long, GameState> gameStateMap = new HashMap<>();
 
+  public HashMap<Long, GameState> getGameStateMap() {
+    return gameStateMap;
+  }
+
+  public void setGameStateMap(
+          HashMap<Long, GameState> gameStateMap) {
+    this.gameStateMap = gameStateMap;
+  }
+
   public Game saveGame(Game game) {
     gameRepo.save(game);
     return game;
   }
 
-  public void deleteGame(Game game){
+  public void deleteGame(Game game) {
     gameRepo.delete(game);
   }
 
@@ -76,27 +85,27 @@ public class GameService {
     return new ResponseEntity(saveGame(game), HttpStatus.OK);
   }
 
-  public List<PokerUserDTO> getUserDTOListFromGame(Game game){
+  public List<PokerUserDTO> getUserDTOListFromGame(Game game) {
     long thisGameStateId = game.getGamestateId();
     List<PokerUserDTO> currentPlayersInTheGame = new ArrayList<>();
     List<GamePlayer> gamePlayers = gameStateMap.get(thisGameStateId).getPlayers();
-    for (GamePlayer player : gamePlayers){
+    for (GamePlayer player : gamePlayers) {
       currentPlayersInTheGame.add(player.getPlayer());
     }
     return currentPlayersInTheGame;
   }
 
 
-  public boolean isPlayerAlreadyInTheGame(long gameId, long userId){
-    for (PokerUserDTO userDto : getUserDTOListFromGame(gameRepo.findOne(gameId))){
-      if (userDto.getId() == userId){
+  public boolean isPlayerAlreadyInTheGame(long gameId, long userId) {
+    for (PokerUserDTO userDto : getUserDTOListFromGame(gameRepo.findOne(gameId))) {
+      if (userDto.getId() == userId) {
         return true;
       }
     }
     return false;
   }
 
-  public void joinPlayerToGame(PokerUserDTO pokerUserDTO, long gameId){
+  public void joinPlayerToGame(PokerUserDTO pokerUserDTO, long gameId) {
     GamePlayer newPlayer = new GamePlayer(pokerUserDTO);
     long stateId = gameRepo.findOne(gameId).getGamestateId();
     getGameState(stateId).getPlayers().add(newPlayer);
