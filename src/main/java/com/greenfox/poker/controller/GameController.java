@@ -54,17 +54,7 @@ public class GameController {
   @PostMapping("/game/{id}/join")
   public ResponseEntity<?> joinTable(@PathVariable("id") long gameId, @RequestBody ChipsToJoinGame chips, @RequestHeader("X-poker-token") String token){
     PokerUser user = tokenService.getPokerUserFromToken(token);
-    if (gameService.isGameExist(gameId)) {
-      Game game = gameService.getGameById(gameId);
-      long gameStateId = game.getGamestateId();
-      if (gameService.isPlayerAlreadyInTheGame(gameId, user.getId())){
-        return new ResponseEntity(new StatusError("fail", user.getUsername() + " has already joined the " + game.getName()), HttpStatus.BAD_REQUEST);
-      }
-      gameService.joinPlayerToGame(userService.getDTOWithChipsForGame(user.getId(), chips.getChips()), gameId);
-      userService.deductChipsToSitDownWithFromUser(chips.getChips(), user.getId());
-      return new ResponseEntity(gameService.getGameState(gameStateId), HttpStatus.OK);
-    }
-    return new ResponseEntity(new StatusError("fail", "game id doesn't exist"), HttpStatus.NOT_FOUND);
+    return gameService.joinPlayerToGame(user.getId(), gameId, chips.getChips());
   }
 }
 

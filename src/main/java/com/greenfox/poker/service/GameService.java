@@ -1,13 +1,11 @@
 package com.greenfox.poker.service;
 
-import com.greenfox.poker.model.ChipsToJoinGame;
 import com.greenfox.poker.model.Game;
 import com.greenfox.poker.model.GamePlayer;
 import com.greenfox.poker.model.GameState;
 import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.model.PokerUserDTO;
 import com.greenfox.poker.repository.GameRepo;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +26,16 @@ public class GameService {
   UserService userService;
 
   @Autowired
-  public GameService(GameRepo gameRepo) {
-    this.gameRepo = gameRepo;
-  }
+  DtoService dtoService;
 
   HashMap<Long, GameState> gameStateMap = new HashMap<>();
+
+  public void createNewGame(){
+    Game newGame  = new Game();
+    newGame.setGamestateId(newGame.getId());
+    gameRepo.save(newGame);
+    gameStateMap.put(newGame.getId(), new GameState(newGame.getId()));
+  }
 
   public Game saveGame(Game game) {
     gameRepo.save(game);
@@ -76,29 +79,30 @@ public class GameService {
     return new ResponseEntity(saveGame(game), HttpStatus.OK);
   }
 
-  public List<PokerUserDTO> getUserDTOListFromGame(Game game){
-    long thisGameStateId = game.getGamestateId();
-    List<PokerUserDTO> currentPlayersInTheGame = new ArrayList<>();
-    List<GamePlayer> gamePlayers = gameStateMap.get(thisGameStateId).getPlayers();
-    for (GamePlayer player : gamePlayers){
-      currentPlayersInTheGame.add(player.getPlayer());
-    }
-    return currentPlayersInTheGame;
-  }
-
-
   public boolean isPlayerAlreadyInTheGame(long gameId, long userId){
-    for (PokerUserDTO userDto : getUserDTOListFromGame(gameRepo.findOne(gameId))){
-      if (userDto.getId() == userId){
+    for (GamePlayer player : gameStateMap.get(gameId).getPlayers()){
+      if (player.getId() == userId){
         return true;
       }
     }
     return false;
   }
 
-  public void joinPlayerToGame(PokerUserDTO pokerUserDTO, long gameId){
-    GamePlayer newPlayer = new GamePlayer(pokerUserDTO);
+  public ResponseEntity<?> joinPlayerToGame(long playerId, long gameId, long chipsToPlayWith){
+    PokerUserDTO player = dtoService.userDTOHashMap.get(playerId);
+    String gameName = gameRepo.findOne(gameId).getName();
+    String playerName = dtoService.userDTOHashMap.get(playerId).getUsername();
+    if (!isGameExist(gameId)) {
+      return new ResponseEntity(new StatusError("fail", "game id doesn't exist"), HttpStatus.BAD_REQUEST);
+    }
+    if (isPlayerAlreadyInTheGame(gameId, player.getId())){
+      return new ResponseEntity(new StatusError("fail",  player.getUsername() + " already joined game: " + playerName), HttpStatus.OK);
+    }
+    GamePlayer newPlayer = new GamePlayer(chipsToPlayWith, player);
+    long chipsAvailableToDTOAfterJoiningTable = player.getChips() - chipsToPlayWith;
+    dtoService.userDTOHashMap.get(playerId).setChips(chipsAvailableToDTOAfterJoiningTable);
     long stateId = gameRepo.findOne(gameId).getGamestateId();
     getGameState(stateId).getPlayers().add(newPlayer);
+    return new ResponseEntity(new StatusError("success", playerName + " joined game: " + gameName), HttpStatus.NOT_FOUND);
   }
 }
