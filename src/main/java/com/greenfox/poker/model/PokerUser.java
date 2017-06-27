@@ -29,6 +29,7 @@ public class PokerUser {
 
   private String avatar;
   private long chips;
+  private String token;
 
   public PokerUser() {
     this.chips = 10000;
@@ -88,5 +89,13 @@ public class PokerUser {
 
   public void setChips(long chips) {
     this.chips = chips;
+  }
+
+  public String getToken() {
+    return token;
+  }
+
+  public void setToken(String token) {
+    this.token = token;
   }
 }

@@ -16,8 +16,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserService {
 
-  String token;
-
   @Autowired
   PokerUserRepo pokerUserRepo;
 
@@ -28,14 +26,6 @@ public class UserService {
   TokenService tokenService;
 
 
-  public String getToken() {
-    return token;
-  }
-
-  public void setToken(String token) {
-    this.token = token;
-  }
-
   @Autowired
   DtoService dtoService;
 
@@ -44,14 +34,17 @@ public class UserService {
 
 
   public ResponseType responseToSuccessfulRegister(PokerUser pokerUser) {
+    String token = tokenService.generateToken(pokerUser);
+    pokerUser.setToken(token);
     pokerUserRepo.save(pokerUser);
-    this.token = tokenService.generateToken(pokerUser);
     return new UserTokenResponse("success", token, pokerUser.getId());
   }
 
   public ResponseType responseToSuccessfulLogin(LoginRequest loginRequest) {
     PokerUser pokerUserFromDatabase = pokerUserRepo.findByUsername(loginRequest.getUsername());
-    this.token = tokenService.generateToken(pokerUserFromDatabase);
+    String token = tokenService.generateToken(pokerUserFromDatabase);
+    pokerUserFromDatabase.setToken(token);
+    pokerUserRepo.save(pokerUserFromDatabase);
     dtoService.makePokerUserDTO(pokerUserFromDatabase.getId());
     return new UserTokenResponse("success", token, pokerUserFromDatabase.getId());
   }
@@ -109,7 +102,7 @@ public class UserService {
     return topTenDTO;
   }
 
-  public void deductChipsToSitDownWithFromUser(long chipsToSitDownWith, long userId){
+  public void deductChipsToSitDownWithFromUser(long chipsToSitDownWith, long userId) {
     pokerUser = pokerUserRepo.findOne(userId);
     long currentAmountOfChips = pokerUser.getChips();
     long amountOfChipsAfterDeduction = currentAmountOfChips - chipsToSitDownWith;
@@ -117,13 +110,13 @@ public class UserService {
     pokerUserRepo.save(pokerUser);
   }
 
-  public PokerUserDTO getDTOWithChipsForGame(long pokerUserId, long chipsToSitDownWith){
+  public PokerUserDTO getDTOWithChipsForGame(long pokerUserId, long chipsToSitDownWith) {
     dtoService.pokerUserDTO = dtoService.makePokerUserDTO(pokerUserId);
     dtoService.pokerUserDTO.setChips(chipsToSitDownWith);
     return dtoService.pokerUserDTO;
   }
 
-  public void updatePokerUserChipsInDBAfterEndOfGame(long chipsDifference, long playerId){
-      pokerUserRepo.findOne(playerId).setChips(chipsDifference);
-    }
+  public void updatePokerUserChipsInDBAfterEndOfGame(long chipsDifference, long playerId) {
+    pokerUserRepo.findOne(playerId).setChips(chipsDifference);
   }
+}
