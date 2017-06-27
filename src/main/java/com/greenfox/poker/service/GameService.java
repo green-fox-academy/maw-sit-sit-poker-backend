@@ -115,4 +115,8 @@ public class GameService {
     getGameState(gameId).getPlayers().add(newPlayer);
     return new StatusError("success", playerName + " joined game: " + gameName);
   }
+
+  public int getTableBigBlind (long gameId){
+    return gameRepo.findOne(gameId).getBigBlind();
+  }
 }

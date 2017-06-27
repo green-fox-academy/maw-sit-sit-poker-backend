@@ -3,7 +3,7 @@ package com.greenfox.poker.model;
 
 public class GamePlayer extends PokerUserDTO {
 
-  private String lastAction;
+  private Action lastAction;
   private int bet;
   private boolean isFolded;
   private boolean isActive;
@@ -19,11 +19,11 @@ public class GamePlayer extends PokerUserDTO {
     this.bet = 0;
   }
 
-  public String getLastAction() {
+  public Action getLastAction() {
     return lastAction;
   }
 
-  public void setLastAction(String lastAction) {
+  public void setLastAction(Action lastAction) {
     this.lastAction = lastAction;
   }
 

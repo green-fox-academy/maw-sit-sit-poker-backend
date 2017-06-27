@@ -1,8 +1,11 @@
 package com.greenfox.poker.gamestates;
 
 
+import com.greenfox.poker.model.Action;
+import com.greenfox.poker.model.Game;
 import com.greenfox.poker.model.GamePlayer;
 import com.greenfox.poker.model.GameState;
+import com.greenfox.poker.model.Round;
 import com.greenfox.poker.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,36 +18,51 @@ public class Betting {
     this.gameService = gameService;
   }
 
-  private void gameStateBettingInit(GameState gameState) {
-    removeGamePlayersFromTableWithLessChipsThankBigBlind(gameState);
-    checkIfThereAreAtLeastTwoPlayersToPlay(gameState);
-    setAllPlayerAtTheTableToActive(gameState);
-    assignDealer(gameState);
-    autoBetSmallBlindBigBlind();
-    drawPlayersCards();
-
-
-  }
-
-  private void removeGamePlayersFromTableWithLessChipsThankBigBlind(GameState gameState) {
-    for (GamePlayer gamePlayer : gameState.getPlayers()) {
-////////////////////////////
+  public void gameStateBettingInit(long gameStateId) {
+    removeGamePlayersFromTableWithLessChipsThankBigBlind(gameStateId);
+    checkIfThereAreAtLeastTwoPlayersToPlay(gameStateId);
+    if (gameService.getGameStateMap().get(gameStateId).getRound() == Round.BETTING) {
+      setAllPlayerAtTheTableToActive(gameStateId);
+      assignDealer(gameStateId);
+      autoBetSmallBlindBigBlind(gameStateId);
+      drawPlayersCards(gameStateId);
     }
   }
 
-  private void checkIfThereAreAtLeastTwoPlayersToPlay(GameState gameState) {
+  private void removeGamePlayersFromTableWithLessChipsThankBigBlind(long gameStateId) {
+    GameState gameState = gameService.getGameStateMap().get(gameStateId);
+    Integer tableBigBlind = gameService.getTableBigBlind(gameStateId);
+    for (GamePlayer gamePlayer : gameState.getPlayers()) {
+      if (gamePlayer.getChips() < tableBigBlind){
+        gameService.getGameStateMap().remove(gamePlayer);
+      }
+    }
   }
 
-  private void setAllPlayerAtTheTableToActive(GameState gameState) {
+  private void checkIfThereAreAtLeastTwoPlayersToPlay(long gameStateId) {
+    GameState gameState = gameService.getGameStateMap().get(gameStateId);
+    if (gameState.getPlayers().size() < 2){
+      gameState.setRound(Round.WAITING);
+    }
   }
 
-  private void assignDealer(GameState gameState) {
+  private void setAllPlayerAtTheTableToActive(long gameStateId) {
+    GameState gameState = gameService.getGameStateMap().get(gameStateId);
+    for (GamePlayer gamePlayer : gameState.getPlayers()) {
+      gamePlayer.setActive(true);
+      gamePlayer.setFolded(false);
+      gamePlayer.setLastAction(Action.NONE);
+    }
   }
 
-  private void autoBetSmallBlindBigBlind() {
+  private void assignDealer(long gameStateId) {
+
   }
 
-  private void drawPlayersCards() {
+  private void autoBetSmallBlindBigBlind(long gameStateId) {
+  }
+
+  private void drawPlayersCards(long gameStateId) {
   }
 
 }
