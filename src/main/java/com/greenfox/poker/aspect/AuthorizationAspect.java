@@ -2,7 +2,7 @@ package com.greenfox.poker.aspect;
 
 
 import com.greenfox.poker.model.StatusError;
-import com.greenfox.poker.service.UserService;
+import com.greenfox.poker.repository.PokerUserRepo;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -20,17 +20,17 @@ import org.springframework.web.bind.annotation.RequestHeader;
 public class AuthorizationAspect {
 
   @Autowired
-  UserService userService;
+  PokerUserRepo pokerUserRepo;
 
-  @Around("execution(* com.greenfox.poker.controller.UserController.*(..))" +
+  @Around("execution(* com.greenfox.poker.controller.*.*(..))" +
       "&& !@annotation(com.greenfox.poker.service.Accessible)")
   public Object accessAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
 
     Object[] argsList = joinPoint.getArgs();
     MethodSignature signatures = (MethodSignature) joinPoint.getSignature();
     Method method = signatures.getMethod();
-    String token = accessToken(argsList, method);
-    if (token.equals(userService.getToken())) {
+    String tokenFromHeader = accessToken(argsList, method);
+    if (pokerUserRepo.existsByToken(tokenFromHeader)) {
       return joinPoint.proceed();
     }
     return new ResponseEntity<>(new StatusError("fail",
@@ -38,17 +38,17 @@ public class AuthorizationAspect {
   }
 
   private String accessToken(Object[] argsList, Method method) {
-    String token = null;
+    String tokenFromHeader = null;
     Annotation[][] parameterAnnotations = method.getParameterAnnotations();
     for (int argIndex = 0; argIndex < argsList.length; argIndex++) {
       for (Annotation annotation : parameterAnnotations[argIndex]) {
         if (annotation instanceof RequestHeader) {
           RequestHeader requestHeader = (RequestHeader) annotation;
-          token = (String) argsList[argIndex];
+          tokenFromHeader = (String) argsList[argIndex];
           System.out.println(requestHeader.value() + " = " + argsList[argIndex]);
         }
       }
     }
-    return token;
+    return tokenFromHeader;
   }
 }
