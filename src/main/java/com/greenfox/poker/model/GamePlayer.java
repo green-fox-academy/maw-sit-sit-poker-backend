@@ -1,17 +1,19 @@
 package com.greenfox.poker.model;
 
 
-  public class GamePlayer {
+  public class GamePlayer extends PokerUserDTO {
   private String lastAction;
-  private PokerUserDTO player;
   private int bet;
   private boolean isFolded;
 
     public GamePlayer() {
     }
-
-    public GamePlayer(PokerUserDTO pokerUserDTO){
-      this.player = pokerUserDTO;
+    public GamePlayer(long chips, PokerUserDTO pokerUserDTO){
+      this.setId(pokerUserDTO.getId());
+      this.setUsername(pokerUserDTO.getUsername());
+      this.setAvatar(pokerUserDTO.getAvatar());
+      this.setChips(chips);
+      this.bet = 0;
     }
 
     public String getLastAction() {
@@ -20,14 +22,6 @@ package com.greenfox.poker.model;
 
     public void setLastAction(String lastAction) {
       this.lastAction = lastAction;
-    }
-
-    public PokerUserDTO getPlayer() {
-      return player;
-    }
-
-    public void setPlayer(PokerUserDTO player) {
-      this.player = player;
     }
 
     public int getBet() {

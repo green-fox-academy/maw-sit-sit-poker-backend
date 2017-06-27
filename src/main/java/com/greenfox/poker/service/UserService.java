@@ -9,11 +9,8 @@ import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.repository.PokerUserRepo;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 
 @Component
 public class UserService {
@@ -22,13 +19,13 @@ public class UserService {
   PokerUserRepo pokerUserRepo;
 
   @Autowired
-  DtoService dtoService;
-
-  @Autowired
   PokerUser pokerUser;
 
   @Autowired
   TokenService tokenService;
+
+  @Autowired
+  DtoService dtoService;
 
   public ResponseType responseToSuccessfulRegister(PokerUser pokerUser) {
     pokerUserRepo.save(pokerUser);
@@ -39,6 +36,7 @@ public class UserService {
   public ResponseType responseToSuccessfulLogin(LoginRequest loginRequest) {
     PokerUser pokerUserFromDatabase = pokerUserRepo.findByUsername(loginRequest.getUsername());
     String token = tokenService.generateToken(pokerUserFromDatabase);
+    dtoService.makePokerUserDTO(pokerUserFromDatabase.getId());
     return new UserTokenResponse("success", token, pokerUserFromDatabase.getId());
   }
 
@@ -95,9 +93,9 @@ public class UserService {
     return topTenDTO;
   }
 
-  public boolean hasPlayerEnoughChipsToPlay(long chipsToSitDownWith, long userId){
+  public boolean hasPlayerEnoughChipsToPlay(long chipsToPlayWith, long userId){
     pokerUser = pokerUserRepo.findOne(userId);
-    if (pokerUser.getChips() < chipsToSitDownWith){
+    if (pokerUser.getChips() < chipsToPlayWith){
       return false;
     }
     return true;

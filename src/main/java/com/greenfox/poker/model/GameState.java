@@ -2,12 +2,8 @@ package com.greenfox.poker.model;
 
 
 import java.util.List;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 
 public class GameState {
-
-  @GeneratedValue(strategy= GenerationType.IDENTITY)
   private long id;
   private List<GamePlayer> players;
   private long actorPlayerId;
@@ -17,6 +13,10 @@ public class GameState {
   private int pot;
 
   public GameState() {
+  }
+
+  public GameState(long id) {
+    this.id = id;
   }
 
   public long getId() {
