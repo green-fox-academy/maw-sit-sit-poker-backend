@@ -3,13 +3,14 @@ package com.greenfox.poker.service;
 import com.greenfox.poker.model.Game;
 import com.greenfox.poker.model.GamePlayer;
 import com.greenfox.poker.model.GameState;
+import com.greenfox.poker.model.GamesList;
 import com.greenfox.poker.model.ResponseType;
 import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.model.PokerUserDTO;
 import com.greenfox.poker.repository.GameRepo;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import javax.xml.ws.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,8 +65,10 @@ public class GameService {
     gameRepo.delete(game);
   }
 
-  public List<Game> getAllGamesOrderedByBigBlind() {
-    return gameRepo.findAllByOrderByBigBlindDesc();
+  public GamesList getAllGamesOrderedByBigBlind() {
+    GamesList gamesList = new GamesList();
+    gamesList.setGames(gameRepo.findAllByOrderByBigBlindDesc());
+    return gamesList;
   }
 
   public boolean isGameExist(long id) {

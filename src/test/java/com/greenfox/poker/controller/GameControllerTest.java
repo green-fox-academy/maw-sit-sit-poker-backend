@@ -78,12 +78,8 @@ public class GameControllerTest {
 
     this.mockMvc.perform(get("/games")
             .contentType(contentType))
-            .andExpect(jsonPath("$.[0].id").exists())
-            .andExpect(jsonPath("$.[0].name").exists())
-            .andExpect(jsonPath("$.[0].big_blind").exists())
-            .andExpect(jsonPath("$.[0].max_players").exists())
-            .andExpect(jsonPath("$.[0].gamestate_id").exists());
-
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.games").exists());
     gameService.deleteGame(testGame);
   }
 }
