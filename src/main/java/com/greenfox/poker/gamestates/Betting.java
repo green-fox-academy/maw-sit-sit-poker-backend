@@ -29,7 +29,7 @@ public class Betting {
     this.gameService = gameService;
   }
 
-  public void gameStateBettingInit(long gameStateId) {
+  public void initForBettingGameState(long gameStateId) {
     removeGamePlayersFromTableWithLessChipsThankBigBlind(gameStateId);
     checkIfThereAreAtLeastTwoPlayersToPlay(gameStateId);
     if (gameService.getGameStateMap().get(gameStateId).getRound() == Round.BETTING) {
@@ -39,7 +39,7 @@ public class Betting {
       getNewDeckAndSetItInGameState(gameStateId);
       shuffleDeck(gameStateId);
       initGamePlayerHandForEachGamePlayer(gameStateId);
-      drawFistTwoCardsToEachPlayer(gameStateId);
+      drawTwoCardsToEachPlayer(gameStateId);
     }
   }
 
@@ -136,7 +136,7 @@ public class Betting {
     }
   }
 
-  private void drawFistTwoCardsToEachPlayer(long gameStateId) {
+  private void drawTwoCardsToEachPlayer(long gameStateId) {
     gameState = gameService.getGameStateMap().get(gameStateId);
     int totalCardsToDeal = playerIdNumbersAroundTheTable.size() * 2;
     Deck deckToDealFrom = gameState.getDeckInGameState();
