@@ -3,6 +3,7 @@ package com.greenfox.poker.controller;
 
 import com.greenfox.poker.model.ChipsToJoinGame;
 import com.greenfox.poker.model.Game;
+import com.greenfox.poker.model.GamesList;
 import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.service.DtoService;
@@ -45,7 +46,7 @@ public class GameController {
   DtoService dtoService;
 
   @RequestMapping(value = "/games", method = RequestMethod.GET)
-  public List<Game> getGamesList() {
+  public GamesList getGamesList() {
     return gameService.getAllGamesOrderedByBigBlind();
   }
 
