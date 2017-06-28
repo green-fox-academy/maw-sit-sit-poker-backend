@@ -1,6 +1,7 @@
 package com.greenfox.poker.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 
 public class GameState {
@@ -12,11 +13,25 @@ public class GameState {
   private List<Card> cardsOnTable;
   private int pot;
 
+  @JsonIgnore
+  private Deck deckInGameState;
+
+  @JsonIgnore
+  private List<GamePlayerHand> gamePlayersHand;
+
   public GameState() {
   }
 
   public GameState(long id) {
     this.id = id;
+  }
+
+  public Deck getDeckInGameState() {
+    return deckInGameState;
+  }
+
+  public void setDeckInGameState(Deck deckInGameState) {
+    this.deckInGameState = deckInGameState;
   }
 
   public long getId() {

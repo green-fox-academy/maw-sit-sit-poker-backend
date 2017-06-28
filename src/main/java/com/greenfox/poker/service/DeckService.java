@@ -7,13 +7,34 @@ import com.greenfox.poker.model.Suit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
 
 public class DeckService {
 
+//  private List<Deck> activeDecksInGames = new ArrayList<>();
+
   private static AtomicLong nextId = new AtomicLong(0);
+
+//  public List<Deck> getActiveDecksInGames() {
+//    return activeDecksInGames;
+//  }
+//
+//  public void setActiveDecksInGames(List<Deck> activeDecksInGames) {
+//    this.activeDecksInGames = activeDecksInGames;
+//  }
+//
+//  public void addDeckToactiveDecksInGamesList(Deck deckToAdd) {
+//    activeDecksInGames.add(deckToAdd);
+//  }
+//
+//  public Deck getDeckFromActiveDecksInGamesListByDeckId(long deckId) {
+//    for (Deck deck : activeDecksInGames) {
+//      if (deck.getId() == deckId) {
+//        return deck;
+//      }
+//    }return null;
+//  }
 
   public Deck getNewDeck() {
     Deck newDeck = new Deck();
@@ -40,7 +61,7 @@ public class DeckService {
     return newCard;
   }
 
-  public void shuffleDeck(Deck deck){
+  public void shuffleDeck(Deck deck) {
     List<Card> cardsToShuffle = deck.getCards();
     Collections.shuffle(cardsToShuffle);
     deck.setCards(cardsToShuffle);
