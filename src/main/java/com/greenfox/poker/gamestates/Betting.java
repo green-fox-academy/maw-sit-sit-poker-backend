@@ -5,6 +5,7 @@ import com.greenfox.poker.model.Action;
 import com.greenfox.poker.model.Card;
 import com.greenfox.poker.model.Deck;
 import com.greenfox.poker.model.GamePlayer;
+import com.greenfox.poker.model.GamePlayerHand;
 import com.greenfox.poker.model.GameState;
 import com.greenfox.poker.model.Round;
 import com.greenfox.poker.service.DeckService;
@@ -21,6 +22,7 @@ public class Betting {
   private List<Long> playerIdNumbersAroundTheTable = new ArrayList<>();
   private long smallBlindPlayerId;
   private long bigBlindPlayerId;
+  private GamePlayerHand gamePlayerHand;
 
   @Autowired
   public Betting(GameService gameService) {
@@ -36,6 +38,7 @@ public class Betting {
       setAndAutobetSmallBlindBigBlind(gameStateId);
       getNewDeckAndSetItInGameState(gameStateId);
       shuffleDeck(gameStateId);
+      initGamePlayerHandForEachGamePlayer(gameStateId);
       drawFistTwoCardsToEachPlayer(gameStateId);
     }
   }
@@ -124,20 +127,29 @@ public class Betting {
     deckService.shuffleDeck(deckToShuffle);
   }
 
+  private void initGamePlayerHandForEachGamePlayer(long gameStateId) {
+    for (GamePlayer gamePlayer : gameState.getPlayers()) {
+      gamePlayerHand = new GamePlayerHand();
+      gamePlayerHand.setGameStateId(gameStateId);
+      gamePlayerHand.setGamePlayerHandId(gamePlayer.getId());
+      gameState.addGamePlayerHandToGamePlayerHandList(gamePlayerHand);
+    }
+  }
+
   private void drawFistTwoCardsToEachPlayer(long gameStateId) {
     gameState = gameService.getGameStateMap().get(gameStateId);
     int totalCardsToDeal = playerIdNumbersAroundTheTable.size() * 2;
     Deck deckToDealFrom = gameState.getDeckInGameState();
     long dealCardToThisPlayerId = smallBlindPlayerId;
-    for (int i = 0; i < totalCardsToDeal ; i++) {
+    for (int i = 0; i < totalCardsToDeal; i++) {
       Card drawnCard = deckService.drawCardFromDeck(deckToDealFrom);
-      
-
-
-
+      for (GamePlayerHand gamePlayerHand : gameState.getGamePlayerHandList()) {
+        if (gamePlayerHand.getGameStateId() == gameStateId
+                && gamePlayerHand.getGamePlayerHandId() == dealCardToThisPlayerId) {
+          gamePlayerHand.addCardToGamePlayerOwnTwoCards(drawnCard);
+        }
+      }
+      dealCardToThisPlayerId = findNextPlayerIdAtTheTable(gameStateId, dealCardToThisPlayerId);
     }
-
-
   }
-
 }

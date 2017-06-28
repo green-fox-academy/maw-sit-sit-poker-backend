@@ -5,10 +5,19 @@ import java.util.List;
 
 public class GamePlayerHand {
 
+  private long gameStateId;
   private long gamePlayerHandId;
   private List<Card> gamePlayerOwnTwoCards;
 
   public GamePlayerHand() {
+  }
+
+  public long getGameStateId() {
+    return gameStateId;
+  }
+
+  public void setGameStateId(long gameStateId) {
+    this.gameStateId = gameStateId;
   }
 
   public long getGamePlayerHandId() {
@@ -25,5 +34,9 @@ public class GamePlayerHand {
 
   public void setGamePlayerOwnTwoCards(List<Card> gamePlayerOwnTwoCards) {
     this.gamePlayerOwnTwoCards = gamePlayerOwnTwoCards;
+  }
+
+  public void addCardToGamePlayerOwnTwoCards(Card cardToAdd){
+    gamePlayerOwnTwoCards.add(cardToAdd);
   }
 }
