@@ -2,8 +2,17 @@ package com.greenfox.poker.controller;
 
 import com.greenfox.poker.PokergameApplication;
 import com.greenfox.poker.model.Game;
+import com.greenfox.poker.model.GameState;
+import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.repository.GameRepo;
+
 import com.greenfox.poker.service.GameService;
+
+import com.greenfox.poker.repository.PokerUserRepo;
+import com.greenfox.poker.service.TokenService;
+import com.greenfox.poker.service.UserService;
+import java.math.BigInteger;
+
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -39,13 +48,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class GameControllerTest {
 
   private MockMvc mockMvc;
+  private PokerUser testPokerUser;
+  private long testGameId;
+  private String token;
   private Game testGame;
+
+  @Autowired
+  UserService userService;
 
   @Autowired
   GameService gameService;
 
   @Autowired
+  PokerUserRepo pokerUserRepo;
+
+  @Autowired
   GameRepo gameRepo;
+
+  @Autowired
+  TokenService tokenService;
 
   @Autowired
   private WebApplicationContext webApplicationContext;
@@ -59,6 +80,35 @@ public class GameControllerTest {
           MediaType.APPLICATION_JSON.getSubtype(),
           Charset.forName("utf8"));
 
+  private void createTestPokerUser() {
+    testPokerUser = new PokerUser();
+    testPokerUser.setUsername("TestJozsi");
+    testPokerUser.setPassword("jenopass");
+    testPokerUser.setEmail("jozsi@kovacs.hu");
+    pokerUserRepo.save(testPokerUser);
+  }
+
+  private void deleteTestPokerUser() {
+    long testUserId = pokerUserRepo.findByUsername("TestJozsi").getId();
+    pokerUserRepo.delete(testUserId);
+  }
+
+  private String createValidTokenForTesting() {
+    token = tokenService.generateToken(testPokerUser);
+    return token;
+  }
+
+  private void createTestGame() {
+    testGame = new Game("test", 20, 3);
+    gameRepo.save(testGame);
+    testGameId = gameRepo.findOneByName("test").getId();
+    gameService.getGameStateMap().put(testGameId, new GameState(testGameId));
+  }
+
+  private void deleteTestGame() {
+    gameRepo.delete(testGame);
+    gameService.getGameStateMap().remove(gameRepo.findOneByName("test"));
+  }
 
   @Test
   public void testGetGameById() throws Exception {
@@ -66,16 +116,26 @@ public class GameControllerTest {
   }
 
   @Test
-  public void testGetGames() throws Exception {
-    testGame = new Game();
-    testGame.setId(1l);
-    testGame.setName("TestJenoTable");
-    testGame.setBigBlind(500);
-    testGame.setMaxPlayers(5);
-    testGame.setGamestateId(55l);
-    System.out.println(testGame.toString());
-    gameService.saveGame(testGame);
+  public void testSuccesfulJoinToTable() throws Exception {
+    createTestGame();
+    createTestPokerUser();
+    createValidTokenForTesting();
+    String join = "{\"chips\" : \"2000\"}";
+    this.mockMvc.perform(post("/game/1/join")
+        .content(join)
+        .header("X-poker-token", token)
+        .contentType(contentType))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.result", is("success")))
+        .andExpect(jsonPath("$.message",
+            is(testPokerUser.getUsername() + " joined game: " + testGame.getName())));
+    deleteTestPokerUser();
+    deleteTestGame();
+  }
 
+  @Test
+  public void testGetGames() throws Exception {
+    createTestGame();
     this.mockMvc.perform(get("/games")
             .contentType(contentType))
             .andExpect(status().isOk())

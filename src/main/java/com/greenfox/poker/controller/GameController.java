@@ -46,37 +46,50 @@ public class GameController {
   @Autowired
   DtoService dtoService;
 
- 
+  @Accessible
   @RequestMapping(value = "/games", method = RequestMethod.GET)
   public GamesList getGamesList() {
     return gameService.getAllGamesOrderedByBigBlind();
   }
 
   @RequestMapping(value = "/game/{id}", method = RequestMethod.GET)
-  public ResponseEntity<?> gameState(@PathVariable("id") long id) {
-    return gameService.getGameStateById(id);
+  public ResponseEntity<?> gameState(@PathVariable("id") long gameId) {
+    if (gameService.isGameExistById(gameId)) {
+      return new ResponseEntity(gameService.getGameById(gameId), HttpStatus.OK);
+    }
+    return new ResponseEntity(errorMessageService.joinWithWrongGameId(), HttpStatus.NOT_FOUND);
   }
 
   @RequestMapping(value = "/savenewgames", method = RequestMethod.POST)
   public ResponseEntity<?> saveNewGame(@RequestBody @Valid Game game, BindingResult bindingResult) {
-    return gameService.saveNewGame(game, bindingResult);
+    if (bindingResult.hasErrors()) {
+      return new ResponseEntity(errorMessageService.respondToMissingParameters(bindingResult),
+          HttpStatus.BAD_REQUEST);
+    }
+    if (gameService.isGameExistByName(game.getName())) {
+      return new ResponseEntity(errorMessageService.responseToAlreadyExistingGameNameInRepo(), HttpStatus.CONFLICT);
+    }
+    return new ResponseEntity(gameService.createNewGame(game), HttpStatus.OK);
   }
 
   @PostMapping("/game/{id}/join")
-  public ResponseEntity<?> joinTable(@PathVariable("id") long gameId, @RequestBody ChipsToJoinGame chips, @RequestHeader("X-poker-token") String token){
+  public ResponseEntity<?> joinTable(@PathVariable("id") long gameId,
+      @RequestBody ChipsToJoinGame chips, @RequestHeader("X-poker-token") String token) {
     PokerUser user = tokenService.getPokerUserFromToken(token);
-    if (gameService.isGameExist(gameId)){
-      return new ResponseEntity(errorMessageService.joinWithWrongGameId(), HttpStatus.NOT_FOUND );
+    if (!gameService.isGameExistById(gameId)) {
+      return new ResponseEntity(errorMessageService.joinWithWrongGameId(), HttpStatus.NOT_FOUND);
     }
     if (gameService.isPlayerAlreadyInTheGame(gameId, user.getId())) {
       return new ResponseEntity(
-          errorMessageService.joinToGameWhereUserPlaysAlready(gameId, user.getId()), HttpStatus.BAD_REQUEST);
+          errorMessageService.joinToGameWhereUserPlaysAlready(gameId, user.getId()),
+          HttpStatus.BAD_REQUEST);
     }
     if (!dtoService.hasPlayerEnoughChipsToPlay(chips.getChips(), user.getId())) {
       return new ResponseEntity(errorMessageService.joinGameWithNotEnoughChips(),
           HttpStatus.BAD_REQUEST);
     }
-    return new ResponseEntity(gameService.joinPlayerToGame(user.getId(), gameId, chips.getChips()), HttpStatus.OK);
+    return new ResponseEntity(
+        gameService.joinPlayerToGame(user.getId(), gameId, chips.getChips()), HttpStatus.OK);
   }
 }
 
