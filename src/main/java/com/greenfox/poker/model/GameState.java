@@ -1,6 +1,7 @@
 package com.greenfox.poker.model;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GameState {
@@ -13,10 +14,12 @@ public class GameState {
   private int pot;
 
   public GameState() {
+    this.players = new ArrayList<>();
   }
 
   public GameState(long id) {
     this.id = id;
+    this.players = new ArrayList<>();
   }
 
   public long getId() {
