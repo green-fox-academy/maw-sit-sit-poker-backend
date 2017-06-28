@@ -8,7 +8,11 @@ import com.greenfox.poker.repository.GameRepo;
 import com.greenfox.poker.repository.PokerUserRepo;
 import java.math.BigInteger;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.validation.BindingResult;
@@ -111,9 +115,6 @@ public class GameServiceTest {
 
   @Test
   public void testSuccesfulJoinToTable() throws Exception {
-    createTestGame();
-    createTestPokerUser();
-    createValidTokenForTesting();
     String join = "{\"chips\" : \"2000\"}";
     this.mockMvc.perform(post("/game/1/join")
         .content(join)
@@ -123,13 +124,10 @@ public class GameServiceTest {
         .andExpect(jsonPath("$.result", is("success")))
         .andExpect(jsonPath("$.message",
             is(testPokerUser.getUsername() + " joined game: " + testGame.getName())));
-    deleteTestPokerUser();
-    deleteTestGame();
   }
 
   @Test
   public void testGetGames() throws Exception {
-    createTestGame();
     this.mockMvc.perform(get("/games")
             .contentType(contentType))
             .andExpect(status().isOk())

@@ -15,8 +15,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class GameService {
 
-  GameRepo gameRepo;
-
   @Autowired
   ErrorMessageService errorMessageService;
 
@@ -25,6 +23,8 @@ public class GameService {
 
   @Autowired
   DtoService dtoService;
+
+  GameRepo gameRepo;
 
   @Autowired
   public GameService(GameRepo gameRepo) {
