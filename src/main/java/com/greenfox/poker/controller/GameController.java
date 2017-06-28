@@ -46,7 +46,7 @@ public class GameController {
   @Autowired
   DtoService dtoService;
 
-  @Accessible
+  
   @RequestMapping(value = "/games", method = RequestMethod.GET)
   public GamesList getGamesList() {
     return gameService.getAllGamesOrderedByBigBlind();
@@ -71,6 +71,7 @@ public class GameController {
     }
     return new ResponseEntity(gameService.createNewGame(game), HttpStatus.OK);
   }
+
 
   @PostMapping("/game/{id}/join")
   public ResponseEntity<?> joinTable(@PathVariable("id") long gameId,
