@@ -5,6 +5,7 @@ import com.greenfox.poker.model.ChipsToJoinGame;
 import com.greenfox.poker.model.Game;
 import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.model.StatusError;
+import com.greenfox.poker.service.Accessible;
 import com.greenfox.poker.service.DtoService;
 import com.greenfox.poker.service.ErrorMessageService;
 import com.greenfox.poker.service.GameService;
@@ -44,6 +45,7 @@ public class GameController {
   @Autowired
   DtoService dtoService;
 
+ 
   @RequestMapping(value = "/games", method = RequestMethod.GET)
   public List<Game> getGamesList() {
     return gameService.getAllGamesOrderedByBigBlind();

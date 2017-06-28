@@ -1,8 +1,9 @@
-package com.greenfox.poker.service;
+package com.greenfox.poker.controller;
 
 import com.greenfox.poker.PokergameApplication;
 import com.greenfox.poker.model.Game;
 import com.greenfox.poker.repository.GameRepo;
+import com.greenfox.poker.service.GameService;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -35,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = PokergameApplication.class)
 @WebAppConfiguration
 @EnableWebMvc
-public class GameServiceTest {
+public class GameControllerTest {
 
   private MockMvc mockMvc;
   private Game testGame;
