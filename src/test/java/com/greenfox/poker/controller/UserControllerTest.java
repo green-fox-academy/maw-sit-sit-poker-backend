@@ -9,12 +9,14 @@ import com.greenfox.poker.repository.PokerUserRepo;
 import com.greenfox.poker.service.TokenService;
 import com.greenfox.poker.service.UserService;
 import java.nio.charset.Charset;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -190,5 +192,50 @@ public class UserControllerTest {
         .andExpect(status().isConflict())
         .andExpect(jsonPath("$.result", is("fail")))
         .andExpect(jsonPath("$.message", is("email address already exists")));
+  }
+
+  @Test
+  public void testGetUserInfoWithValidTokenAndId() throws Exception {
+    PokerUser mockUser = mockPokerUserBuilder.createMockPokerUser();
+    String token = tokenService.generateToken(mockUser);
+    Mockito.when(pokerUserRepo.exists(0L)).thenReturn(true);
+    Mockito.when(pokerUserRepo.findOne(0L)).thenReturn(mockUser);
+    Mockito.when(pokerUserRepo.existsByToken(token)).thenReturn(true);
+    this.mockMvc.perform(get("/user/0")
+        .contentType(contentType)
+        .header("X-poker-token", token))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id", is(0)))
+        .andExpect(jsonPath("$.username", is("TestJeno")));
+  }
+
+  @Test
+  public void testGetUserInfoWithValidTokenWrongId() throws Exception {
+    PokerUser mockUser = mockPokerUserBuilder.createMockPokerUser();
+    String token = tokenService.generateToken(mockUser);
+    Mockito.when(pokerUserRepo.existsByToken(token)).thenReturn(true);
+    this.mockMvc.perform(get("/user/0")
+        .contentType(contentType)
+        .header("X-poker-token", token))
+        .andExpect(status().is4xxClientError())
+        .andExpect(jsonPath("$.result", is("fail")))
+        .andExpect(jsonPath("$.message", is("user doesn't exist")));
+  }
+
+  @Test
+  public void testGetLeaderBoard() throws Exception {
+    PokerUser mockUser = mockPokerUserBuilder.createMockPokerUser();
+    List<PokerUser> listOfMockUser = mockPokerUserBuilder.createListOfMockPokerUser();
+    String token = tokenService.generateToken(mockUser);
+    Mockito.when(pokerUserRepo.existsByToken(token)).thenReturn(true);
+    Mockito.when(pokerUserRepo.findOne(0L)).thenReturn(mockUser);
+    Mockito.when(pokerUserRepo.findTop10ByOrderByChipsDesc()).thenReturn(listOfMockUser);
+    this.mockMvc.perform(get("/leaderboard")
+        .contentType(contentType)
+        .header("X-poker-token", token))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()", is(10)))
+        .andExpect(jsonPath("$.[1].id", is(0)))
+        .andExpect(jsonPath("$.[1].username", is("TestJeno")));
   }
 }
