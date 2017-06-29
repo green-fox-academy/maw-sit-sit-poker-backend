@@ -31,12 +31,11 @@ public class DtoService {
     userDTOHashMap.get(playerId).setChips(chipsAvailableToDTOAfterJoiningTable);
   }
 
-  public PokerUserDTO makePokerUserDTO(long id) {
-    PokerUser pokerUser = pokerUserRepo.findOne(id);
-    pokerUserDTO.setId(id);
-    pokerUserDTO.setUsername(pokerUser.getUsername());
-    pokerUserDTO.setAvatar(pokerUser.getAvatar());
-    pokerUserDTO.setChips(pokerUser.getChips());
+  public PokerUserDTO makePokerUserDTO(PokerUser pUser) {
+    pokerUserDTO.setId(pUser.getId());
+    pokerUserDTO.setUsername(pUser.getUsername());
+    pokerUserDTO.setAvatar(pUser.getAvatar());
+    pokerUserDTO.setChips(pUser.getChips());
     userDTOHashMap.put(pokerUserDTO.getId(), pokerUserDTO);
     return pokerUserDTO;
   }

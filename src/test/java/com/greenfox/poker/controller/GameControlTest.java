@@ -84,7 +84,7 @@ public class GameControlTest {
     Mockito.when(gameRepo.exists(2l)).thenReturn(false);
     Mockito.when(gameRepo.findOne(1l)).thenReturn(game);
     Mockito.when(gameRepo.findOneByName("Table")).thenReturn(game);
-    dtoService.makePokerUserDTO(1l);
+    dtoService.makePokerUserDTO(player);
     gameService.createNewGame(game);
 
     mockMvc.perform(post("/game/1/join")
@@ -111,7 +111,7 @@ public class GameControlTest {
     Mockito.when(gameRepo.exists(2l)).thenReturn(false);
     Mockito.when(gameRepo.findOne(1l)).thenReturn(game);
     Mockito.when(gameRepo.findOneByName("Table")).thenReturn(game);
-    dtoService.makePokerUserDTO(1l);
+    dtoService.makePokerUserDTO(player);
     gameService.createNewGame(game);
 
     mockMvc.perform(post("/game/2/join")
@@ -137,7 +137,7 @@ public class GameControlTest {
     Mockito.when(gameRepo.exists(1l)).thenReturn(true);
     Mockito.when(gameRepo.findOne(1l)).thenReturn(game);
     Mockito.when(gameRepo.findOneByName("Table")).thenReturn(game);
-    dtoService.makePokerUserDTO(1l);
+    dtoService.makePokerUserDTO(player);
     gameService.createNewGame(game);
 
     mockMvc.perform(post("/game/1/join")
@@ -164,7 +164,7 @@ public class GameControlTest {
     Mockito.when(gameRepo.exists(2l)).thenReturn(false);
     Mockito.when(gameRepo.findOne(1l)).thenReturn(game);
     Mockito.when(gameRepo.findOneByName("Table")).thenReturn(game);
-    dtoService.makePokerUserDTO(1l);
+    dtoService.makePokerUserDTO(player);
     gameService.createNewGame(game);
     gameService.createNewPlayerAndAddToGame(player.getId(), game.getId(), 5000);
 

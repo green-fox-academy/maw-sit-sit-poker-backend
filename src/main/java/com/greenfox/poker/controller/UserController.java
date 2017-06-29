@@ -6,6 +6,7 @@ import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.service.Accessible;
 import com.greenfox.poker.service.DtoService;
 import com.greenfox.poker.service.ErrorMessageService;
+import com.greenfox.poker.service.TokenService;
 import com.greenfox.poker.service.UserService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class UserController {
 
   @Autowired
   UserService userService;
+
+  @Autowired
+  TokenService tokenService;
 
   @Autowired
   ErrorMessageService errorMessageService;
@@ -66,7 +70,8 @@ public class UserController {
   @GetMapping("/user/{id}")
   public ResponseEntity<?> getUserInfo(@PathVariable("id") long id, @RequestHeader("X-poker-token") String token) {
     if (userService.isUserExistsInDB(id)) {
-      return new ResponseEntity(dtoService.makePokerUserDTO(id), HttpStatus.OK);
+      PokerUser player = tokenService.getPokerUserFromToken(token);
+      return new ResponseEntity(dtoService.makePokerUserDTO(player), HttpStatus.OK);
     }
     return new ResponseEntity(new StatusError("fail", "user doesn't exist"), HttpStatus.NOT_FOUND);
   }

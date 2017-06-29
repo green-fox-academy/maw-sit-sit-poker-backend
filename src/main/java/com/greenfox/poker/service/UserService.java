@@ -33,7 +33,7 @@ public class UserService {
     String token = tokenService.generateToken(pokerUser);
     pokerUser.setToken(token);
     pokerUserRepo.save(pokerUser);
-    dtoService.makePokerUserDTO(pokerUser.getId());
+    dtoService.makePokerUserDTO(pokerUser);
     return new UserTokenResponse("success", token, pokerUser.getId());
   }
 
@@ -42,7 +42,7 @@ public class UserService {
     String token = tokenService.generateToken(pokerUserFromDatabase);
     pokerUserFromDatabase.setToken(token);
     pokerUserRepo.save(pokerUserFromDatabase);
-    dtoService.makePokerUserDTO(pokerUserFromDatabase.getId());
+    dtoService.makePokerUserDTO(pokerUserFromDatabase);
     return new UserTokenResponse("success", token, pokerUserFromDatabase.getId());
   }
 
@@ -94,7 +94,7 @@ public class UserService {
     List<PokerUser> topTenList = pokerUserRepo.findTop10ByOrderByChipsDesc();
     List<PokerUserDTO> topTenDTO = new ArrayList<>();
     for (PokerUser user : topTenList) {
-      topTenDTO.add(dtoService.makePokerUserDTO(user.getId()));
+      topTenDTO.add(dtoService.makePokerUserDTO(user));
     }
     return topTenDTO;
   }

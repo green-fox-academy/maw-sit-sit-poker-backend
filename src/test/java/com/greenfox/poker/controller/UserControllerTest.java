@@ -6,15 +6,19 @@ import com.greenfox.poker.PokergameApplication;
 import com.greenfox.poker.mockbuilder.MockPokerUserBuilder;
 import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.repository.PokerUserRepo;
+import com.greenfox.poker.service.DtoService;
 import com.greenfox.poker.service.TokenService;
 import com.greenfox.poker.service.UserService;
 import java.nio.charset.Charset;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -28,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = PokergameApplication.class)
+@AutoConfigureMockMvc
 @WebAppConfiguration
 @EnableWebMvc
 public class UserControllerTest {
@@ -37,16 +42,14 @@ public class UserControllerTest {
 
   @Autowired
   MockPokerUserBuilder mockPokerUserBuilder;
-
   @Autowired
   UserService userService;
-
+  @Autowired
+  DtoService dtoService;
   @MockBean
   PokerUserRepo pokerUserRepo;
-
   @Autowired
   TokenService tokenService;
-
   @Autowired
   private WebApplicationContext webApplicationContext;
 
@@ -63,11 +66,11 @@ public class UserControllerTest {
   @Test
   public void testPokerUserLoginWithValidData() throws Exception {
     PokerUser mockUser = mockPokerUserBuilder.build();
-    Mockito.when(pokerUserRepo.findByUsername("TestJeno")).thenReturn(mockUser);
-    Mockito.when(pokerUserRepo.existsByPassword("jenopass")).thenReturn(true);
-    Mockito.when(pokerUserRepo.existsByUsername("TestJeno")).thenReturn(true);
-    Mockito.when(pokerUserRepo.findOne(0L)).thenReturn(mockUser);
-    String login = "{\"username\" : \"TestJeno\", \"password\" : \"jenopass\"}";
+    Mockito.when(pokerUserRepo.findByUsername("Pisti")).thenReturn(mockUser);
+    Mockito.when(pokerUserRepo.existsByPassword("password123")).thenReturn(true);
+    Mockito.when(pokerUserRepo.existsByUsername("Pisti")).thenReturn(true);
+    Mockito.when(pokerUserRepo.findOne(1l)).thenReturn(mockUser);
+    String login = "{\"username\" : \"Pisti\", \"password\" : \"password123\"}";
     this.mockMvc.perform(post("/login")
         .content(login)
         .contentType(contentType))
@@ -79,7 +82,7 @@ public class UserControllerTest {
 
   @Test
   public void testPokerUserLoginWithMissingPassword() throws Exception {
-    String login = "{\"username\" : \"TestJeno\"}";
+    String login = "{\"username\" : \"Pisti\"}";
     this.mockMvc.perform(post("/login")
         .content(login)
         .contentType(contentType))
@@ -90,7 +93,7 @@ public class UserControllerTest {
 
   @Test
   public void testPokerUserLoginWithInvalidPassword() throws Exception {
-    String login = "{\"username\" : \"TestJeno\", \"password\" : \"invalidpassword\"}";
+    String login = "{\"username\" : \"Pisti\", \"password\" : \"invalidpassword\"}";
     this.mockMvc.perform(post("/login")
         .content(login)
         .contentType(contentType))
@@ -101,7 +104,7 @@ public class UserControllerTest {
 
   @Test
   public void testPokerUserLoginWithMissingUsername() throws Exception {
-    String login = "{\"password\" : \"jenopass\"}";
+    String login = "{\"password\" : \"password123\"}";
     this.mockMvc.perform(post("/login")
         .content(login)
         .contentType(contentType))
@@ -112,7 +115,7 @@ public class UserControllerTest {
 
   @Test
   public void testPokerUserLoginWithInvalidUsername() throws Exception {
-    String login = "{\"username\" : \"InvalidTestJeno\", \"password\" : \"jenopass\"}";
+    String login = "{\"username\" : \"InvalidPisti\", \"password\" : \"password123\"}";
     this.mockMvc.perform(post("/login")
         .content(login)
         .contentType(contentType))
@@ -124,8 +127,14 @@ public class UserControllerTest {
   @Test
   public void testRegisterWithValidParameters() throws Exception {
     PokerUser mockUser = mockPokerUserBuilder.build();
-    Mockito.when(pokerUserRepo.findOne(0L)).thenReturn(mockUser);
-    String register = "{\"username\" : \"TestJeno\", \"password\" : \"jenopass\", \"email\" : \"jeno@kovacs.hu\"}";
+    Mockito.when(pokerUserRepo.findOne(1l)).thenReturn(mockUser);
+    Mockito.when(pokerUserRepo.existsByEmail("pisti@pisti.com")).thenReturn(false);
+    Mockito.when(pokerUserRepo.existsByUsername("Pisti")).thenReturn(false);
+    String token = tokenService.generateToken(mockUser);
+    mockUser.setToken(token);
+    pokerUserRepo.save(mockUser);
+    dtoService.makePokerUserDTO(mockUser);
+    String register = "{\"username\" : \"Pisti\", \"password\" : \"password123\", \"email\" : \"pisti@pisti.com\"}";
     this.mockMvc.perform(post("/register")
         .content(register)
         .contentType(contentType))
@@ -137,7 +146,7 @@ public class UserControllerTest {
 
   @Test
   public void testRegisterWithMissingUsername() throws Exception {
-    String register = "{\"password\" : \"jenopass\", \"email\" :\"jeno@kovacs.hu\"}";
+    String register = "{\"password\" : \"password123\", \"email\" :\"pisti@pisti.com\"}";
     this.mockMvc.perform(post("/register")
         .content(register)
         .contentType(contentType))
@@ -148,8 +157,8 @@ public class UserControllerTest {
 
   @Test
   public void testRegisterWithOccupiedUsername() throws Exception {
-    Mockito.when(pokerUserRepo.existsByUsername("TestJeno")).thenReturn(true);
-    String register = "{\"username\" : \"TestJeno\", \"password\" : \"jenopass\", \"email\" : \"jenoTwin@kovacs.hu\"}";
+    Mockito.when(pokerUserRepo.existsByUsername("Pisti")).thenReturn(true);
+    String register = "{\"username\" : \"Pisti\", \"password\" : \"password123\", \"email\" : \"pisti@pisti.com\"}";
     this.mockMvc.perform(post("/register")
         .content(register)
         .contentType(contentType))
@@ -160,7 +169,7 @@ public class UserControllerTest {
 
   @Test
   public void testRegisterWithMissingPassword() throws Exception {
-    String register = "{\"username\" : \"TestJeno\", \"email\" : \"jeno@kovacs.hu\"}";
+    String register = "{\"username\" : \"Pisti\", \"email\" : \"pisti@pisti.com\"}";
     this.mockMvc.perform(post("/register")
         .content(register)
         .contentType(contentType))
@@ -171,7 +180,7 @@ public class UserControllerTest {
 
   @Test
   public void testRegisterWithMissingEmail() throws Exception {
-    String register = "{\"username\" : \"TestJeno\", \"password\" : \"jenopass\"}";
+    String register = "{\"username\" : \"Pisti\", \"password\" : \"password123\"}";
     this.mockMvc.perform(post("/register")
         .content(register)
         .contentType(contentType))
@@ -182,13 +191,58 @@ public class UserControllerTest {
 
   @Test
   public void testRegisterWithOccupiedEmail() throws Exception {
-    Mockito.when(pokerUserRepo.existsByEmail("jeno@kovacs.hu")).thenReturn(true);
-    String register = "{\"username\" : \"TestJeno\", \"password\" : \"jenopass\", \"email\" : \"jeno@kovacs.hu\"}";
+    Mockito.when(pokerUserRepo.existsByEmail("pisti@pisti.com")).thenReturn(true);
+    String register = "{\"username\" : \"Pisti\", \"password\" : \"password123\", \"email\" : \"pisti@pisti.com\"}";
     this.mockMvc.perform(post("/register")
         .content(register)
         .contentType(contentType))
         .andExpect(status().isConflict())
         .andExpect(jsonPath("$.result", is("fail")))
         .andExpect(jsonPath("$.message", is("email address already exists")));
+  }
+
+  @Test
+  public void testGetUserInfoWithValidTokenAndId() throws Exception {
+    PokerUser mockUser = mockPokerUserBuilder.build();
+    String token = tokenService.generateToken(mockUser);
+    Mockito.when(pokerUserRepo.exists(1l)).thenReturn(true);
+    Mockito.when(pokerUserRepo.findOne(1l)).thenReturn(mockUser);
+    Mockito.when(pokerUserRepo.existsByToken(token)).thenReturn(true);
+    this.mockMvc.perform(get("/user/1")
+        .contentType(contentType)
+        .header("X-poker-token", token))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id", is(1)))
+        .andExpect(jsonPath("$.username", is("Pisti")));
+  }
+
+  @Test
+  public void testGetUserInfoWithValidTokenWrongId() throws Exception {
+    PokerUser mockUser = mockPokerUserBuilder.build();
+    String token = tokenService.generateToken(mockUser);
+    Mockito.when(pokerUserRepo.existsByToken(token)).thenReturn(true);
+    this.mockMvc.perform(get("/user/0")
+        .contentType(contentType)
+        .header("X-poker-token", token))
+        .andExpect(status().is4xxClientError())
+        .andExpect(jsonPath("$.result", is("fail")))
+        .andExpect(jsonPath("$.message", is("user doesn't exist")));
+  }
+
+  @Test
+  public void testGetLeaderBoard() throws Exception {
+    PokerUser mockUser = mockPokerUserBuilder.build();
+    List<PokerUser> listOfMockUser = mockPokerUserBuilder.createListOfMockPokerUser();
+    String token = tokenService.generateToken(mockUser);
+    Mockito.when(pokerUserRepo.existsByToken(token)).thenReturn(true);
+    Mockito.when(pokerUserRepo.findOne(1l)).thenReturn(mockUser);
+    Mockito.when(pokerUserRepo.findTop10ByOrderByChipsDesc()).thenReturn(listOfMockUser);
+    this.mockMvc.perform(get("/leaderboard")
+        .contentType(contentType)
+        .header("X-poker-token", token))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()", is(10)))
+        .andExpect(jsonPath("$.[1].id", is(1)))
+        .andExpect(jsonPath("$.[1].username", is("Pisti")));
   }
 }
