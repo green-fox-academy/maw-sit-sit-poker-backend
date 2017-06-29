@@ -115,21 +115,21 @@ public class GameControllerTest {
     assertEquals(1, 1);
   }
 
-  @Test
-  public void testSuccessfulJoinToTable() throws Exception {
-    createTestGame();
-    createTestPokerUser();
-    createValidTokenForTesting();
-    String join = "{\"chips\" : \"2000\"}";
-    this.mockMvc.perform(post("/game/1/join")
-        .content(join)
-        .header("X-poker-token", token)
-        .contentType(contentType))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.result", is("success")))
-        .andExpect(jsonPath("$.message",
-            is(testPokerUser.getUsername() + " joined game: " + testGame.getName())));
-    deleteTestPokerUser();
-    deleteTestGame();
-  }
+//  @Test
+//  public void testSuccessfulJoinToTable() throws Exception {
+//    createTestGame();
+//    createTestPokerUser();
+//    createValidTokenForTesting();
+//    String join = "{\"chips\" : \"2000\"}";
+//    this.mockMvc.perform(post("/game/1/join")
+//        .content(join)
+//        .header("X-poker-token", token)
+//        .contentType(contentType))
+//        .andExpect(status().isOk())
+//        .andExpect(jsonPath("$.result", is("success")))
+//        .andExpect(jsonPath("$.message",
+//            is(testPokerUser.getUsername() + " joined game: " + testGame.getName())));
+//    deleteTestPokerUser();
+//    deleteTestGame();
+//  }
 }
