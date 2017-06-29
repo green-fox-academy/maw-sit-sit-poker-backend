@@ -28,7 +28,6 @@ public class ErrorMessageService {
     for (FieldError fielderror : bindingResult.getFieldErrors()) {
       missing.add(fielderror.getField());
     }
-    System.out.println(missingFields);
     missingFields = "Missing parameter(s): " + missing.stream().collect(Collectors.joining(", ")) + "!";
     return new StatusError("fail", missingFields);
   }

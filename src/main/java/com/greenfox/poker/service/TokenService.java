@@ -24,10 +24,6 @@ public class TokenService {
 
   private Key key;
 
-//  public TokenService(PokerUserRepo pokerUserRepo) {
-//    this.pokerUserRepo = pokerUserRepo;
-//  }
-
   public String generateToken(PokerUser pokerUser) {
     HashMap<String, Object> claims = new HashMap<>();
     claims.put("id", pokerUser.getId());
