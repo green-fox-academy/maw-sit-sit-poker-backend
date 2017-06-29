@@ -132,14 +132,4 @@ public class GameControllerTest {
     deleteTestPokerUser();
     deleteTestGame();
   }
-
-//  @Test
-//  public void testGetGames() throws Exception {
-//    createTestGame();
-//    this.mockMvc.perform(get("/games")
-//            .contentType(contentType))
-//            .andExpect(status().isOk())
-//            .andExpect(jsonPath("$.games").exists());
-//    gameService.deleteGame(testGame);
-//  }
 }
