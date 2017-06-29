@@ -32,7 +32,7 @@ public class ErrorMessageService {
     return new StatusError("fail", missingFields);
   }
 
-  public ResponseType joinWithWrongGameId(){
+  public ResponseType responseToWrongGameId(){
       return new StatusError("fail", "game id doesn't exist");
   }
 
@@ -40,6 +40,12 @@ public class ErrorMessageService {
     String playerName = pokerUserRepo.findOne(playerId).getUsername();
     String gameName = gameRepo.findOne(gameId).getName();
     return new StatusError("fail", playerName + " already joined game: " + gameName);
+  }
+
+  public ResponseType respondToPlayerNotSitingAtTheGame(long playerId, long gameId) {
+    String playerName = pokerUserRepo.findOne(playerId).getUsername();
+    String gameName = gameRepo.findOne(gameId).getName();
+    return new StatusError("fail", playerName + " was not a player in game: " + gameName);
   }
 
   public ResponseType joinGameWithNotEnoughChips() {

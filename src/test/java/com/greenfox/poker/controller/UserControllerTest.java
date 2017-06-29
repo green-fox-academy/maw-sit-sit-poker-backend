@@ -22,7 +22,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.mockito.Mockito;
-
 import static org.hamcrest.core.Is.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -33,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @EnableWebMvc
 public class UserControllerTest {
 
+  @Autowired
   private MockMvc mockMvc;
 
   @Autowired
@@ -62,7 +62,7 @@ public class UserControllerTest {
 
   @Test
   public void testPokerUserLoginWithValidData() throws Exception {
-    PokerUser mockUser = mockPokerUserBuilder.createMockPokerUser();
+    PokerUser mockUser = mockPokerUserBuilder.build();
     Mockito.when(pokerUserRepo.findByUsername("TestJeno")).thenReturn(mockUser);
     Mockito.when(pokerUserRepo.existsByPassword("jenopass")).thenReturn(true);
     Mockito.when(pokerUserRepo.existsByUsername("TestJeno")).thenReturn(true);
@@ -123,7 +123,7 @@ public class UserControllerTest {
 
   @Test
   public void testRegisterWithValidParameters() throws Exception {
-    PokerUser mockUser = mockPokerUserBuilder.createMockPokerUser();
+    PokerUser mockUser = mockPokerUserBuilder.build();
     Mockito.when(pokerUserRepo.findOne(0L)).thenReturn(mockUser);
     String register = "{\"username\" : \"TestJeno\", \"password\" : \"jenopass\", \"email\" : \"jeno@kovacs.hu\"}";
     this.mockMvc.perform(post("/register")

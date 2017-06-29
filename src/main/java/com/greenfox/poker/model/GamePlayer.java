@@ -1,6 +1,8 @@
 package com.greenfox.poker.model;
 
+import org.springframework.stereotype.Component;
 
+@Component
 public class GamePlayer extends PokerUserDTO {
 
   private Action lastAction;

@@ -4,30 +4,30 @@ import com.greenfox.poker.model.Game;
 import com.greenfox.poker.model.GamePlayer;
 import com.greenfox.poker.model.GameState;
 import com.greenfox.poker.model.GamesList;
+import com.greenfox.poker.model.PlayerAction;
 import com.greenfox.poker.model.ResponseType;
 import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.model.PokerUserDTO;
 import com.greenfox.poker.repository.GameRepo;
 import java.util.HashMap;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class GameService {
 
+  ErrorMessageService errorMessageService;
+  DtoService dtoService;
+  GamePlayer gamePlayer;
   GameRepo gameRepo;
 
   @Autowired
-  ErrorMessageService errorMessageService;
-
-  @Autowired
-  UserService userService;
-
-  @Autowired
-  DtoService dtoService;
-
-  @Autowired
-  public GameService(GameRepo gameRepo) {
+  public GameService(ErrorMessageService errorMessageService,
+      DtoService dtoService, GamePlayer gamePlayer, GameRepo gameRepo) {
+    this.errorMessageService = errorMessageService;
+    this.dtoService = dtoService;
+    this.gamePlayer = gamePlayer;
     this.gameRepo = gameRepo;
   }
 
@@ -49,7 +49,6 @@ public class GameService {
     gameRepo.save(newGame);
     long commonId = gameRepo.findOneByName(game.getName()).getId();
     gameStateMap.put(commonId, new GameState(commonId));
-    System.out.println(gameStateMap.toString());
     return newGame;
   }
 
@@ -82,7 +81,7 @@ public class GameService {
     return gameStateMap.get(id);
   }
 
-  public boolean isPlayerAlreadyInTheGame(long gameId, long userId) {
+  public boolean isPlayerInTheGame(long gameId, long userId) {
     if (!gameStateMap.isEmpty()) {
       if (!gameStateMap.get(gameId).getPlayers().isEmpty()) {
         for (GamePlayer player : gameStateMap.get(gameId).getPlayers()) {
@@ -111,5 +110,41 @@ public class GameService {
 
   public int getTableBigBlind (long gameId){
     return gameRepo.findOne(gameId).getBigBlind();
+  }
+
+  public ResponseType leaveGame(long gameId, long playerId){
+    List<GamePlayer> playersAtTable = getGameStateById(gameId).getPlayers();
+    for (GamePlayer player : playersAtTable){
+      if (playerId == player.getId()){
+        playersAtTable.remove(player);
+      }
+    }
+    getGameStateById(gameId).setPlayers(playersAtTable);
+    String playerName = dtoService.userDTOHashMap.get(playerId).getUsername();
+    String gameName = gameRepo.findOne(gameId).getName();
+    return new StatusError("success", playerName + " left game: " + gameName);
+  }
+
+  public Integer getPlayerIndexFromGameState(long playerId, long gameId) {
+    List<GamePlayer> playersAtTable = getGameStateById(gameId).getPlayers();
+    Integer index = 0;
+    for (GamePlayer player : playersAtTable) {
+      if (playerId == player.getId()) {
+        index = playersAtTable.indexOf(player);
+      }
+    }
+    return index;
+  }
+
+  public void updateGame(long playerId, long gameId, PlayerAction playerAction){
+    List<GamePlayer> players = gameStateMap.get(gameId).getPlayers();
+    gameStateMap.get(gameId).setActorPlayerId(playerId);
+    Integer playerIndex = getPlayerIndexFromGameState(playerId, gameId);
+    gamePlayer = players.get(playerIndex);
+    gamePlayer.setLastAction(playerAction.getAction());
+    Integer currentBet = gamePlayer.getBet();
+    gamePlayer.setBet(currentBet + (int) playerAction.getValue());
+    players.set(playerIndex, gamePlayer);
+    gameStateMap.get(gameId).setPlayers(players);
   }
 }
