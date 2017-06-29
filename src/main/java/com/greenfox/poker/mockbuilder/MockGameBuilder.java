@@ -2,7 +2,9 @@ package com.greenfox.poker.mockbuilder;
 
 
 import com.greenfox.poker.model.Game;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MockGameBuilder {
 
   private Game mockGame;

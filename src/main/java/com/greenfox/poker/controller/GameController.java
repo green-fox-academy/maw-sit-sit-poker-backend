@@ -6,6 +6,7 @@ import com.greenfox.poker.model.Game;
 import com.greenfox.poker.model.GamesList;
 import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.model.StatusError;
+import com.greenfox.poker.service.Accessible;
 import com.greenfox.poker.service.DtoService;
 import com.greenfox.poker.service.ErrorMessageService;
 import com.greenfox.poker.service.GameService;
@@ -50,12 +51,13 @@ public class GameController {
     return gameService.getAllGamesOrderedByBigBlind();
   }
 
+  @Accessible
   @RequestMapping(value = "/game/{id}", method = RequestMethod.GET)
   public ResponseEntity<?> gameState(@PathVariable("id") long gameId) {
     if (gameService.isGameExistById(gameId)) {
       return new ResponseEntity(gameService.getGameById(gameId), HttpStatus.OK);
     }
-    return new ResponseEntity(errorMessageService.joinWithWrongGameId(), HttpStatus.NOT_FOUND);
+    return new ResponseEntity(errorMessageService.responseToWrongGameId(), HttpStatus.NOT_FOUND);
   }
 
   @RequestMapping(value = "/savenewgames", method = RequestMethod.POST)
@@ -75,9 +77,9 @@ public class GameController {
     @RequestBody ChipsToJoinGame chips, @RequestHeader("X-poker-token") String token){
       PokerUser user = tokenService.getPokerUserFromToken(token);
       if (!gameService.isGameExistById(gameId)) {
-        return new ResponseEntity(errorMessageService.joinWithWrongGameId(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity(errorMessageService.responseToWrongGameId(), HttpStatus.NOT_FOUND);
       }
-      if (gameService.isPlayerAlreadyInTheGame(gameId, user.getId())) {
+      if (gameService.isPlayerInTheGame(gameId, user.getId())) {
         return new ResponseEntity(
             errorMessageService.joinToGameWhereUserPlaysAlready(gameId, user.getId()),
             HttpStatus.BAD_REQUEST);
@@ -89,6 +91,19 @@ public class GameController {
       return new ResponseEntity(
           gameService.joinPlayerToGame(user.getId(), gameId, chips.getChips()), HttpStatus.OK);
     }
+
+    @PostMapping("/game/{id}/leave")
+    public ResponseEntity<?> leaveTable (@PathVariable("id") long gameId, @RequestHeader("X-poker-token") String token){
+      PokerUser user = tokenService.getPokerUserFromToken(token);
+      if (!gameService.isGameExistById(gameId)) {
+        return new ResponseEntity(errorMessageService.responseToWrongGameId(), HttpStatus.NOT_FOUND);
+      }
+      if (!gameService.isPlayerInTheGame(gameId, user.getId())) {
+        return new ResponseEntity(errorMessageService.leaveTableWhereYouAreNotSiting(user.getId(), gameId), HttpStatus.BAD_REQUEST);
+      }
+      return new ResponseEntity(gameService.leaveGame(gameId, user.getId()), HttpStatus.OK);
+    }
+
   }
 
 

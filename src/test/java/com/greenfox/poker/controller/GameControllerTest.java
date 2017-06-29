@@ -1,7 +1,9 @@
 package com.greenfox.poker.controller;
 
 import static org.hamcrest.core.Is.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -63,25 +65,111 @@ public class GameControllerTest {
           Charset.forName("utf8"));
 
   @Test
-  public void testJoinPlayerToGame() throws Exception{
+  public void testSuccesfulJoinToGame() throws Exception{
 
+    String join = "{\"chips\" : \"2000\"}";
+    final String token = tokenService.generateToken(mockPokerUserBuilder.build());
     Mockito.when(pokerUserRepo.findByUsername("Pisti")).thenReturn(mockPokerUserBuilder.build());
     Mockito.when(pokerUserRepo.findOne(1l)).thenReturn(mockPokerUserBuilder.build());
     Mockito.when(pokerUserRepo.existsByUsername("Pisti")).thenReturn(true);
     Mockito.when(pokerUserRepo.exists(1l)).thenReturn(true);
+    Mockito.when(pokerUserRepo.existsByToken(token)).thenReturn(true);
     Mockito.when(gameRepo.exists(1l)).thenReturn(true);
+    Mockito.when(gameRepo.exists(2l)).thenReturn(false);
     Mockito.when(gameRepo.findOne(1l)).thenReturn(mockGameBuilder.build());
     Mockito.when(gameRepo.findOneByName("Table")).thenReturn(mockGameBuilder.build());
 
-    String join = "{\"chips\" : \"2000\"}";
-    final String token = tokenService.generateToken(mockPokerUserBuilder.build());
-    this.mockMvc.perform(post("/game/1/join")
+    mockMvc.perform(post("/game/1/join")
         .content(join)
         .header("X-poker-token", token)
         .contentType(contentType))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.result", is("success")))
         .andExpect(jsonPath("$.message", is(mockPokerUserBuilder.build().getUsername() + " joined game: " + mockGameBuilder.build().getName())));
+  }
+
+  @Test
+  public void testJoinWithNonExistingGameId() throws Exception{
+    String join = "{\"chips\" : \"2000\"}";
+    final String token = tokenService.generateToken(mockPokerUserBuilder.build());
+    Mockito.when(pokerUserRepo.findByUsername("Pisti")).thenReturn(mockPokerUserBuilder.build());
+    Mockito.when(pokerUserRepo.findOne(1l)).thenReturn(mockPokerUserBuilder.build());
+    Mockito.when(pokerUserRepo.existsByUsername("Pisti")).thenReturn(true);
+    Mockito.when(pokerUserRepo.exists(1l)).thenReturn(true);
+    Mockito.when(pokerUserRepo.existsByToken(token)).thenReturn(true);
+    Mockito.when(gameRepo.exists(1l)).thenReturn(true);
+    Mockito.when(gameRepo.exists(2l)).thenReturn(false);
+    Mockito.when(gameRepo.findOne(1l)).thenReturn(mockGameBuilder.build());
+    Mockito.when(gameRepo.findOneByName("Table")).thenReturn(mockGameBuilder.build());
+
+    mockMvc.perform(post("/game/2/join")
+        .content(join)
+        .header("X-poker-token", token)
+        .contentType(contentType))
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.result", is("fail")))
+        .andExpect(jsonPath("$.message", is("game id doesn't exist")));
+  }
+
+  @Test
+  public void testJoinWithNotEnoughChips() throws Exception {
+    String join = "{\"chips\" : \"12000\"}";
+    final String token = tokenService.generateToken(mockPokerUserBuilder.build());
+    Mockito.when(pokerUserRepo.findByUsername("Pisti")).thenReturn(mockPokerUserBuilder.build());
+    Mockito.when(pokerUserRepo.findOne(1l)).thenReturn(mockPokerUserBuilder.build());
+    Mockito.when(pokerUserRepo.existsByUsername("Pisti")).thenReturn(true);
+    Mockito.when(pokerUserRepo.exists(1l)).thenReturn(true);
+    Mockito.when(pokerUserRepo.existsByToken(token)).thenReturn(true);
+    Mockito.when(gameRepo.exists(1l)).thenReturn(true);
+    Mockito.when(gameRepo.findOne(1l)).thenReturn(mockGameBuilder.build());
+    Mockito.when(gameRepo.findOneByName("Table")).thenReturn(mockGameBuilder.build());
+
+    mockMvc.perform(post("/game/1/join")
+        .content(join)
+        .header("X-poker-token", token)
+        .contentType(contentType))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.result", is("fail")))
+        .andExpect(jsonPath("$.message", is("you dont have enough chips to play with")));
+  }
+//
+  @Test
+  public void testJoinWithPlayerAlreadySittigAtTable() throws Exception {
+    String join = "{\"chips\" : \"2000\"}";
+    final String token = tokenService.generateToken(mockPokerUserBuilder.build());
+    Mockito.when(pokerUserRepo.findByUsername("Pisti")).thenReturn(mockPokerUserBuilder.build());
+    Mockito.when(pokerUserRepo.findOne(1l)).thenReturn(mockPokerUserBuilder.build());
+    Mockito.when(pokerUserRepo.existsByUsername("Pisti")).thenReturn(true);
+    Mockito.when(pokerUserRepo.exists(1l)).thenReturn(true);
+    Mockito.when(pokerUserRepo.existsByToken(token)).thenReturn(true);
+    Mockito.when(gameRepo.exists(1l)).thenReturn(true);
+    Mockito.when(gameRepo.exists(2l)).thenReturn(false);
+    Mockito.when(gameRepo.findOne(1l)).thenReturn(mockGameBuilder.build());
+    Mockito.when(gameRepo.findOneByName("Table")).thenReturn(mockGameBuilder.build());
+//    gameService.createNewPlayerAndAddToGame(1, 1, 2000);
+
+    mockMvc.perform(post("/game/{id}/join", 1l)
+        .content(join)
+        .header("X-poker-token", token)
+        .contentType(contentType))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.result", is("fail")))
+        .andExpect(jsonPath("$.message", is(mockPokerUserBuilder.build().getUsername() + " already joined game: " + mockGameBuilder.build().getName())));
+  }
+
+  @Test
+  public void testGetGameEndpointWithCorrectId() throws Exception {
+    Mockito.when(gameRepo.exists(0l)).thenReturn(true);
+    Mockito.when(gameRepo.findOne(0l)).thenReturn(mockGameBuilder.build());
+    Mockito.when(gameRepo.findOneByName("Table")).thenReturn(mockGameBuilder.build());
+
+    this.mockMvc.perform(get("/game/{id}", 0l)
+        .contentType(contentType))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id", is(0)))
+        .andExpect(jsonPath("$.name", is("Table")))
+        .andExpect(jsonPath("$.big_blind", is(20)))
+        .andExpect(jsonPath("$.max_players", is(3)));
   }
 }
 

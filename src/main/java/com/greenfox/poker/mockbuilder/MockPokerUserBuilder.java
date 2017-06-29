@@ -1,7 +1,9 @@
 package com.greenfox.poker.mockbuilder;
 
 import com.greenfox.poker.model.PokerUser;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MockPokerUserBuilder {
 
   PokerUser mockPokerUser;

@@ -9,6 +9,7 @@ import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.model.PokerUserDTO;
 import com.greenfox.poker.repository.GameRepo;
 import java.util.HashMap;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -82,7 +83,7 @@ public class GameService {
     return gameStateMap.get(id);
   }
 
-  public boolean isPlayerAlreadyInTheGame(long gameId, long userId) {
+  public boolean isPlayerInTheGame(long gameId, long userId) {
     if (!gameStateMap.isEmpty()) {
       if (!gameStateMap.get(gameId).getPlayers().isEmpty()) {
         for (GamePlayer player : gameStateMap.get(gameId).getPlayers()) {
@@ -111,5 +112,18 @@ public class GameService {
 
   public int getTableBigBlind (long gameId){
     return gameRepo.findOne(gameId).getBigBlind();
+  }
+
+  public ResponseType leaveGame(long gameId, long playerId){
+    List<GamePlayer> playersAtTable = getGameStateById(gameId).getPlayers();
+    for (GamePlayer player : playersAtTable){
+      if (playerId == player.getId()){
+        playersAtTable.remove(player);
+      }
+    }
+    getGameStateById(gameId).setPlayers(playersAtTable);
+    String playerName = dtoService.userDTOHashMap.get(playerId).getUsername();
+    String gameName = gameRepo.findOne(gameId).getName();
+    return new StatusError("success", playerName + " left game: " + gameName);
   }
 }

@@ -7,13 +7,13 @@ CREATE TABLE IF NOT EXISTS Poker_user (
   password VARCHAR(255) NOT NULL,
   avatar   VARCHAR(255),
   email    VARCHAR(255) NOT NULL,
-  chips    INTEGER DEFAULT 10000
+  chips    INTEGER DEFAULT 10000,
+  token    VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS game (
-  id              BIGSERIAL PRIMARY KEY,
-  NAME            VARCHAR(255) NOT NULL,
-  big_blind       INTEGER      NOT NULL,
-  max_players     INTEGER      NOT NULL
+  id           BIGSERIAL PRIMARY KEY,
+  NAME         VARCHAR(255) NOT NULL,
+  big_blind    INTEGER      NOT NULL,
+  max_players  INTEGER      NOT NULL
 );
-
