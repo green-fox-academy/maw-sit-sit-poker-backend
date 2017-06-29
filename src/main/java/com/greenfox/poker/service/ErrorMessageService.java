@@ -43,7 +43,7 @@ public class ErrorMessageService {
     return new StatusError("fail", playerName + " already joined game: " + gameName);
   }
 
-  public ResponseType leaveTableWhereYouAreNotSiting(long playerId, long gameId) {
+  public ResponseType respondToPlayerNotSitingAtTheGame(long playerId, long gameId) {
     String playerName = pokerUserRepo.findOne(playerId).getUsername();
     String gameName = gameRepo.findOne(gameId).getName();
     return new StatusError("fail", playerName + " was not a player in game: " + gameName);

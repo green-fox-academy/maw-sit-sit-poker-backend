@@ -4,6 +4,7 @@ import com.greenfox.poker.model.Game;
 import com.greenfox.poker.model.GamePlayer;
 import com.greenfox.poker.model.GameState;
 import com.greenfox.poker.model.GamesList;
+import com.greenfox.poker.model.PlayerAction;
 import com.greenfox.poker.model.ResponseType;
 import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.model.PokerUserDTO;
@@ -24,6 +25,9 @@ public class GameService {
 
   @Autowired
   DtoService dtoService;
+
+  @Autowired
+  GamePlayer gamePlayer;
 
   GameRepo gameRepo;
 
@@ -125,5 +129,28 @@ public class GameService {
     String playerName = dtoService.userDTOHashMap.get(playerId).getUsername();
     String gameName = gameRepo.findOne(gameId).getName();
     return new StatusError("success", playerName + " left game: " + gameName);
+  }
+
+  public Integer getPlayerIndexFromGameState(long playerId, long gameId) {
+    List<GamePlayer> playersAtTable = getGameStateById(gameId).getPlayers();
+    Integer index = 0;
+    for (GamePlayer player : playersAtTable) {
+      if (playerId == player.getId()) {
+        index = playersAtTable.indexOf(player);
+      }
+    }
+    return index;
+  }
+
+  public void updateGame(long playerId, long gameId, PlayerAction playerAction){
+    List<GamePlayer> players = gameStateMap.get(gameId).getPlayers();
+    gameStateMap.get(gameId).setActorPlayerId(playerId);
+    Integer playerIndex = getPlayerIndexFromGameState(playerId, gameId);
+    gamePlayer = players.get(playerIndex);
+    gamePlayer.setLastAction(playerAction.getAction());
+    Integer currentBet = gamePlayer.getBet();
+    gamePlayer.setBet(currentBet + (int) playerAction.getValue());
+    players.set(playerIndex, gamePlayer);
+    gameStateMap.get(gameId).setPlayers(players);
   }
 }
