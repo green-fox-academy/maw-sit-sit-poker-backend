@@ -17,22 +17,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class GameService {
 
-  @Autowired
   ErrorMessageService errorMessageService;
-
-  @Autowired
-  UserService userService;
-
-  @Autowired
   DtoService dtoService;
-
-  @Autowired
   GamePlayer gamePlayer;
-
   GameRepo gameRepo;
 
   @Autowired
-  public GameService(GameRepo gameRepo) {
+  public GameService(ErrorMessageService errorMessageService,
+      DtoService dtoService, GamePlayer gamePlayer, GameRepo gameRepo) {
+    this.errorMessageService = errorMessageService;
+    this.dtoService = dtoService;
+    this.gamePlayer = gamePlayer;
     this.gameRepo = gameRepo;
   }
 
@@ -54,7 +49,6 @@ public class GameService {
     gameRepo.save(newGame);
     long commonId = gameRepo.findOneByName(game.getName()).getId();
     gameStateMap.put(commonId, new GameState(commonId));
-    System.out.println(gameStateMap.toString());
     return newGame;
   }
 

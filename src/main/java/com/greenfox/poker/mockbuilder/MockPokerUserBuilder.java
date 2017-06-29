@@ -10,6 +10,7 @@ public class MockPokerUserBuilder {
 
   public MockPokerUserBuilder(){
     mockPokerUser = new PokerUser("Pisti", "password123", "pisti@pisti.com", "avatarurl");
+    mockPokerUser.setId(1l);
   }
 
   public MockPokerUserBuilder setUserName(String name){

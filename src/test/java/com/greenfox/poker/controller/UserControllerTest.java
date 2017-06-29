@@ -32,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @EnableWebMvc
 public class UserControllerTest {
 
+  @Autowired
   private MockMvc mockMvc;
   private PokerUser testPokerUser;
   private long testGameId;

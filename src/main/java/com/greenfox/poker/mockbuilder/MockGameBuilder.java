@@ -11,6 +11,7 @@ public class MockGameBuilder {
 
   public MockGameBuilder(){
     mockGame = new Game("Table", 20, 3);
+    mockGame.setId(1l);
   }
 
   public void setMockGame(Game mockGame) {

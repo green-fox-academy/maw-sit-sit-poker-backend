@@ -16,22 +16,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserService {
 
-  @Autowired
   PokerUserRepo pokerUserRepo;
-
-  @Autowired
   PokerUser pokerUser;
-
-  @Autowired
   TokenService tokenService;
-
-
-  @Autowired
   DtoService dtoService;
 
-  @Autowired
-  GameService gameService;
-
+  public UserService(PokerUserRepo pokerUserRepo, PokerUser pokerUser,
+      TokenService tokenService, DtoService dtoService) {
+    this.pokerUserRepo = pokerUserRepo;
+    this.pokerUser = pokerUser;
+    this.tokenService = tokenService;
+    this.dtoService = dtoService;
+  }
 
   public ResponseType responseToSuccessfulRegister(PokerUser pokerUser) {
     String token = tokenService.generateToken(pokerUser);
