@@ -1,7 +1,9 @@
 package com.greenfox.poker.model;
 
 
+
 import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 
 public class GameState {
@@ -13,13 +15,36 @@ public class GameState {
   private List<Card> cardsOnTable;
   private int pot;
 
+  @JsonIgnore
+  private Deck deckInGameState;
+
+  @JsonIgnore
+  private List<GamePlayerHand> gamePlayerHandList;
+
   public GameState() {
     this.players = new ArrayList<>();
+  }
+
+  public List<GamePlayerHand> getGamePlayerHandList() {
+    return gamePlayerHandList;
+  }
+
+  public void setGamePlayerHandList(
+          List<GamePlayerHand> gamePlayerHandList) {
+    this.gamePlayerHandList = gamePlayerHandList;
   }
 
   public GameState(long id) {
     this.id = id;
     this.players = new ArrayList<>();
+  }
+
+  public Deck getDeckInGameState() {
+    return deckInGameState;
+  }
+
+  public void setDeckInGameState(Deck deckInGameState) {
+    this.deckInGameState = deckInGameState;
   }
 
   public long getId() {
@@ -76,5 +101,9 @@ public class GameState {
 
   public void setPot(int pot) {
     this.pot = pot;
+  }
+
+  public void addGamePlayerHandToGamePlayerHandList(GamePlayerHand gamePlayerHandToAdd){
+    gamePlayerHandList.add(gamePlayerHandToAdd);
   }
 }
