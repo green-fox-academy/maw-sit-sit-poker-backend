@@ -233,13 +233,10 @@ public class UserControllerTest {
   public void testGetLeaderBoard() throws Exception {
     PokerUser mockUser = mockPokerUserBuilder.build();
     List<PokerUser> listOfMockUser = mockPokerUserBuilder.createListOfMockPokerUser();
-    String token = tokenService.generateToken(mockUser);
-    Mockito.when(pokerUserRepo.existsByToken(token)).thenReturn(true);
     Mockito.when(pokerUserRepo.findOne(1l)).thenReturn(mockUser);
     Mockito.when(pokerUserRepo.findTop10ByOrderByChipsDesc()).thenReturn(listOfMockUser);
     this.mockMvc.perform(get("/leaderboard")
-        .contentType(contentType)
-        .header("X-poker-token", token))
+        .contentType(contentType))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()", is(10)))
         .andExpect(jsonPath("$.[1].id", is(1)))
