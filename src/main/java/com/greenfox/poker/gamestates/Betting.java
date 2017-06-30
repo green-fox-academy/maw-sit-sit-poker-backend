@@ -34,6 +34,7 @@ public class Betting {
     checkIfThereAreAtLeastTwoPlayersToPlay(gameStateId);
     if (gameService.getGameStateMap().get(gameStateId).getRound() == Round.BETTING) {
       setAllPlayerAtTheTableToActive(gameStateId);
+      setGameStateSettingsToDefault(gameStateId);
       assignDealer(gameStateId);
       setAndAutobetSmallBlindBigBlind(gameStateId);
       getNewDeckAndSetItInGameState(gameStateId);
@@ -79,6 +80,13 @@ public class Betting {
     }
   }
 
+  private void setGameStateSettingsToDefault(long gameStateId) {
+    gameState = gameService.getGameStateMap().get(gameStateId);
+    gameState.setPot(0);
+    gameState.setCardsOnTable(null);
+    gameState.setRound(Round.BETTING);
+  }
+
   private Long findNextPlayerIdAtTheTable(long gameStateId, Long currentPlayerId) {
     gameState = gameService.getGameStateMap().get(gameStateId);
     for (GamePlayer gamePlayer : gameState.getPlayers()) {
@@ -113,6 +121,7 @@ public class Betting {
         gameState.setPot(gameState.getPot() + bigBlindAmount);
       }
     }
+    gameState.setActorPlayerId(findNextPlayerIdAtTheTable(gameStateId, bigBlindPlayerId));
   }
 
   private void getNewDeckAndSetItInGameState(long gameStateId) {
