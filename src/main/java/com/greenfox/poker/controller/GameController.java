@@ -52,8 +52,8 @@ public class GameController {
   PokerUser pokerUser;
 
   @RequestMapping(value = "/games", method = RequestMethod.GET)
-  public GamesList getGamesList(@RequestHeader("X-poker-token") String token) {
-    return gameService.getAllGamesOrderedByBigBlind();
+  public ResponseEntity<?> getGamesList(@RequestHeader("X-poker-token") String token) {
+    return new ResponseEntity(gameService.getAllGamesOrderedByBigBlind(), HttpStatus.OK);
   }
 
 

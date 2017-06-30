@@ -2,6 +2,8 @@ package com.greenfox.poker.mockbuilder;
 
 
 import com.greenfox.poker.model.Game;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -35,5 +37,13 @@ public class MockGameBuilder {
 
   public Game build(){
     return mockGame;
+  }
+
+  public List<Game> createListOfAllGamesOrderedByBigBlind () {
+    List<Game> topTenGames = new ArrayList<>();
+    for (int i = 0; i < 10; i++) {
+      topTenGames.add(build());
+    }
+    return topTenGames;
   }
 }
