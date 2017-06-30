@@ -47,9 +47,13 @@ public class GameService {
   public Game createNewGame(Game game) {
     newGame = new Game(game.getName(), game.getBigBlind(), game.getMaxPlayers());
     gameRepo.save(newGame);
-    long commonId = gameRepo.findOneByName(game.getName()).getId();
-    gameStateMap.put(commonId, new GameState(commonId));
+    createGameState(game);
     return newGame;
+  }
+
+  public void createGameState(Game game) {
+    long commonIdwithGame = gameRepo.findOneByName(game.getName()).getId();
+    gameStateMap.put(commonIdwithGame, new GameState(commonIdwithGame));
   }
 
   public void deleteGame(Game game) {
