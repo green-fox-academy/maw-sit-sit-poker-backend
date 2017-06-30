@@ -111,11 +111,6 @@ public class GameControllerTest {
   }
 
   @Test
-  public void testGetGameById() throws Exception {
-    assertEquals(1, 1);
-  }
-
-  @Test
   public void testSuccesfulJoinToTable() throws Exception {
     createTestGame();
     createTestPokerUser();
