@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,8 +23,13 @@ public class AuthorizationAspect {
   @Autowired
   PokerUserRepo pokerUserRepo;
 
-  @Around("execution(* com.greenfox.poker.controller.*.*(..))" +
+  @Pointcut("execution(* com.greenfox.poker.controller.*.*(..))" +
       "&& !@annotation(com.greenfox.poker.service.Accessible)")
+  public void allEndpointsInControllerPackageExceptHavingAccessibleAnnotation() {
+
+  }
+
+  @Around("allEndpointsInControllerPackageExceptHavingAccessibleAnnotation()")
   public Object accessAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
 
     Object[] argsList = joinPoint.getArgs();
