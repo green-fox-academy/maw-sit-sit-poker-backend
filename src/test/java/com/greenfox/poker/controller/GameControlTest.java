@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+
 import com.greenfox.poker.PokergameApplication;
 import com.greenfox.poker.mockbuilder.MockGameBuilder;
 import com.greenfox.poker.mockbuilder.MockPokerUserBuilder;
@@ -18,6 +19,7 @@ import com.greenfox.poker.service.DtoService;
 import com.greenfox.poker.service.GameService;
 import com.greenfox.poker.service.TokenService;
 import java.nio.charset.Charset;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -97,7 +99,7 @@ public class GameControlTest {
   }
 
   @Test
-  public void testJoinWithNonExistingGameId() throws Exception{
+  public void testJoinWithNonExistingGameId() throws Exception {
     PokerUser player = mockPokerUserBuilder.build();
     Game game = mockGameBuilder.build();
     String token = tokenService.generateToken(player);
@@ -148,6 +150,7 @@ public class GameControlTest {
         .andExpect(jsonPath("$.result", is("fail")))
         .andExpect(jsonPath("$.message", is("you dont have enough chips to play with")));
   }
+
   //
   @Test
   public void testJoinWithPlayerAlreadySittingAtTable() throws Exception {
@@ -196,5 +199,25 @@ public class GameControlTest {
         .andExpect(jsonPath("$.name", is("Table")))
         .andExpect(jsonPath("$.big_blind", is(20)))
         .andExpect(jsonPath("$.max_players", is(3)));
+  }
+
+  @Test
+  public void testGetGameListOrderedByBigBlind() throws Exception {
+    PokerUser player = mockPokerUserBuilder.build();
+    Game game = mockGameBuilder.build();
+    List<Game> listOfMockGame = mockGameBuilder.createListOfAllGamesOrderedByBigBlind();
+    String token = tokenService.generateToken(player);
+    Mockito.when(pokerUserRepo.existsByToken(token)).thenReturn(true);
+    Mockito.when(gameRepo.findAllByOrderByBigBlindDesc()).thenReturn(listOfMockGame);
+
+    this.mockMvc.perform(get("/games")
+        .header("X-poker-token", token)
+        .contentType(contentType))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.games.length()", is(10)))
+        .andExpect(jsonPath("$.games[1].id", is(1)))
+        .andExpect(jsonPath("$.games[1].name", is("Table")))
+        .andExpect(jsonPath("$.games[1].big_blind", is(20)))
+        .andExpect(jsonPath("$.games[1].max_players", is(3)));
   }
 }
