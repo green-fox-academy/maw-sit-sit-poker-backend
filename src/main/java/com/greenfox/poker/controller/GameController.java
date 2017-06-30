@@ -52,13 +52,13 @@ public class GameController {
   PokerUser pokerUser;
 
   @RequestMapping(value = "/games", method = RequestMethod.GET)
-  public GamesList getGamesList() {
+  public GamesList getGamesList(@RequestHeader("X-poker-token") String token) {
     return gameService.getAllGamesOrderedByBigBlind();
   }
 
- // @Accessible
+
   @RequestMapping(value = "/game/{id}", method = RequestMethod.GET)
-  public ResponseEntity<?> gameState(@PathVariable("id") long gameId) {
+  public ResponseEntity<?> gameState(@PathVariable("id") long gameId, @RequestHeader("X-poker-token") String token) {
     if (gameService.isGameExistById(gameId)) {
       return new ResponseEntity(gameService.getGameById(gameId), HttpStatus.OK);
     }

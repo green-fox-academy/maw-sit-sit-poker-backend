@@ -150,7 +150,7 @@ public class GameControlTest {
   }
   //
   @Test
-  public void testJoinWithPlayerAlreadySittigAtTable() throws Exception {
+  public void testJoinWithPlayerAlreadySittingAtTable() throws Exception {
     PokerUser player = mockPokerUserBuilder.build();
     Game game = mockGameBuilder.build();
     String token = tokenService.generateToken(player);
@@ -179,13 +179,17 @@ public class GameControlTest {
 
   @Test
   public void testGetGameEndpointWithCorrectId() throws Exception {
+    PokerUser player = mockPokerUserBuilder.build();
     Game game = mockGameBuilder.build();
+    String token = tokenService.generateToken(player);
+    Mockito.when(pokerUserRepo.existsByToken(token)).thenReturn(true);
     Mockito.when(gameRepo.exists(1l)).thenReturn(true);
     Mockito.when(gameRepo.findOne(1l)).thenReturn(game);
     Mockito.when(gameRepo.findOneByName("Table")).thenReturn(game);
     gameService.createNewGame(game);
 
     this.mockMvc.perform(get("/game/{id}", 1l)
+        .header("X-poker-token", token)
         .contentType(contentType))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id", is(1)))

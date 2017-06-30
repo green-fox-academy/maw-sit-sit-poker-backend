@@ -76,9 +76,9 @@ public class UserController {
     return new ResponseEntity(new StatusError("fail", "user doesn't exist"), HttpStatus.NOT_FOUND);
   }
 
-  @Accessible
+
   @GetMapping("/leaderboard")
-  public ResponseEntity<?> getLeaderboard() {
+  public ResponseEntity<?> getLeaderboard(@RequestHeader("X-poker-token") String token) {
     return new ResponseEntity(userService.getTopTenLeaderboard(), HttpStatus.OK);
   }
 }
