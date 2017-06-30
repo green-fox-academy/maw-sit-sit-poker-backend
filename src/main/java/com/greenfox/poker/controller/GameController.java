@@ -56,7 +56,7 @@ public class GameController {
     return gameService.getAllGamesOrderedByBigBlind();
   }
 
-  @Accessible
+ // @Accessible
   @RequestMapping(value = "/game/{id}", method = RequestMethod.GET)
   public ResponseEntity<?> gameState(@PathVariable("id") long gameId) {
     if (gameService.isGameExistById(gameId)) {
