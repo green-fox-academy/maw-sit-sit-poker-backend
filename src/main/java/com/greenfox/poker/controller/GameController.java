@@ -83,7 +83,7 @@ public class GameController {
   }
 
   @RequestMapping(value = "/savenewgames", method = RequestMethod.POST)
-  public ResponseEntity<?> saveNewGame(@RequestBody @Valid Game game, BindingResult bindingResult) {
+  public ResponseEntity<?> saveNewGame(@RequestBody @Valid Game game, BindingResult bindingResult, @RequestHeader String token) {
     if (bindingResult.hasErrors()) {
       return new ResponseEntity(errorMessageService.respondToMissingParameters(bindingResult),
           HttpStatus.BAD_REQUEST);

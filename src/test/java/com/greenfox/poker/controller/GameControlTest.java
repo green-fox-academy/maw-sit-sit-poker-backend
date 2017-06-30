@@ -179,7 +179,6 @@ public class GameControlTest {
 
   @Test
   public void testGetGameEndpointWithCorrectId() throws Exception {
-    PokerUser player = mockPokerUserBuilder.build();
     Game game = mockGameBuilder.build();
     Mockito.when(gameRepo.exists(1l)).thenReturn(true);
     Mockito.when(gameRepo.findOne(1l)).thenReturn(game);
