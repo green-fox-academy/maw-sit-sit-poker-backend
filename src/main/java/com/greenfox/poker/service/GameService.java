@@ -86,7 +86,9 @@ public class GameService {
 
 
   public boolean isPlayerInTheGame(long gameId, long userId) {
-    return getPlayersListFromGame(gameId).stream().map(player -> player.getId().equals(userId)).findFirst().isPresent();
+    return getPlayersListFromGame(gameId).stream()
+        .map(player -> player.getId().equals(userId))
+        .findFirst().isPresent();
   }
 
   public boolean isGameExistById(long id) {
@@ -101,14 +103,14 @@ public class GameService {
   }
 
   public void createNewPlayerAndAddToGame(long playerId, long gameId, long chipsToPlayWith) {
-    PokerUserDTO player = dtoService.userDTOHashMap.get(playerId);
-    GamePlayer newPlayer = new GamePlayer(chipsToPlayWith, player);
-    gameStates.get(gameId).getPlayers().add(newPlayer);
+    PokerUserDTO player = dtoService.pokerUserDTOs.get(playerId);
+    gamePlayer = new GamePlayer(chipsToPlayWith, player);
+    gameStates.get(gameId).getPlayers().add(gamePlayer);
   }
 
   public ResponseType joinPlayerToGame(long playerId, long gameId, long chipsToPlayWith) {
     String gameName = gameRepo.findOne(gameId).getName();
-    String playerName = dtoService.userDTOHashMap.get(playerId).getUsername();
+    String playerName = dtoService.pokerUserDTOs.get(playerId).getUsername();
     createGameState(gameRepo.findOne(gameId));
     createNewPlayerAndAddToGame(playerId, gameId, chipsToPlayWith);
     return new StatusError("success", playerName + " joined game: " + gameName);
@@ -124,22 +126,22 @@ public class GameService {
   }
 
   public ResponseType respondToLeave(long playerId, long gameId) {
-    String playerName = dtoService.userDTOHashMap.get(playerId).getUsername();
+    String playerName = dtoService.pokerUserDTOs.get(playerId).getUsername();
     String gameName = gameRepo.findOne(gameId).getName();
     return new StatusError("success", playerName + " left game: " + gameName);
   }
 
   public Integer getPlayerIndexFromGameState(long playerId, long gameId) {
-    GamePlayer matchingPlayer = getPlayersListFromGame(gameId).stream()
+    gamePlayer = getPlayersListFromGame(gameId).stream()
         .filter(player -> player.getId().equals(playerId))
         .findFirst().get();
-    return getPlayersListFromGame(gameId).indexOf(matchingPlayer);
+    return getPlayersListFromGame(gameId).indexOf(gamePlayer);
   }
 
   public void updateGame(long playerId, long gameId, PlayerAction playerAction) {
     gamePlayer = getPlayersListFromGame(gameId).get(getPlayerIndexFromGameState(playerId, gameId));
     setActingPlayerIdInGameState(playerId, gameId);
-    setLastActionAndBetOfPlayer(gamePlayer, gameId, playerAction);
+    setLastActionAndBetOfPlayer(playerId, gameId, playerAction);
     getPlayersListFromGame(gameId).set(getPlayerIndexFromGameState(playerId, gameId), gamePlayer);
     gameStates.get(gameId).setPlayers(getPlayersListFromGame(gameId));
   }
@@ -152,8 +154,10 @@ public class GameService {
     gameStates.get(gameId).setActorPlayerId(playerId);
   }
 
-  public void setLastActionAndBetOfPlayer(GamePlayer player, long gameId, PlayerAction playerAction) {
-    player.setLastAction(playerAction.getAction());
-    player.setBet(player.getBet() + (int) playerAction.getValue());
+//  TODO
+  public void setLastActionAndBetOfPlayer(long playerId, long gameId, PlayerAction playerAction) {
+    gamePlayer = getPlayersListFromGame(gameId).get(getPlayerIndexFromGameState(playerId, gameId));
+    gamePlayer.setLastAction(playerAction.getAction());
+    gamePlayer.setBet(gamePlayer.getBet() + (int) playerAction.getValue());
   }
 }

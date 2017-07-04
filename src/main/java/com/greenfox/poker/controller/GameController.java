@@ -3,17 +3,13 @@ package com.greenfox.poker.controller;
 
 import com.greenfox.poker.model.ChipsToJoinGame;
 import com.greenfox.poker.model.Game;
-import com.greenfox.poker.model.GamesList;
 import com.greenfox.poker.model.PlayerAction;
-import com.greenfox.poker.model.PokerUser;
-import com.greenfox.poker.model.StatusError;
-import com.greenfox.poker.service.Accessible;
+import com.greenfox.poker.model.PokerUserDTO;
 import com.greenfox.poker.service.DtoService;
 import com.greenfox.poker.service.ErrorMessageService;
 import com.greenfox.poker.service.GameService;
 import com.greenfox.poker.service.TokenService;
 import com.greenfox.poker.service.UserService;
-import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,15 +45,17 @@ public class GameController {
   DtoService dtoService;
 
   @Autowired
-  PokerUser pokerUser;
+  PokerUserDTO pokerUserDTO;
 
   @RequestMapping(value = "/games", method = RequestMethod.GET)
-  public ResponseEntity<?> getGamesList(@RequestHeader String token) {
+  public ResponseEntity<?> getGamesList(@RequestHeader("X-poker-token") String token) {
     return new ResponseEntity(gameService.getAllGamesOrderedByBigBlind(), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/game/{id}", method = RequestMethod.GET)
-  public ResponseEntity<?> gameState(@PathVariable("id") long gameId) {
+  public ResponseEntity<?> gameState(
+      @PathVariable("id") long gameId,
+      @RequestHeader("X-poker-token") String token) {
     if (gameService.isGameExistById(gameId)) {
       return new ResponseEntity(gameService.getGameById(gameId), HttpStatus.OK);
     }
@@ -69,7 +67,7 @@ public class GameController {
       @PathVariable("id") long gameId,
       @RequestBody @Valid PlayerAction action, BindingResult bindingResult,
       @RequestHeader("X-poker-token") String token) {
-    pokerUser = tokenService.getPokerUserFromToken(token);
+     pokerUserDTO = tokenService.getPokerUserDTOFromToken(token);
     if (bindingResult.hasErrors()) {
       return new ResponseEntity(errorMessageService.respondToMissingParameters(bindingResult),
           HttpStatus.BAD_REQUEST);
@@ -77,17 +75,18 @@ public class GameController {
     if (!gameService.isGameExistById(gameId)) {
       return new ResponseEntity(errorMessageService.responseToWrongGameId(), HttpStatus.NOT_FOUND);
     }
-    if (!gameService.isPlayerInTheGame(gameId, pokerUser.getId())) {
-      return new ResponseEntity(errorMessageService.respondToPlayerNotSitingAtTheGame(pokerUser.getId(), gameId), HttpStatus.BAD_REQUEST);
+    if (!gameService.isPlayerInTheGame(gameId, pokerUserDTO.getId())) {
+      return new ResponseEntity(errorMessageService.respondToPlayerNotSitingAtTheGame(pokerUserDTO.getId(), gameId), HttpStatus.BAD_REQUEST);
     }
-    gameService.updateGame(pokerUser.getId(), gameId, action);
+    gameService.updateGame(pokerUserDTO.getId(), gameId, action);
     return new ResponseEntity(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/savenewgames", method = RequestMethod.POST)
   public ResponseEntity<?> saveNewGame(
       @RequestBody @Valid Game game,
-      BindingResult bindingResult) {
+      BindingResult bindingResult,
+      @RequestHeader("X-poker-token") String token) {
     if (bindingResult.hasErrors()) {
       return new ResponseEntity(errorMessageService.respondToMissingParameters(bindingResult),
           HttpStatus.BAD_REQUEST);
@@ -103,34 +102,34 @@ public class GameController {
       @PathVariable("id") long gameId,
       @RequestBody ChipsToJoinGame chips,
       @RequestHeader("X-poker-token") String token) {
-    pokerUser = tokenService.getPokerUserFromToken(token);
+    pokerUserDTO = tokenService.getPokerUserDTOFromToken(token);
     if (!gameService.isGameExistById(gameId)) {
       return new ResponseEntity(errorMessageService.responseToWrongGameId(), HttpStatus.NOT_FOUND);
     }
-    if (gameService.isPlayerInTheGame(gameId, pokerUser.getId())) {
-      return new ResponseEntity(errorMessageService.joinToGameWhereUserPlaysAlready(gameId, pokerUser.getId()),
+    if (gameService.isPlayerInTheGame(gameId, pokerUserDTO.getId())) {
+      return new ResponseEntity(errorMessageService.joinToGameWhereUserPlaysAlready(gameId, pokerUserDTO.getId()),
           HttpStatus.BAD_REQUEST);
     }
-    if (!dtoService.hasPlayerEnoughChipsToPlay(chips.getChips(), pokerUser.getId())) {
+    if (!dtoService.hasPlayerEnoughChipsToPlay(chips.getChips(), pokerUserDTO.getId())) {
       return new ResponseEntity(errorMessageService.joinGameWithNotEnoughChips(), HttpStatus.BAD_REQUEST);
     }
-    dtoService.deductChipsFromAvailableChips(chips.getChips(), pokerUser.getId());
-    return new ResponseEntity(gameService.joinPlayerToGame(pokerUser.getId(), gameId, chips.getChips()), HttpStatus.OK);
+    dtoService.deductChipsFromAvailableChips(chips.getChips(), pokerUserDTO.getId());
+    return new ResponseEntity(gameService.joinPlayerToGame(pokerUserDTO.getId(), gameId, chips.getChips()), HttpStatus.OK);
     }
 
-    @PostMapping("/game/{id}/leave")
-    public ResponseEntity<?> leaveTable (
-        @PathVariable("id") long gameId,
-        @RequestHeader("X-poker-token") String token) {
-      pokerUser = tokenService.getPokerUserFromToken(token);
-      if (!gameService.isGameExistById(gameId)) {
-        return new ResponseEntity(errorMessageService.responseToWrongGameId(), HttpStatus.NOT_FOUND);
-      }
-      if (!gameService.isPlayerInTheGame(gameId, pokerUser.getId())) {
-        return new ResponseEntity(errorMessageService.respondToPlayerNotSitingAtTheGame(pokerUser.getId(), gameId), HttpStatus.BAD_REQUEST);
-      }
-      gameService.leaveGame(pokerUser.getId(), gameId);
-      return new ResponseEntity(gameService.respondToLeave(pokerUser.getId(),gameId), HttpStatus.OK);
+  @PostMapping("/game/{id}/leave")
+  public ResponseEntity<?> leaveTable (
+      @PathVariable("id") long gameId,
+      @RequestHeader("X-poker-token") String token) {
+    pokerUserDTO = tokenService.getPokerUserDTOFromToken(token);
+    if (!gameService.isGameExistById(gameId)) {
+      return new ResponseEntity(errorMessageService.responseToWrongGameId(), HttpStatus.NOT_FOUND);
+    }
+    if (!gameService.isPlayerInTheGame(gameId, pokerUserDTO.getId())) {
+      return new ResponseEntity(errorMessageService.respondToPlayerNotSitingAtTheGame(pokerUserDTO.getId(), gameId), HttpStatus.BAD_REQUEST);
+    }
+    gameService.leaveGame(pokerUserDTO.getId(), gameId);
+    return new ResponseEntity(gameService.respondToLeave(pokerUserDTO.getId(),gameId), HttpStatus.OK);
   }
 }
 
