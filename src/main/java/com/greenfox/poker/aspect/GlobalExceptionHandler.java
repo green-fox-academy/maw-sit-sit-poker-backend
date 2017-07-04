@@ -16,7 +16,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   @Override
   protected ResponseEntity<Object> handleServletRequestBindingException(ServletRequestBindingException ex,
       HttpHeaders headers, HttpStatus status, WebRequest request) {
-
     return handleExceptionInternal(ex, new StatusError("fail",
         "No authentication token is provided, please refer to the API specification"), headers, status, request);
   }

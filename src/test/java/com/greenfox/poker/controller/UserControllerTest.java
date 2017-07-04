@@ -130,6 +130,7 @@ public class UserControllerTest {
     Mockito.when(pokerUserRepo.findOne(1l)).thenReturn(mockUser);
     Mockito.when(pokerUserRepo.existsByEmail("pisti@pisti.com")).thenReturn(false);
     Mockito.when(pokerUserRepo.existsByUsername("Pisti")).thenReturn(false);
+    Mockito.when(pokerUserRepo.findByUsername("Pisti")).thenReturn(mockUser);
     String token = tokenService.generateToken(mockUser);
     mockUser.setToken(token);
     pokerUserRepo.save(mockUser);

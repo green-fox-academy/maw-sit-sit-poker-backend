@@ -36,7 +36,7 @@ public class TokenService {
     this.key = MacProvider.generateKey();
     String token = Jwts.builder()
         .setClaims(claims)
-        .signWith(SignatureAlgorithm.HS256, key)
+        .signWith(SignatureAlgorithm.HS256, this.key)
         .compact();
     return token;
   }
@@ -44,7 +44,7 @@ public class TokenService {
   private Claims getClaimsFromToken(String token) {
     Claims claims;
     claims = Jwts.parser()
-        .setSigningKey(key)
+        .setSigningKey(this.key)
         .parseClaimsJws(token)
         .getBody();
     return claims;
@@ -55,7 +55,7 @@ public class TokenService {
     long id;
     try {
       Claims claims = getClaimsFromToken(token);
-      id = (Integer) claims.get("id");
+      id = new Long((Integer) claims.get("id"));
     } catch (MissingClaimException e) {
       id = -1L;
     }

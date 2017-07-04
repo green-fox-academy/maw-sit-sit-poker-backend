@@ -3,6 +3,7 @@ package com.greenfox.poker.aspect;
 
 import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.repository.PokerUserRepo;
+import com.greenfox.poker.service.LoggingService;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -23,13 +24,15 @@ public class AuthorizationAspect {
   @Autowired
   PokerUserRepo pokerUserRepo;
 
+  @Autowired
+  LoggingService loggingService;
+
   @Pointcut("execution(* com.greenfox.poker.controller.*.*(..))" +
       "&& !@annotation(com.greenfox.poker.service.Accessible)")
-  public void allEndpointsInControllerPackageExceptHavingAccessibleAnnotation() {
-
+  public void protectedEndPoints() {
   }
 
-  @Around("allEndpointsInControllerPackageExceptHavingAccessibleAnnotation()")
+  @Around("protectedEndPoints()")
   public Object accessAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
 
     Object[] argsList = joinPoint.getArgs();
@@ -51,7 +54,7 @@ public class AuthorizationAspect {
         if (annotation instanceof RequestHeader) {
           RequestHeader requestHeader = (RequestHeader) annotation;
           tokenFromHeader = (String) argsList[argIndex];
-          System.out.println(requestHeader.value() + " = " + argsList[argIndex]);
+          loggingService.getRequestHeaderAndItsValue(requestHeader, argsList, argIndex);
         }
       }
     }
