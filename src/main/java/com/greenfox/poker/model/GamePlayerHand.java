@@ -6,8 +6,7 @@ import java.util.List;
 public class GamePlayerHand {
 
   private long gameStateId;
-  private long gamePlayerHandId;
-  private List<Card> gamePlayerOwnTwoCards;
+  private List<Card> playerCards;
 
   public GamePlayerHand() {
   }
@@ -20,23 +19,15 @@ public class GamePlayerHand {
     this.gameStateId = gameStateId;
   }
 
-  public long getGamePlayerHandId() {
-    return gamePlayerHandId;
+  public List<Card> getPlayerCards() {
+    return playerCards;
   }
 
-  public void setGamePlayerHandId(long gamePlayerHandId) {
-    this.gamePlayerHandId = gamePlayerHandId;
+  public void setPlayerCards(List<Card> playerCards) {
+    this.playerCards = playerCards;
   }
 
-  public List<Card> getGamePlayerOwnTwoCards() {
-    return gamePlayerOwnTwoCards;
-  }
-
-  public void setGamePlayerOwnTwoCards(List<Card> gamePlayerOwnTwoCards) {
-    this.gamePlayerOwnTwoCards = gamePlayerOwnTwoCards;
-  }
-
-  public void addCardToGamePlayerOwnTwoCards(Card cardToAdd){
-    gamePlayerOwnTwoCards.add(cardToAdd);
+  public void addCardToGamePlayerHand(Card cardToAdd){
+    playerCards.add(cardToAdd);
   }
 }

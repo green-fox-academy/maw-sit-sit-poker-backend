@@ -29,7 +29,7 @@ public class GameStateService {
 
   private void flopRound(GameState gameState){
     Flop flop = new Flop();
-    flop.initForBettingGameState(gameState);
+    flop.initForFlopGameState(gameState);
   }
 
   private void turnRound(GameState gameState) {

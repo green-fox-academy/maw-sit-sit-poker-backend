@@ -15,7 +15,7 @@ public class Flop {
   public Flop() {
   }
 
-  public void initForBettingGameState(GameState gameState) {
+  public void initForFlopGameState(GameState gameState) {
     DeckService deckService = new DeckService();
     List<Card> flopCards = new ArrayList<>();
     for (int i = 0; i < 3; i++) {

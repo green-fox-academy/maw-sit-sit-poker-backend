@@ -33,7 +33,8 @@ public class Betting {
     }
   }
 
-  private void removeGamePlayersFromTableWithLessChipsThankBigBlind(GameState gameState, Game game) {
+  private void removeGamePlayersFromTableWithLessChipsThankBigBlind(GameState gameState,
+          Game game) {
     for (GamePlayer gamePlayer : gameState.getPlayers()) {
       if (gamePlayer.getChips() < game.getBigBlind()) {
         gameState.getPlayers().remove(gamePlayer);
@@ -130,12 +131,11 @@ public class Betting {
     for (GamePlayer gamePlayer : gameState.getPlayers()) {
       GamePlayerHand gamePlayerHand = new GamePlayerHand();
       gamePlayerHand.setGameStateId(gameState.getId());
-      gamePlayerHand.setGamePlayerHandId(gamePlayer.getId());
       for (int i = 0; i < 2; i++) {
         Card drawnCard = deckService.drawCardFromDeck(gameState.getDeckInGameState());
-        gamePlayerHand.addCardToGamePlayerOwnTwoCards(drawnCard);
+        gamePlayerHand.addCardToGamePlayerHand(drawnCard);
       }
-      gameState.addGamePlayerHandToGamePlayerHandList(gamePlayerHand);
+      gamePlayer.setGamePlayerHand(gamePlayerHand);
     }
   }
 }
