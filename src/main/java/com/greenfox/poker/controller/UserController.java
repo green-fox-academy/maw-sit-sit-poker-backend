@@ -1,5 +1,6 @@
 package com.greenfox.poker.controller;
 
+
 import com.greenfox.poker.model.LoginRequest;
 import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.model.StatusError;
@@ -71,7 +72,6 @@ public class UserController {
   public ResponseEntity<?> getUserInfo(@PathVariable("id") long id, @RequestHeader("X-poker-token") String token) {
     if (userService.isUserExistsInDB(id)) {
       PokerUser player = tokenService.getPokerUserFromToken(token);
-      System.out.println(player.getUsername());
       return new ResponseEntity(dtoService.makePokerUserDTO(player), HttpStatus.OK);
     }
     return new ResponseEntity(new StatusError("fail", "user doesn't exist"), HttpStatus.NOT_FOUND);
