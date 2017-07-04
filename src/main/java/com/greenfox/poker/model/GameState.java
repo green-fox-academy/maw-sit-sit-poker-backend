@@ -16,22 +16,16 @@ public class GameState {
   private int pot;
 
   @JsonIgnore
-  private Deck deckInGameState;
+  private Long smallBlindPlayerId;
 
   @JsonIgnore
-  private List<GamePlayerHand> gamePlayerHandList;
+  private Long bigBlindPlayerId;
+
+  @JsonIgnore
+  private Deck deckInGameState;
 
   public GameState() {
     this.players = new ArrayList<>();
-  }
-
-  public List<GamePlayerHand> getGamePlayerHandList() {
-    return gamePlayerHandList;
-  }
-
-  public void setGamePlayerHandList(
-          List<GamePlayerHand> gamePlayerHandList) {
-    this.gamePlayerHandList = gamePlayerHandList;
   }
 
   public GameState(long id) {
@@ -103,7 +97,19 @@ public class GameState {
     this.pot = pot;
   }
 
-  public void addGamePlayerHandToGamePlayerHandList(GamePlayerHand gamePlayerHandToAdd){
-    gamePlayerHandList.add(gamePlayerHandToAdd);
+  public Long getSmallBlindPlayerId() {
+    return smallBlindPlayerId;
+  }
+
+  public void setSmallBlindPlayerId(Long smallBlindPlayerId) {
+    this.smallBlindPlayerId = smallBlindPlayerId;
+  }
+
+  public Long getBigBlindPlayerId() {
+    return bigBlindPlayerId;
+  }
+
+  public void setBigBlindPlayerId(Long bigBlindPlayerId) {
+    this.bigBlindPlayerId = bigBlindPlayerId;
   }
 }

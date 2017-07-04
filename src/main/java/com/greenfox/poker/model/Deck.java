@@ -2,13 +2,14 @@ package com.greenfox.poker.model;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 public class Deck {
 
   private long id;
   private List<Card> cards;
-  private static final AtomicInteger totalDeckCounter = new AtomicInteger(0);
+  private static final AtomicLong totalDeckCounter = new AtomicLong(0);
 
 
 
