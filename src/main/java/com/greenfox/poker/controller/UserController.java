@@ -40,7 +40,8 @@ public class UserController {
 
   @Accessible
   @RequestMapping(value = "/register", method = RequestMethod.POST)
-  public ResponseEntity<?> registerUser(@RequestBody @Valid PokerUser userRegister,
+  public ResponseEntity<?> registerUser(
+      @RequestBody @Valid PokerUser userRegister,
       BindingResult bindingResult) {
     if (bindingResult.hasErrors()) {
       return new ResponseEntity(errorMessageService.respondToMissingParameters(bindingResult),
@@ -55,7 +56,8 @@ public class UserController {
 
   @Accessible
   @RequestMapping(value = "/login", method = RequestMethod.POST)
-  public ResponseEntity<?> loginUser(@RequestBody @Valid LoginRequest loginRequest,
+  public ResponseEntity<?> loginUser(
+      @RequestBody @Valid LoginRequest loginRequest,
       BindingResult bindingResult) {
     if (bindingResult.hasErrors()) {
       return new ResponseEntity(errorMessageService.respondToMissingParameters(bindingResult),
@@ -68,7 +70,9 @@ public class UserController {
   }
 
   @GetMapping("/user/{id}")
-  public ResponseEntity<?> getUserInfo(@PathVariable("id") long id, @RequestHeader("X-poker-token") String token) {
+  public ResponseEntity<?> getUserInfo(
+      @PathVariable("id") long id,
+      @RequestHeader("X-poker-token") String token) {
     if (userService.isUserExistsInDB(id)) {
       PokerUser player = tokenService.getPokerUserFromToken(token);
       return new ResponseEntity(dtoService.makePokerUserDTO(player), HttpStatus.OK);

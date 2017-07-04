@@ -86,6 +86,7 @@ public class GameControlTest {
     Mockito.when(gameRepo.findOneByName("Table")).thenReturn(game);
     dtoService.makePokerUserDTO(player);
     gameService.createNewGame(game);
+    gameService.createGameState(game);
 
     mockMvc.perform(post("/game/1/join")
         .content(join)
@@ -139,6 +140,7 @@ public class GameControlTest {
     Mockito.when(gameRepo.findOneByName("Table")).thenReturn(game);
     dtoService.makePokerUserDTO(player);
     gameService.createNewGame(game);
+    gameService.createGameState(game);
 
     mockMvc.perform(post("/game/1/join")
         .content(join)
@@ -166,6 +168,7 @@ public class GameControlTest {
     Mockito.when(gameRepo.findOneByName("Table")).thenReturn(game);
     dtoService.makePokerUserDTO(player);
     gameService.createNewGame(game);
+    gameService.createGameState(game);
     gameService.createNewPlayerAndAddToGame(player.getId(), game.getId(), 5000);
 
     mockMvc.perform(post("/game/{id}/join", 1l)
