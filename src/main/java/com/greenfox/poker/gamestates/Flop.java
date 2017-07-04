@@ -12,24 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class Flop {
 
-  GameService gameService;
-
-  @Autowired
-  public Flop(GameService gameService) {
-    this.gameService = gameService;
+  public Flop() {
   }
 
-  public void initForBettingGameState(long gameStateId){
-    getFlopThreeCards(gameStateId);
-  }
-
-  private void getFlopThreeCards(long gameStateId) {
+  public void initForBettingGameState(GameState gameState) {
     DeckService deckService = new DeckService();
-    GameState gameState = gameService.getGameStateMap().get(gameStateId);
-    Deck deckToDealFrom = gameState.getDeckInGameState();
     List<Card> flopCards = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
-      Card cardToDrawn = deckService.drawCardFromDeck(deckToDealFrom);
+      Card cardToDrawn = deckService.drawCardFromDeck(gameState.getDeckInGameState());
       flopCards.add(cardToDrawn);
     }
     gameState.setCardsOnTable(flopCards);

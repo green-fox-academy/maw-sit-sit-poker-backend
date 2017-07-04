@@ -1,34 +1,23 @@
 package com.greenfox.poker.gamestates;
 
 import com.greenfox.poker.model.Card;
-import com.greenfox.poker.model.Deck;
 import com.greenfox.poker.model.GameState;
 import com.greenfox.poker.service.DeckService;
-import com.greenfox.poker.service.GameService;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 
 
-public class River {
+public class RiverAndTurn {
 
-  GameService gameService;
-
-  @Autowired
-  public River(GameService gameService) {
-    this.gameService = gameService;
+  public RiverAndTurn() {
   }
 
-  public void initForRiverGameState(long gameStateId) {
-    getRiverCard(gameStateId);
-  }
-
-  private void getRiverCard(long gameStateId) {
+  public void initForRiverAndTurnGameState(GameState gameState) {
     DeckService deckService = new DeckService();
-    GameState gameState = gameService.getGameStateMap().get(gameStateId);
-    Deck deckToDealFrom = gameState.getDeckInGameState();
-    List<Card> riverCards = gameState.getCardsOnTable();
-    Card cardToDrawn = deckService.drawCardFromDeck(deckToDealFrom);
-    riverCards.add(cardToDrawn);
-    gameState.setCardsOnTable(riverCards);
+    List<Card> cardsOnTable = gameState.getCardsOnTable();
+    Card cardToDrawn = deckService.drawCardFromDeck(gameState.getDeckInGameState());
+    cardsOnTable.add(cardToDrawn);
+    gameState.setCardsOnTable(cardsOnTable);
   }
 }
+
+

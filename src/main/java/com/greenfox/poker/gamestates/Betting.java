@@ -4,65 +4,56 @@ package com.greenfox.poker.gamestates;
 import com.greenfox.poker.model.Action;
 import com.greenfox.poker.model.Card;
 import com.greenfox.poker.model.Deck;
+import com.greenfox.poker.model.Game;
 import com.greenfox.poker.model.GamePlayer;
 import com.greenfox.poker.model.GamePlayerHand;
 import com.greenfox.poker.model.GameState;
 import com.greenfox.poker.model.Round;
 import com.greenfox.poker.service.DeckService;
-import com.greenfox.poker.service.GameService;
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
+
 
 public class Betting {
 
-  private GameService gameService;
-  private GameState gameState;
-  private DeckService deckService;
-  private List<Long> playerIdNumbersAroundTheTable = new ArrayList<>();
-  private long smallBlindPlayerId;
-  private long bigBlindPlayerId;
-  private GamePlayerHand gamePlayerHand;
-
-  @Autowired
-  public Betting(GameService gameService) {
-    this.gameService = gameService;
+  public Betting() {
   }
 
-  public void initForBettingGameState(long gameStateId) {
-    removeGamePlayersFromTableWithLessChipsThankBigBlind(gameStateId);
-    checkIfThereAreAtLeastTwoPlayersToPlay(gameStateId);
-    if (gameService.getGameStateMap().get(gameStateId).getRound() == Round.BETTING) {
-      setAllPlayerAtTheTableToActive(gameStateId);
-      setGameStateSettingsToDefault(gameStateId);
-      assignDealer(gameStateId);
-      setAndAutobetSmallBlindBigBlind(gameStateId);
-      getNewDeckAndSetItInGameState(gameStateId);
-      shuffleDeck(gameStateId);
-      initGamePlayerHandForEachGamePlayer(gameStateId);
-      drawTwoCardsToEachPlayer(gameStateId);
+  public void initForBettingGameState(GameState gameState, Game game) {
+    removeGamePlayersFromTableWithLessChipsThankBigBlind(gameState, game);
+    if (!isThereAtLeastTwoPlayersToPlay(gameState)) {
+      setGameRoundToIdle(gameState);
+    }
+    if (gameState.getRound() == Round.BETTING) {
+      setAllPlayerAtTheTableToActive(gameState);
+      setGameStateSettingsToDefault(gameState);
+      assignDealer(gameState);
+      setSmallBlindAndBigBlindId(gameState);
+      betSmallBlindBigBlind(gameState, game);
+      getNewDeckAndShuffleAndSetItInGameState(gameState);
+      setPlayerHandsForAllPlayers(gameState);
     }
   }
 
-  private void removeGamePlayersFromTableWithLessChipsThankBigBlind(long gameStateId) {
-    gameState = gameService.getGameStateMap().get(gameStateId);
-    Integer tableBigBlind = gameService.getTableBigBlind(gameStateId);
+  private void removeGamePlayersFromTableWithLessChipsThankBigBlind(GameState gameState, Game game) {
     for (GamePlayer gamePlayer : gameState.getPlayers()) {
-      if (gamePlayer.getChips() < tableBigBlind) {
-        gameService.getGameStateMap().remove(gamePlayer);
+      if (gamePlayer.getChips() < game.getBigBlind()) {
+        gameState.getPlayers().remove(gamePlayer);
       }
     }
   }
 
-  private void checkIfThereAreAtLeastTwoPlayersToPlay(long gameStateId) {
-    gameState = gameService.getGameStateMap().get(gameStateId);
+  private boolean isThereAtLeastTwoPlayersToPlay(GameState gameState) {
     if (gameState.getPlayers().size() < 2) {
-      gameState.setRound(Round.IDLE);
+      return false;
     }
+    gameState.setRound(Round.BETTING);
+    return true;
   }
 
-  private void setAllPlayerAtTheTableToActive(long gameStateId) {
-    gameState = gameService.getGameStateMap().get(gameStateId);
+  private void setGameRoundToIdle(GameState gameState) {
+    gameState.setRound(Round.IDLE);
+  }
+
+  private void setAllPlayerAtTheTableToActive(GameState gameState) {
     for (GamePlayer gamePlayer : gameState.getPlayers()) {
       gamePlayer.setWaiting(true);
       gamePlayer.setFolded(false);
@@ -70,95 +61,81 @@ public class Betting {
     }
   }
 
-  private void assignDealer(long gameStateId) {
-    gameState = gameService.getGameStateMap().get(gameStateId);
+  private void assignDealer(GameState gameState) {
     if (gameState.getDealerPlayerId() != null) {
       gameState.setDealerPlayerId(
-              findNextPlayerIdAtTheTable(gameStateId, gameState.getDealerPlayerId()));
+              findNextPlayerAtTheTable(gameState, gameState.getDealerPlayerId()));
     } else {
       gameState.setDealerPlayerId(gameState.getPlayers().get(0).getId());
     }
   }
 
-  private void setGameStateSettingsToDefault(long gameStateId) {
-    gameState = gameService.getGameStateMap().get(gameStateId);
+  public void setSmallBlindAndBigBlindId(GameState gameState) {
+    gameState.setSmallBlindPlayerId(
+            findNextPlayerAtTheTable(gameState, gameState.getDealerPlayerId()));
+    gameState.setBigBlindPlayerId(
+            findNextPlayerAtTheTable(gameState, gameState.getSmallBlindPlayerId()));
+  }
+
+  private void setGameStateSettingsToDefault(GameState gameState) {
     gameState.setPot(0);
     gameState.setCardsOnTable(null);
     gameState.setRound(Round.BETTING);
   }
 
-  private Long findNextPlayerIdAtTheTable(long gameStateId, Long currentPlayerId) {
-    gameState = gameService.getGameStateMap().get(gameStateId);
-    for (GamePlayer gamePlayer : gameState.getPlayers()) {
-      if (gamePlayer.getId() != null) {
-        playerIdNumbersAroundTheTable.add(gamePlayer.getId());
+  private Long findNextPlayerAtTheTable(GameState gameState, Long currentPlayerId) {
+    GamePlayer currentPlayer = gameState.getPlayers().stream()
+            .filter(gamePlayer -> gamePlayer.getId() == currentPlayerId).findFirst().get();
+    int currentPlayerIndex = gameState.getPlayers().indexOf(currentPlayer);
+    Long nextPlayerId = null;
+    for (int i = currentPlayerIndex + 1; i < gameState.getPlayers().size(); i++) {
+      if (gameState.getPlayers().get(i) != null) {
+        nextPlayerId = gameState.getPlayers().get(i).getId();
+        return nextPlayerId;
       }
     }
-    int playersListSize = playerIdNumbersAroundTheTable.size();
-    int indexOfCurrentPlayerId = playerIdNumbersAroundTheTable.indexOf(currentPlayerId);
-    if (indexOfCurrentPlayerId + 1 == playersListSize) {
-      return playerIdNumbersAroundTheTable.get(0);
+    for (int i = 0; i < currentPlayerIndex; i++) {
+      if (gameState.getPlayers().get(i) != null) {
+        nextPlayerId = gameState.getPlayers().get(i).getId();
+      }
     }
-    return playerIdNumbersAroundTheTable.get(indexOfCurrentPlayerId + 1);
+    return nextPlayerId;
   }
 
-  private void setAndAutobetSmallBlindBigBlind(long gameStateId) {
-    gameState = gameService.getGameStateMap().get(gameStateId);
-    int bigBlindAmount = gameService.getTableBigBlind(gameStateId);
-    int smallBlindAmount = bigBlindAmount / 2;
-    smallBlindPlayerId = findNextPlayerIdAtTheTable(gameStateId,
-            gameState.getDealerPlayerId());
-    bigBlindPlayerId = findNextPlayerIdAtTheTable(gameStateId, smallBlindPlayerId);
-    for (GamePlayer gamePlayer : gameState.getPlayers()) {
-      if (gamePlayer.getId() == smallBlindPlayerId) {
-        gamePlayer.setChips(gamePlayer.getChips() - smallBlindAmount);
-        gamePlayer.setBet(gamePlayer.getBet() + smallBlindAmount);
-        gameState.setPot(gameState.getPot() + smallBlindAmount);
-      }
-      if (gamePlayer.getId() == bigBlindPlayerId) {
-        gamePlayer.setChips(gamePlayer.getChips() - bigBlindAmount);
-        gamePlayer.setBet(gamePlayer.getBet() + bigBlindAmount);
-        gameState.setPot(gameState.getPot() + bigBlindAmount);
-      }
-    }
-    gameState.setActorPlayerId(findNextPlayerIdAtTheTable(gameStateId, bigBlindPlayerId));
+  private void betSmallBlindBigBlind(GameState gameState, Game game) {
+    int bigBlindAmount = game.getBigBlind();
+    GamePlayer smallBlindPlayer = gameState.getPlayers().stream()
+            .filter(gamePlayer -> gamePlayer.getId() == gameState.getSmallBlindPlayerId())
+            .findFirst().get();
+    smallBlindPlayer.setChips(smallBlindPlayer.getChips() - (bigBlindAmount / 2));
+    smallBlindPlayer.setBet(smallBlindPlayer.getBet() + (bigBlindAmount / 2));
+    gameState.setPot(gameState.getPot() + (bigBlindAmount / 2));
+    GamePlayer bigBlindPlayer = gameState.getPlayers().stream()
+            .filter(gamePlayer -> gamePlayer.getId() == gameState.getBigBlindPlayerId())
+            .findFirst().get();
+    bigBlindPlayer.setChips(bigBlindPlayer.getChips() - bigBlindAmount);
+    bigBlindPlayer.setBet(bigBlindPlayer.getBet() + bigBlindAmount);
+    gameState.setPot(gameState.getPot() + bigBlindAmount);
   }
 
-  private void getNewDeckAndSetItInGameState(long gameStateId) {
-    gameState = gameService.getGameStateMap().get(gameStateId);
+  private void getNewDeckAndShuffleAndSetItInGameState(GameState gameState) {
+    DeckService deckService = new DeckService();
     Deck deck = deckService.getNewDeck();
+    deckService.shuffleDeck(deck);
     gameState.setDeckInGameState(deck);
   }
 
-  private void shuffleDeck(long gameStateId) {
-    gameState = gameService.getGameStateMap().get(gameStateId);
-    Deck deckToShuffle = gameState.getDeckInGameState();
-    deckService.shuffleDeck(deckToShuffle);
-  }
-
-  private void initGamePlayerHandForEachGamePlayer(long gameStateId) {
+  private void setPlayerHandsForAllPlayers(GameState gameState) {
+    DeckService deckService = new DeckService();
     for (GamePlayer gamePlayer : gameState.getPlayers()) {
-      gamePlayerHand = new GamePlayerHand();
-      gamePlayerHand.setGameStateId(gameStateId);
+      GamePlayerHand gamePlayerHand = new GamePlayerHand();
+      gamePlayerHand.setGameStateId(gameState.getId());
       gamePlayerHand.setGamePlayerHandId(gamePlayer.getId());
-      gameState.addGamePlayerHandToGamePlayerHandList(gamePlayerHand);
-    }
-  }
-
-  private void drawTwoCardsToEachPlayer(long gameStateId) {
-    gameState = gameService.getGameStateMap().get(gameStateId);
-    int totalCardsToDeal = playerIdNumbersAroundTheTable.size() * 2;
-    Deck deckToDealFrom = gameState.getDeckInGameState();
-    long dealCardToThisPlayerId = smallBlindPlayerId;
-    for (int i = 0; i < totalCardsToDeal; i++) {
-      Card drawnCard = deckService.drawCardFromDeck(deckToDealFrom);
-      for (GamePlayerHand gamePlayerHand : gameState.getGamePlayerHandList()) {
-        if (gamePlayerHand.getGameStateId() == gameStateId
-                && gamePlayerHand.getGamePlayerHandId() == dealCardToThisPlayerId) {
-          gamePlayerHand.addCardToGamePlayerOwnTwoCards(drawnCard);
-        }
+      for (int i = 0; i < 2; i++) {
+        Card drawnCard = deckService.drawCardFromDeck(gameState.getDeckInGameState());
+        gamePlayerHand.addCardToGamePlayerOwnTwoCards(drawnCard);
       }
-      dealCardToThisPlayerId = findNextPlayerIdAtTheTable(gameStateId, dealCardToThisPlayerId);
+      gameState.addGamePlayerHandToGamePlayerHandList(gamePlayerHand);
     }
   }
 }

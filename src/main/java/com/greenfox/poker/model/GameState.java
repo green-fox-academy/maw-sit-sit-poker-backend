@@ -16,6 +16,12 @@ public class GameState {
   private int pot;
 
   @JsonIgnore
+  private Long smallBlindPlayerId;
+
+  @JsonIgnore
+  private Long bigBlindPlayerId;
+
+  @JsonIgnore
   private Deck deckInGameState;
 
   @JsonIgnore
@@ -105,5 +111,21 @@ public class GameState {
 
   public void addGamePlayerHandToGamePlayerHandList(GamePlayerHand gamePlayerHandToAdd){
     gamePlayerHandList.add(gamePlayerHandToAdd);
+  }
+
+  public Long getSmallBlindPlayerId() {
+    return smallBlindPlayerId;
+  }
+
+  public void setSmallBlindPlayerId(Long smallBlindPlayerId) {
+    this.smallBlindPlayerId = smallBlindPlayerId;
+  }
+
+  public Long getBigBlindPlayerId() {
+    return bigBlindPlayerId;
+  }
+
+  public void setBigBlindPlayerId(Long bigBlindPlayerId) {
+    this.bigBlindPlayerId = bigBlindPlayerId;
   }
 }

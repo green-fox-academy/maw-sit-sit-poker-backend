@@ -8,20 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class Idle {
 
-  GameService gameService;
-
-  @Autowired
-  public Idle(GameService gameService) {
-    this.gameService = gameService;
-  }
-
-  public void checkForPlayersNumberToStartTheGame() {
-    for (GameState gameStateValue : gameService.getGameStateMap().values()) {
-      if (gameStateValue.getRound() == Round.IDLE) {
-        if (gameStateValue.getPlayers().size() >= 2) {
-          gameStateValue.setRound(Round.BETTING);
-        }
-      }
-    }
+  public Idle() {
   }
 }
