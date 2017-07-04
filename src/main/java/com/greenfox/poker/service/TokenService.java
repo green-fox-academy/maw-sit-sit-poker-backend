@@ -27,6 +27,8 @@ public class TokenService {
   public String generateToken(PokerUser pokerUser) {
     HashMap<String, Object> claims = new HashMap<>();
     claims.put("id", pokerUser.getId());
+    System.out.println(pokerUser.getId());
+    System.out.println(claims.get("id"));
     claims.put("username", pokerUser.getUsername());
     String token = generateTokenByClaims(claims);
     return token;
@@ -36,15 +38,16 @@ public class TokenService {
     this.key = MacProvider.generateKey();
     String token = Jwts.builder()
         .setClaims(claims)
-        .signWith(SignatureAlgorithm.HS256, key)
+        .signWith(SignatureAlgorithm.HS256, this.key)
         .compact();
     return token;
   }
 
   private Claims getClaimsFromToken(String token) {
     Claims claims;
+    System.out.println(Arrays.toString(this.key.getEncoded()));
     claims = Jwts.parser()
-        .setSigningKey(key)
+        .setSigningKey(this.key)
         .parseClaimsJws(token)
         .getBody();
     return claims;
@@ -55,7 +58,8 @@ public class TokenService {
     long id;
     try {
       Claims claims = getClaimsFromToken(token);
-      id = (Integer) claims.get("id");
+      id = new Long((Integer)claims.get("id"));
+      System.out.println(id);
     } catch (MissingClaimException e) {
       id = -1L;
     }
@@ -64,6 +68,7 @@ public class TokenService {
 
   public PokerUser getPokerUserFromToken(String token) {
     long idFromToken = getIdFromToken(token);
+    System.out.println(idFromToken);
     PokerUser pokerUserFromToken = pokerUserRepo.findOne(idFromToken);
     return pokerUserFromToken;
   }
