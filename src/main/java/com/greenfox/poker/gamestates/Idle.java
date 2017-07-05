@@ -16,7 +16,7 @@ public class Idle {
   }
 
   public void checkForPlayersNumberToStartTheGame() {
-    for (GameState gameStateValue : gameService.getGameStateMap().values()) {
+    for (GameState gameStateValue : gameService.getGameStates().values()) {
       if (gameStateValue.getRound() == Round.IDLE) {
         if (gameStateValue.getPlayers().size() >= 2) {
           gameStateValue.setRound(Round.BETTING);

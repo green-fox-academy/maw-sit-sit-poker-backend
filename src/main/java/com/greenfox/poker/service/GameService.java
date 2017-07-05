@@ -84,11 +84,16 @@ public class GameService {
     return gameStates.get(id);
   }
 
-
-  public boolean isPlayerInTheGame(long gameId, long userId) {
-    return getPlayersListFromGame(gameId).stream()
-        .map(player -> player.getId().equals(userId))
-        .findFirst().isPresent();
+  public boolean isPlayerInTheGame(long playerId, long gameId) {
+//    if (!hasGameAGameState(gameId)) {
+//      return false;
+//    }
+    if (getPlayersListFromGame(gameId).stream()
+        .map(player -> player.getId().equals(playerId))
+        .findFirst().isPresent()) {
+      return true;
+    }
+  return false;
   }
 
   public boolean isGameExistById(long id) {
@@ -102,17 +107,20 @@ public class GameService {
     return false;
   }
 
-  public void createNewPlayerAndAddToGame(long playerId, long gameId, long chipsToPlayWith) {
-    PokerUserDTO player = dtoService.pokerUserDTOs.get(playerId);
-    gamePlayer = new GamePlayer(chipsToPlayWith, player);
+  public void createNewPlayerAndAddToGame(PokerUserDTO user, long gameId, long chipsToPlayWith) {
+    gamePlayer = new GamePlayer(chipsToPlayWith, user);
     gameStates.get(gameId).getPlayers().add(gamePlayer);
   }
 
-  public ResponseType joinPlayerToGame(long playerId, long gameId, long chipsToPlayWith) {
-    String gameName = gameRepo.findOne(gameId).getName();
-    String playerName = dtoService.pokerUserDTOs.get(playerId).getUsername();
+  public ResponseType joinPlayerToGame(PokerUserDTO user, long gameId, long chipsToPlayWith) {
     createGameState(gameRepo.findOne(gameId));
-    createNewPlayerAndAddToGame(playerId, gameId, chipsToPlayWith);
+    createNewPlayerAndAddToGame(user, gameId, chipsToPlayWith);
+    return respondToJoinTable(user, gameId);
+  }
+
+  public ResponseType respondToJoinTable(PokerUserDTO user, long gameId) {
+    String gameName = gameRepo.findOne(gameId).getName();
+    String playerName = user.getUsername();
     return new StatusError("success", playerName + " joined game: " + gameName);
   }
 
@@ -120,7 +128,7 @@ public class GameService {
     return gameRepo.findOne(gameId).getBigBlind();
   }
 
-  public void leaveGame(long playerId, long gameId) {
+  public void removePlayerFromGame(long playerId, long gameId) {
     getPlayersListFromGame(gameId).set(getPlayerIndexFromGameState(playerId, gameId), null);
     getGameStateById(gameId).setPlayers(getPlayersListFromGame(gameId));
   }
@@ -141,7 +149,7 @@ public class GameService {
   public void updateGame(long playerId, long gameId, PlayerAction playerAction) {
     gamePlayer = getPlayersListFromGame(gameId).get(getPlayerIndexFromGameState(playerId, gameId));
     setActingPlayerIdInGameState(playerId, gameId);
-    setLastActionAndBetOfPlayer(playerId, gameId, playerAction);
+    setLastActionAndBetOfPlayer(gamePlayer, gameId, playerAction);
     getPlayersListFromGame(gameId).set(getPlayerIndexFromGameState(playerId, gameId), gamePlayer);
     gameStates.get(gameId).setPlayers(getPlayersListFromGame(gameId));
   }
@@ -154,9 +162,8 @@ public class GameService {
     gameStates.get(gameId).setActorPlayerId(playerId);
   }
 
-//  TODO
-  public void setLastActionAndBetOfPlayer(long playerId, long gameId, PlayerAction playerAction) {
-    gamePlayer = getPlayersListFromGame(gameId).get(getPlayerIndexFromGameState(playerId, gameId));
+  public void setLastActionAndBetOfPlayer(PokerUserDTO pokerUserDTO, long gameId, PlayerAction playerAction) {
+    gamePlayer = getPlayersListFromGame(gameId).get(getPlayerIndexFromGameState(pokerUserDTO.getId(), gameId));
     gamePlayer.setLastAction(playerAction.getAction());
     gamePlayer.setBet(gamePlayer.getBet() + (int) playerAction.getValue());
   }

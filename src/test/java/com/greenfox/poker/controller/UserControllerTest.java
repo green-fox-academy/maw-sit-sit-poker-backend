@@ -208,6 +208,7 @@ public class UserControllerTest {
     Mockito.when(pokerUserRepo.exists(1l)).thenReturn(true);
     Mockito.when(pokerUserRepo.findOne(1l)).thenReturn(mockUser);
     Mockito.when(pokerUserRepo.existsByToken(token)).thenReturn(true);
+    dtoService.makePokerUserDTO(mockUser);
     this.mockMvc.perform(get("/user/1")
         .contentType(contentType)
         .header("X-poker-token", token))

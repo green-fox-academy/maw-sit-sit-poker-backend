@@ -32,7 +32,7 @@ public class Betting {
   public void initForBettingGameState(long gameStateId) {
     removeGamePlayersFromTableWithLessChipsThankBigBlind(gameStateId);
     checkIfThereAreAtLeastTwoPlayersToPlay(gameStateId);
-    if (gameService.getGameStateMap().get(gameStateId).getRound() == Round.BETTING) {
+    if (gameService.getGameStates().get(gameStateId).getRound() == Round.BETTING) {
       setAllPlayerAtTheTableToActive(gameStateId);
       setGameStateSettingsToDefault(gameStateId);
       assignDealer(gameStateId);
@@ -45,24 +45,24 @@ public class Betting {
   }
 
   private void removeGamePlayersFromTableWithLessChipsThankBigBlind(long gameStateId) {
-    gameState = gameService.getGameStateMap().get(gameStateId);
+    gameState = gameService.getGameStates().get(gameStateId);
     Integer tableBigBlind = gameService.getTableBigBlind(gameStateId);
     for (GamePlayer gamePlayer : gameState.getPlayers()) {
       if (gamePlayer.getChips() < tableBigBlind) {
-        gameService.getGameStateMap().remove(gamePlayer);
+        gameService.getGameStates().remove(gamePlayer);
       }
     }
   }
 
   private void checkIfThereAreAtLeastTwoPlayersToPlay(long gameStateId) {
-    gameState = gameService.getGameStateMap().get(gameStateId);
+    gameState = gameService.getGameStates().get(gameStateId);
     if (gameState.getPlayers().size() < 2) {
       gameState.setRound(Round.IDLE);
     }
   }
 
   private void setAllPlayerAtTheTableToActive(long gameStateId) {
-    gameState = gameService.getGameStateMap().get(gameStateId);
+    gameState = gameService.getGameStates().get(gameStateId);
     for (GamePlayer gamePlayer : gameState.getPlayers()) {
       gamePlayer.setWaiting(true);
       gamePlayer.setFolded(false);
@@ -71,7 +71,7 @@ public class Betting {
   }
 
   private void assignDealer(long gameStateId) {
-    gameState = gameService.getGameStateMap().get(gameStateId);
+    gameState = gameService.getGameStates().get(gameStateId);
     if (gameState.getDealerPlayerId() != null) {
       gameState.setDealerPlayerId(
               findNextPlayerIdAtTheTable(gameStateId, gameState.getDealerPlayerId()));
@@ -81,14 +81,14 @@ public class Betting {
   }
 
   private void setGameStateSettingsToDefault(long gameStateId) {
-    gameState = gameService.getGameStateMap().get(gameStateId);
+    gameState = gameService.getGameStates().get(gameStateId);
     gameState.setPot(0);
     gameState.setCardsOnTable(null);
     gameState.setRound(Round.BETTING);
   }
 
   private Long findNextPlayerIdAtTheTable(long gameStateId, Long currentPlayerId) {
-    gameState = gameService.getGameStateMap().get(gameStateId);
+    gameState = gameService.getGameStates().get(gameStateId);
     for (GamePlayer gamePlayer : gameState.getPlayers()) {
       if (gamePlayer.getId() != null) {
         playerIdNumbersAroundTheTable.add(gamePlayer.getId());
@@ -103,7 +103,7 @@ public class Betting {
   }
 
   private void setAndAutobetSmallBlindBigBlind(long gameStateId) {
-    gameState = gameService.getGameStateMap().get(gameStateId);
+    gameState = gameService.getGameStates().get(gameStateId);
     int bigBlindAmount = gameService.getTableBigBlind(gameStateId);
     int smallBlindAmount = bigBlindAmount / 2;
     smallBlindPlayerId = findNextPlayerIdAtTheTable(gameStateId,
@@ -125,13 +125,13 @@ public class Betting {
   }
 
   private void getNewDeckAndSetItInGameState(long gameStateId) {
-    gameState = gameService.getGameStateMap().get(gameStateId);
+    gameState = gameService.getGameStates().get(gameStateId);
     Deck deck = deckService.getNewDeck();
     gameState.setDeckInGameState(deck);
   }
 
   private void shuffleDeck(long gameStateId) {
-    gameState = gameService.getGameStateMap().get(gameStateId);
+    gameState = gameService.getGameStates().get(gameStateId);
     Deck deckToShuffle = gameState.getDeckInGameState();
     deckService.shuffleDeck(deckToShuffle);
   }
@@ -146,7 +146,7 @@ public class Betting {
   }
 
   private void drawTwoCardsToEachPlayer(long gameStateId) {
-    gameState = gameService.getGameStateMap().get(gameStateId);
+    gameState = gameService.getGameStates().get(gameStateId);
     int totalCardsToDeal = playerIdNumbersAroundTheTable.size() * 2;
     Deck deckToDealFrom = gameState.getDeckInGameState();
     long dealCardToThisPlayerId = smallBlindPlayerId;

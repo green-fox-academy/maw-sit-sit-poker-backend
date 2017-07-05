@@ -24,7 +24,7 @@ public class Turn {
 
   private void getTurnCard(long gameStateId) {
     DeckService deckService = new DeckService();
-    GameState gameState = gameService.getGameStateMap().get(gameStateId);
+    GameState gameState = gameService.getGameStates().get(gameStateId);
     Deck deckToDealFrom = gameState.getDeckInGameState();
     List<Card> turnCards = gameState.getCardsOnTable();
     Card cardToDrawn = deckService.drawCardFromDeck(deckToDealFrom);

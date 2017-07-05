@@ -26,13 +26,13 @@ public class BettingCycleInEachRound {
   }
 
   public void initBettingCycle(long gameStateId) {
-    gameState = gameService.getGameStateMap().get(gameStateId);
+    gameState = gameService.getGameStates().get(gameStateId);
     bettingRound = 0;
     createActiveGamePlayersListAroundTheTableStartingFromFirstToAct(gameStateId);
   }
 
   public void bettingCycle(long gameStateId) {
-    gameState = gameService.getGameStateMap().get(gameStateId);
+    gameState = gameService.getGameStates().get(gameStateId);
     bettingRound = 0;
     createActiveGamePlayersListAroundTheTableStartingFromFirstToAct(gameStateId);
   }
@@ -40,7 +40,7 @@ public class BettingCycleInEachRound {
 
   private void createActiveGamePlayersListAroundTheTableStartingFromFirstToAct(long gameStateId) {
     activeGamePlayersListAroundTheTableStartingFromFirstToAct = new ArrayList<>();
-    gameState = gameService.getGameStateMap().get(gameStateId);
+    gameState = gameService.getGameStates().get(gameStateId);
     List<GamePlayer> originalList = new ArrayList<>();
     int actorPlayerIndexInTheOriginalList = 0;
     for (GamePlayer gamePlayer : gameState.getPlayers()) {
@@ -67,7 +67,7 @@ public class BettingCycleInEachRound {
   private void markNextActivePlayerAsPlayerToAct(long gameStateId, long currentPlayerId) {
     long PlayerToActIdInTheNextRound = activeGamePlayersListAroundTheTableStartingFromFirstToAct
             .get(1).getId();
-    gameState = gameService.getGameStateMap().get(gameStateId);
+    gameState = gameService.getGameStates().get(gameStateId);
     GamePlayer playerToActInThisRound;
     GamePlayer playerToActInNextRound;
   }

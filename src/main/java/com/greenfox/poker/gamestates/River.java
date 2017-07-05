@@ -24,7 +24,7 @@ public class River {
 
   private void getRiverCard(long gameStateId) {
     DeckService deckService = new DeckService();
-    GameState gameState = gameService.getGameStateMap().get(gameStateId);
+    GameState gameState = gameService.getGameStates().get(gameStateId);
     Deck deckToDealFrom = gameState.getDeckInGameState();
     List<Card> riverCards = gameState.getCardsOnTable();
     Card cardToDrawn = deckService.drawCardFromDeck(deckToDealFrom);

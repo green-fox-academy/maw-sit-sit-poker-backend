@@ -25,7 +25,7 @@ public class Flop {
 
   private void getFlopThreeCards(long gameStateId) {
     DeckService deckService = new DeckService();
-    GameState gameState = gameService.getGameStateMap().get(gameStateId);
+    GameState gameState = gameService.getGameStates().get(gameStateId);
     Deck deckToDealFrom = gameState.getDeckInGameState();
     List<Card> flopCards = new ArrayList<>();
     for (int i = 0; i < 3; i++) {

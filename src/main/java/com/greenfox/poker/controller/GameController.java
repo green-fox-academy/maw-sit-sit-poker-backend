@@ -75,7 +75,7 @@ public class GameController {
     if (!gameService.isGameExistById(gameId)) {
       return new ResponseEntity(errorMessageService.responseToWrongGameId(), HttpStatus.NOT_FOUND);
     }
-    if (!gameService.isPlayerInTheGame(gameId, pokerUserDTO.getId())) {
+    if (!gameService.isPlayerInTheGame(pokerUserDTO.getId(), gameId)) {
       return new ResponseEntity(errorMessageService.respondToPlayerNotSitingAtTheGame(pokerUserDTO.getId(), gameId), HttpStatus.BAD_REQUEST);
     }
     gameService.updateGame(pokerUserDTO.getId(), gameId, action);
@@ -106,7 +106,7 @@ public class GameController {
     if (!gameService.isGameExistById(gameId)) {
       return new ResponseEntity(errorMessageService.responseToWrongGameId(), HttpStatus.NOT_FOUND);
     }
-    if (gameService.isPlayerInTheGame(gameId, pokerUserDTO.getId())) {
+    if (gameService.isPlayerInTheGame(pokerUserDTO.getId(), gameId)) {
       return new ResponseEntity(errorMessageService.joinToGameWhereUserPlaysAlready(gameId, pokerUserDTO.getId()),
           HttpStatus.BAD_REQUEST);
     }
@@ -114,7 +114,7 @@ public class GameController {
       return new ResponseEntity(errorMessageService.joinGameWithNotEnoughChips(), HttpStatus.BAD_REQUEST);
     }
     dtoService.deductChipsFromAvailableChips(chips.getChips(), pokerUserDTO.getId());
-    return new ResponseEntity(gameService.joinPlayerToGame(pokerUserDTO.getId(), gameId, chips.getChips()), HttpStatus.OK);
+    return new ResponseEntity(gameService.joinPlayerToGame(pokerUserDTO, gameId, chips.getChips()), HttpStatus.OK);
     }
 
   @PostMapping("/game/{id}/leave")
@@ -125,10 +125,10 @@ public class GameController {
     if (!gameService.isGameExistById(gameId)) {
       return new ResponseEntity(errorMessageService.responseToWrongGameId(), HttpStatus.NOT_FOUND);
     }
-    if (!gameService.isPlayerInTheGame(gameId, pokerUserDTO.getId())) {
+    if (!gameService.isPlayerInTheGame(pokerUserDTO.getId(), gameId)) {
       return new ResponseEntity(errorMessageService.respondToPlayerNotSitingAtTheGame(pokerUserDTO.getId(), gameId), HttpStatus.BAD_REQUEST);
     }
-    gameService.leaveGame(pokerUserDTO.getId(), gameId);
+    gameService.removePlayerFromGame(pokerUserDTO.getId(), gameId);
     return new ResponseEntity(gameService.respondToLeave(pokerUserDTO.getId(),gameId), HttpStatus.OK);
   }
 }

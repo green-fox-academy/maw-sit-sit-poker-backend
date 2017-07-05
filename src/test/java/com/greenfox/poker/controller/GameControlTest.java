@@ -3,7 +3,6 @@ package com.greenfox.poker.controller;
 import static org.hamcrest.core.Is.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
@@ -12,6 +11,7 @@ import com.greenfox.poker.mockbuilder.MockGameBuilder;
 import com.greenfox.poker.mockbuilder.MockPokerUserBuilder;
 import com.greenfox.poker.model.Game;
 import com.greenfox.poker.model.PokerUser;
+import com.greenfox.poker.model.PokerUserDTO;
 import com.greenfox.poker.repository.GameRepo;
 import com.greenfox.poker.repository.PokerUserRepo;
 import com.greenfox.poker.service.DtoService;
@@ -153,12 +153,12 @@ public class GameControlTest {
   //
   @Test
   public void testJoinWithPlayerAlreadySittigAtTable() throws Exception {
-    PokerUser player = mockPokerUserBuilder.build();
+    PokerUser mockUser = mockPokerUserBuilder.build();
     Game game = mockGameBuilder.build();
-    String token = tokenService.generateToken(player);
+    String token = tokenService.generateToken(mockUser);
     String join = "{\"chips\" : \"2000\"}";
-    Mockito.when(pokerUserRepo.findByUsername("Pisti")).thenReturn(player);
-    Mockito.when(pokerUserRepo.findOne(1l)).thenReturn(player);
+    Mockito.when(pokerUserRepo.findByUsername("Pisti")).thenReturn(mockUser);
+    Mockito.when(pokerUserRepo.findOne(1l)).thenReturn(mockUser);
     Mockito.when(pokerUserRepo.existsByUsername("Pisti")).thenReturn(true);
     Mockito.when(pokerUserRepo.exists(1l)).thenReturn(true);
     Mockito.when(pokerUserRepo.existsByToken(token)).thenReturn(true);
@@ -166,10 +166,10 @@ public class GameControlTest {
     Mockito.when(gameRepo.exists(2l)).thenReturn(false);
     Mockito.when(gameRepo.findOne(1l)).thenReturn(game);
     Mockito.when(gameRepo.findOneByName("Table")).thenReturn(game);
-    dtoService.makePokerUserDTO(player);
+    PokerUserDTO pokerUserDTO = dtoService.makePokerUserDTO(mockUser);
     gameService.createNewGame(game);
     gameService.createGameState(game);
-    gameService.createNewPlayerAndAddToGame(player.getId(), game.getId(), 5000);
+    gameService.createNewPlayerAndAddToGame(pokerUserDTO, game.getId(), 5000);
 
     mockMvc.perform(post("/game/{id}/join", 1l)
         .content(join)
@@ -177,7 +177,7 @@ public class GameControlTest {
         .contentType(contentType))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.result", is("fail")))
-        .andExpect(jsonPath("$.message", is(player.getUsername() + " already joined game: " + game.getName())));
+        .andExpect(jsonPath("$.message", is(mockUser.getUsername() + " already joined game: " + game.getName())));
   }
 
   @Test
