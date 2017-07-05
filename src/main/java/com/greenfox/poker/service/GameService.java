@@ -85,13 +85,16 @@ public class GameService {
   }
 
   public boolean isPlayerInTheGame(long playerId, long gameId) {
-//    if (!hasGameAGameState(gameId)) {
-//      return false;
-//    }
-    if (getPlayersListFromGame(gameId).stream()
-        .map(player -> player.getId().equals(playerId))
-        .findFirst().isPresent()) {
-      return true;
+    if (!hasGameAGameState(gameId)) {
+      return false;
+    }
+    if (getPlayersListFromGame(gameId).isEmpty()) {
+      return false;
+    }
+    for (GamePlayer player : getPlayersListFromGame(gameId)){
+      if (player.getId() == playerId){
+        return true;
+      }
     }
   return false;
   }

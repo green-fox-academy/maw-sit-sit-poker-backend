@@ -4,6 +4,7 @@ import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.model.PokerUserDTO;
 import com.greenfox.poker.repository.PokerUserRepo;
 import java.util.HashMap;
+import java.util.function.DoubleToIntFunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,9 +19,8 @@ public class DtoService {
   @Autowired
   PokerUserRepo pokerUserRepo;
 
-  public boolean hasPlayerEnoughChipsToPlay(long chipsToPlayWith, long userId){
-    pokerUserDTO = pokerUserDTOs.get(userId);
-    if (pokerUserDTO.getChips() < chipsToPlayWith){
+  public boolean hasPlayerEnoughChipsToPlay(long chipsToPlayWith, PokerUserDTO user){
+    if (user.getChips() < chipsToPlayWith){
       return false;
     }
     return true;
@@ -38,5 +38,9 @@ public class DtoService {
     pokerUserDTO.setChips(pUser.getChips());
     pokerUserDTOs.put(pokerUserDTO.getId(), pokerUserDTO);
     return pokerUserDTO;
+  }
+
+  public void removePokerUserDTO(long playerId){
+    pokerUserDTOs.remove(playerId);
   }
 }
