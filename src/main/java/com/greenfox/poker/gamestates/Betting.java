@@ -4,7 +4,6 @@ package com.greenfox.poker.gamestates;
 import com.greenfox.poker.model.Action;
 import com.greenfox.poker.model.Card;
 import com.greenfox.poker.model.Deck;
-import com.greenfox.poker.model.Game;
 import com.greenfox.poker.model.GamePlayer;
 import com.greenfox.poker.model.GamePlayerHand;
 import com.greenfox.poker.model.GameState;
@@ -17,8 +16,8 @@ public class Betting {
   public Betting() {
   }
 
-  public void initForBettingGameState(GameState gameState, Game game) {
-    removeGamePlayersFromTableWithLessChipsThankBigBlind(gameState, game);
+  public void initForBettingGameState(GameState gameState, int bigBlindAmount) {
+    removeGamePlayersFromTableWithLessChipsThankBigBlind(gameState, bigBlindAmount);
     if (!isThereAtLeastTwoPlayersToPlay(gameState)) {
       setGameRoundToIdle(gameState);
     }
@@ -27,16 +26,21 @@ public class Betting {
       setGameStateSettingsToDefault(gameState);
       assignDealer(gameState);
       setSmallBlindAndBigBlindId(gameState);
-      betSmallBlindBigBlind(gameState, game);
+      betSmallBlindBigBlind(gameState, bigBlindAmount);
       getNewDeckAndShuffleAndSetItInGameState(gameState);
       setPlayerHandsForAllPlayers(gameState);
     }
   }
 
   private void removeGamePlayersFromTableWithLessChipsThankBigBlind(GameState gameState,
-          Game game) {
+          int bigBlindAmount) {
     for (GamePlayer gamePlayer : gameState.getPlayers()) {
+<<<<<<< HEAD
       if (gamePlayer.getChips() < game.getBigBlind()) {
+=======
+      if (gamePlayer.getChips() < bigBlindAmount) {
+        gameState.getPlayers().remove(gamePlayer);
+>>>>>>> origin/NLGameLogicCycle
       }
     }
   }
@@ -101,8 +105,7 @@ public class Betting {
     return nextPlayerId;
   }
 
-  private void betSmallBlindBigBlind(GameState gameState, Game game) {
-    int bigBlindAmount = game.getBigBlind();
+  private void betSmallBlindBigBlind(GameState gameState, int bigBlindAmount) {
     GamePlayer smallBlindPlayer = gameState.getPlayers().stream()
             .filter(gamePlayer -> gamePlayer.getId() == gameState.getSmallBlindPlayerId())
             .findFirst().get();
