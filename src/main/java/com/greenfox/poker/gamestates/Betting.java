@@ -37,7 +37,6 @@ public class Betting {
           Game game) {
     for (GamePlayer gamePlayer : gameState.getPlayers()) {
       if (gamePlayer.getChips() < game.getBigBlind()) {
-        gameState.getPlayers().remove(gamePlayer);
       }
     }
   }
@@ -64,8 +63,7 @@ public class Betting {
 
   private void assignDealer(GameState gameState) {
     if (gameState.getDealerPlayerId() != null) {
-      gameState.setDealerPlayerId(
-              findNextPlayerAtTheTable(gameState, gameState.getDealerPlayerId()));
+      gameState.setDealerPlayerId(findNextPlayerAtTheTable(gameState, gameState.getDealerPlayerId()));
     } else {
       gameState.setDealerPlayerId(gameState.getPlayers().get(0).getId());
     }

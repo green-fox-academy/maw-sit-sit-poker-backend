@@ -2,6 +2,7 @@ package com.greenfox.poker.service;
 
 import com.greenfox.poker.model.PokerUser;
 
+import com.greenfox.poker.model.PokerUserDTO;
 import com.greenfox.poker.repository.PokerUserRepo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Component;
 public class TokenService {
 
   @Autowired
-  PokerUserRepo pokerUserRepo;
+  DtoService dtoService;
 
   private Key key;
 
@@ -62,10 +63,9 @@ public class TokenService {
     return id;
   }
 
-  public PokerUser getPokerUserFromToken(String token) {
+  public PokerUserDTO getPokerUserDTOFromToken(String token) {
     long idFromToken = getIdFromToken(token);
-    PokerUser pokerUserFromToken = pokerUserRepo.findOne(idFromToken);
-    return pokerUserFromToken;
+    return dtoService.pokerUserDTOs.get(idFromToken);
   }
 }
 

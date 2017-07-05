@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DtoService {
 
-  HashMap<Long, PokerUserDTO> userDTOHashMap = new HashMap<>();
+  HashMap<Long, PokerUserDTO> pokerUserDTOs = new HashMap<>();
 
   @Autowired
   PokerUserDTO pokerUserDTO;
@@ -19,7 +19,7 @@ public class DtoService {
   PokerUserRepo pokerUserRepo;
 
   public boolean hasPlayerEnoughChipsToPlay(long chipsToPlayWith, long userId){
-    pokerUserDTO = userDTOHashMap.get(userId);
+    pokerUserDTO = pokerUserDTOs.get(userId);
     if (pokerUserDTO.getChips() < chipsToPlayWith){
       return false;
     }
@@ -27,8 +27,8 @@ public class DtoService {
   }
 
   public void deductChipsFromAvailableChips(long chipsToPlayWith, long playerId){
-    long chipsAvailableToDTOAfterJoiningTable = userDTOHashMap.get(playerId).getChips() - chipsToPlayWith;
-    userDTOHashMap.get(playerId).setChips(chipsAvailableToDTOAfterJoiningTable);
+    long chipsAvailableToDTOAfterJoiningTable = pokerUserDTOs.get(playerId).getChips() - chipsToPlayWith;
+    pokerUserDTOs.get(playerId).setChips(chipsAvailableToDTOAfterJoiningTable);
   }
 
   public PokerUserDTO makePokerUserDTO(PokerUser pUser) {
@@ -36,7 +36,7 @@ public class DtoService {
     pokerUserDTO.setUsername(pUser.getUsername());
     pokerUserDTO.setAvatar(pUser.getAvatar());
     pokerUserDTO.setChips(pUser.getChips());
-    userDTOHashMap.put(pokerUserDTO.getId(), pokerUserDTO);
+    pokerUserDTOs.put(pokerUserDTO.getId(), pokerUserDTO);
     return pokerUserDTO;
   }
 }
