@@ -35,12 +35,8 @@ public class Betting {
   private void removeGamePlayersFromTableWithLessChipsThankBigBlind(GameState gameState,
           int bigBlindAmount) {
     for (GamePlayer gamePlayer : gameState.getPlayers()) {
-<<<<<<< HEAD
-      if (gamePlayer.getChips() < game.getBigBlind()) {
-=======
       if (gamePlayer.getChips() < bigBlindAmount) {
         gameState.getPlayers().remove(gamePlayer);
->>>>>>> origin/NLGameLogicCycle
       }
     }
   }
