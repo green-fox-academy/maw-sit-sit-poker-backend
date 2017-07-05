@@ -73,12 +73,12 @@ public class GameControlTest {
 
   @Test
   public void testSuccessfulJoinToGame() throws Exception {
-    PokerUser player = mockPokerUserBuilder.build();
+    PokerUser mockUser = mockPokerUserBuilder.build();
     Game game = mockGameBuilder.build();
-    String token = tokenService.generateToken(player);
+    String token = tokenService.generateToken(mockUser);
     String join = "{\"chips\" : \"2000\"}";
-    Mockito.when(pokerUserRepo.findByUsername("Pisti")).thenReturn(player);
-    Mockito.when(pokerUserRepo.findOne(1l)).thenReturn(player);
+    Mockito.when(pokerUserRepo.findByUsername("Pisti")).thenReturn(mockUser);
+    Mockito.when(pokerUserRepo.findOne(1l)).thenReturn(mockUser);
     Mockito.when(pokerUserRepo.existsByUsername("Pisti")).thenReturn(true);
     Mockito.when(pokerUserRepo.exists(1l)).thenReturn(true);
     Mockito.when(pokerUserRepo.existsByToken(token)).thenReturn(true);
@@ -86,7 +86,7 @@ public class GameControlTest {
     Mockito.when(gameRepo.exists(2l)).thenReturn(false);
     Mockito.when(gameRepo.findOne(1l)).thenReturn(game);
     Mockito.when(gameRepo.findOneByName("Table")).thenReturn(game);
-    dtoService.makePokerUserDTO(player);
+    dtoService.makePokerUserDTO(mockUser);
     gameService.createNewGame(game);
 
     mockMvc.perform(post("/game/1/join")
@@ -95,17 +95,17 @@ public class GameControlTest {
         .contentType(contentType))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.result", is("success")))
-        .andExpect(jsonPath("$.message", is(player.getUsername() + " joined game: " + game.getName())));
+        .andExpect(jsonPath("$.message", is(mockUser.getUsername() + " joined game: " + game.getName())));
   }
 
   @Test
   public void testJoinWithNonExistingGameId() throws Exception {
-    PokerUser player = mockPokerUserBuilder.build();
+    PokerUser mockUser = mockPokerUserBuilder.build();
     Game game = mockGameBuilder.build();
-    String token = tokenService.generateToken(player);
+    String token = tokenService.generateToken(mockUser);
     String join = "{\"chips\" : \"2000\"}";
-    Mockito.when(pokerUserRepo.findByUsername("Pisti")).thenReturn(player);
-    Mockito.when(pokerUserRepo.findOne(1l)).thenReturn(player);
+    Mockito.when(pokerUserRepo.findByUsername("Pisti")).thenReturn(mockUser);
+    Mockito.when(pokerUserRepo.findOne(1l)).thenReturn(mockUser);
     Mockito.when(pokerUserRepo.existsByUsername("Pisti")).thenReturn(true);
     Mockito.when(pokerUserRepo.exists(1l)).thenReturn(true);
     Mockito.when(pokerUserRepo.existsByToken(token)).thenReturn(true);
@@ -113,7 +113,7 @@ public class GameControlTest {
     Mockito.when(gameRepo.exists(2l)).thenReturn(false);
     Mockito.when(gameRepo.findOne(1l)).thenReturn(game);
     Mockito.when(gameRepo.findOneByName("Table")).thenReturn(game);
-    dtoService.makePokerUserDTO(player);
+    dtoService.makePokerUserDTO(mockUser);
     gameService.createNewGame(game);
 
     mockMvc.perform(post("/game/2/join")
@@ -127,19 +127,19 @@ public class GameControlTest {
 
   @Test
   public void testJoinWithNotEnoughChips() throws Exception {
-    PokerUser player = mockPokerUserBuilder.build();
+    PokerUser mockUser = mockPokerUserBuilder.build();
     Game game = mockGameBuilder.build();
     String token = tokenService.generateToken(mockPokerUserBuilder.build());
     String join = "{\"chips\" : \"12000\"}";
-    Mockito.when(pokerUserRepo.findByUsername("Pisti")).thenReturn(player);
-    Mockito.when(pokerUserRepo.findOne(1l)).thenReturn(player);
+    Mockito.when(pokerUserRepo.findByUsername("Pisti")).thenReturn(mockUser);
+    Mockito.when(pokerUserRepo.findOne(1l)).thenReturn(mockUser);
     Mockito.when(pokerUserRepo.existsByUsername("Pisti")).thenReturn(true);
     Mockito.when(pokerUserRepo.exists(1l)).thenReturn(true);
     Mockito.when(pokerUserRepo.existsByToken(token)).thenReturn(true);
     Mockito.when(gameRepo.exists(1l)).thenReturn(true);
     Mockito.when(gameRepo.findOne(1l)).thenReturn(game);
     Mockito.when(gameRepo.findOneByName("Table")).thenReturn(game);
-    dtoService.makePokerUserDTO(player);
+    dtoService.makePokerUserDTO(mockUser);
     gameService.createNewGame(game);
 
     mockMvc.perform(post("/game/1/join")
@@ -185,9 +185,9 @@ public class GameControlTest {
 
   @Test
   public void testGetGameEndpointWithCorrectId() throws Exception {
-    PokerUser player = mockPokerUserBuilder.build();
+    PokerUser mockUser = mockPokerUserBuilder.build();
     Game game = mockGameBuilder.build();
-    String token = tokenService.generateToken(player);
+    String token = tokenService.generateToken(mockUser);
     Mockito.when(pokerUserRepo.existsByToken(token)).thenReturn(true);
     Mockito.when(gameRepo.exists(1l)).thenReturn(true);
     Mockito.when(gameRepo.findOne(1l)).thenReturn(game);
@@ -206,10 +206,10 @@ public class GameControlTest {
 
   @Test
   public void testGetGameListOrderedByBigBlind() throws Exception {
-    PokerUser player = mockPokerUserBuilder.build();
+    PokerUser mockUser = mockPokerUserBuilder.build();
     Game game = mockGameBuilder.build();
     List<Game> listOfMockGame = mockGameBuilder.createListOfAllGamesOrderedByBigBlind();
-    String token = tokenService.generateToken(player);
+    String token = tokenService.generateToken(mockUser);
     Mockito.when(pokerUserRepo.existsByToken(token)).thenReturn(true);
     Mockito.when(gameRepo.findAllByOrderByBigBlindDesc()).thenReturn(listOfMockGame);
 
