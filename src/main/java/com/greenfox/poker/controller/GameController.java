@@ -54,14 +54,10 @@ public class GameController {
 
 
   @RequestMapping(value = "/game/{id}", method = RequestMethod.GET)
-<<<<<<< HEAD
+
   public ResponseEntity<?> gameState(
-      @PathVariable("id") long gameId,
-      @RequestHeader("X-poker-token") String token) {
-=======
-  public ResponseEntity<?> gameState(@PathVariable("id") long gameId,
+          @PathVariable("id") long gameId,
           @RequestHeader("X-poker-token") String token) {
->>>>>>> origin/NLGameLogicCycle
     if (gameService.isGameExistById(gameId)) {
       return new ResponseEntity(gameService.getGameById(gameId), HttpStatus.OK);
     }
@@ -69,18 +65,12 @@ public class GameController {
   }
 
   @PutMapping("/game/{id}")
-<<<<<<< HEAD
+
   public ResponseEntity<?> updateGameState(
-      @PathVariable("id") long gameId,
-      @RequestBody @Valid PlayerAction action, BindingResult bindingResult,
-      @RequestHeader("X-poker-token") String token) {
-     pokerUserDTO = tokenService.getPokerUserDTOFromToken(token);
-=======
-  public ResponseEntity<?> updateGameState(@PathVariable("id") long gameId,
+          @PathVariable("id") long gameId,
           @RequestBody @Valid PlayerAction action, BindingResult bindingResult,
           @RequestHeader("X-poker-token") String token) {
-    pokerUser = tokenService.getPokerUserFromToken(token);
->>>>>>> origin/NLGameLogicCycle
+    pokerUserDTO = tokenService.getPokerUserDTOFromToken(token);
     if (bindingResult.hasErrors()) {
       return new ResponseEntity(errorMessageService.respondToMissingParameters(bindingResult),
               HttpStatus.BAD_REQUEST);
@@ -88,15 +78,11 @@ public class GameController {
     if (!gameService.isGameExistById(gameId)) {
       return new ResponseEntity(errorMessageService.responseToWrongGameId(), HttpStatus.NOT_FOUND);
     }
-<<<<<<< HEAD
+
     if (!gameService.isPlayerInTheGame(pokerUserDTO.getId(), gameId)) {
-      return new ResponseEntity(errorMessageService.respondToPlayerNotSitingAtTheGame(pokerUserDTO.getId(), gameId), HttpStatus.BAD_REQUEST);
-=======
-    if (!gameService.isPlayerInTheGame(gameId, pokerUser.getId())) {
       return new ResponseEntity(
-              errorMessageService.respondToPlayerNotSitingAtTheGame(pokerUser.getId(), gameId),
+              errorMessageService.respondToPlayerNotSitingAtTheGame(pokerUserDTO.getId(), gameId),
               HttpStatus.BAD_REQUEST);
->>>>>>> origin/NLGameLogicCycle
     }
     gameService.updateGame(pokerUserDTO.getId(), gameId, action);
 
@@ -104,15 +90,10 @@ public class GameController {
   }
 
   @RequestMapping(value = "/savenewgames", method = RequestMethod.POST)
-<<<<<<< HEAD
   public ResponseEntity<?> saveNewGame(
-      @RequestBody @Valid Game game,
-      BindingResult bindingResult,
-      @RequestHeader("X-poker-token") String token) {
-=======
-  public ResponseEntity<?> saveNewGame(@RequestBody @Valid Game game, BindingResult bindingResult,
-          @RequestHeader String token) {
->>>>>>> origin/NLGameLogicCycle
+          @RequestBody @Valid Game game,
+          BindingResult bindingResult,
+          @RequestHeader("X-poker-token") String token) {
     if (bindingResult.hasErrors()) {
       return new ResponseEntity(errorMessageService.respondToMissingParameters(bindingResult),
               HttpStatus.BAD_REQUEST);
@@ -125,74 +106,44 @@ public class GameController {
   }
 
   @PostMapping("/game/{id}/join")
-<<<<<<< HEAD
-  public ResponseEntity<?> joinTable (
-      @PathVariable("id") long gameId,
-      @RequestBody ChipsToJoinGame chips,
-      @RequestHeader("X-poker-token") String token) {
+  public ResponseEntity<?> joinTable(
+          @PathVariable("id") long gameId,
+          @RequestBody ChipsToJoinGame chips,
+          @RequestHeader("X-poker - token") String token) {
     pokerUserDTO = tokenService.getPokerUserDTOFromToken(token);
     if (!gameService.isGameExistById(gameId)) {
       return new ResponseEntity(errorMessageService.responseToWrongGameId(), HttpStatus.NOT_FOUND);
     }
     if (gameService.isPlayerInTheGame(pokerUserDTO.getId(), gameId)) {
-      return new ResponseEntity(errorMessageService.joinToGameWhereUserPlaysAlready(gameId, pokerUserDTO.getId()),
-          HttpStatus.BAD_REQUEST);
+      return new ResponseEntity(
+              errorMessageService.joinToGameWhereUserPlaysAlready(gameId, pokerUserDTO.getId()),
+              HttpStatus.BAD_REQUEST);
     }
     if (!dtoService.hasPlayerEnoughChipsToPlay(chips.getChips(), pokerUserDTO.getId())) {
-      return new ResponseEntity(errorMessageService.joinGameWithNotEnoughChips(), HttpStatus.BAD_REQUEST);
-    }
-    dtoService.deductChipsFromAvailableChips(chips.getChips(), pokerUserDTO.getId());
-    return new ResponseEntity(gameService.joinPlayerToGame(pokerUserDTO, gameId, chips.getChips()), HttpStatus.OK);
-=======
-  public ResponseEntity<?> joinTable(@PathVariable("id") long gameId,
-          @RequestBody ChipsToJoinGame chips, @RequestHeader("X-poker-token") String token) {
-    pokerUser = tokenService.getPokerUserFromToken(token);
-    if (!gameService.isGameExistById(gameId)) {
-      return new ResponseEntity(errorMessageService.responseToWrongGameId(), HttpStatus.NOT_FOUND);
-    }
-    if (gameService.isPlayerInTheGame(gameId, pokerUser.getId())) {
-      return new ResponseEntity(
-              errorMessageService.joinToGameWhereUserPlaysAlready(gameId, pokerUser.getId()),
-              HttpStatus.BAD_REQUEST);
-    }
-    if (!dtoService.hasPlayerEnoughChipsToPlay(chips.getChips(), pokerUser.getId())) {
       return new ResponseEntity(errorMessageService.joinGameWithNotEnoughChips(),
               HttpStatus.BAD_REQUEST);
->>>>>>> origin/NLGameLogicCycle
     }
-    return new ResponseEntity(
-            gameService.joinPlayerToGame(pokerUser.getId(), gameId, chips.getChips()),
+    dtoService.deductChipsFromAvailableChips(chips.getChips(), pokerUserDTO.getId());
+    return new ResponseEntity(gameService.joinPlayerToGame(pokerUserDTO, gameId, chips.getChips()),
             HttpStatus.OK);
   }
 
   @PostMapping("/game/{id}/leave")
-<<<<<<< HEAD
-  public ResponseEntity<?> leaveTable (
-      @PathVariable("id") long gameId,
-      @RequestHeader("X-poker-token") String token) {
+  public ResponseEntity<?> leaveTable(
+          @PathVariable("id") long gameId,
+          @RequestHeader("X-poker-token") String token) {
     pokerUserDTO = tokenService.getPokerUserDTOFromToken(token);
     if (!gameService.isGameExistById(gameId)) {
       return new ResponseEntity(errorMessageService.responseToWrongGameId(), HttpStatus.NOT_FOUND);
     }
     if (!gameService.isPlayerInTheGame(pokerUserDTO.getId(), gameId)) {
-      return new ResponseEntity(errorMessageService.respondToPlayerNotSitingAtTheGame(pokerUserDTO.getId(), gameId), HttpStatus.BAD_REQUEST);
-    }
-    gameService.removePlayerFromGame(pokerUserDTO.getId(), gameId);
-    return new ResponseEntity(gameService.respondToLeave(pokerUserDTO.getId(),gameId), HttpStatus.OK);
-=======
-  public ResponseEntity<?> leaveTable(@PathVariable("id") long gameId,
-          @RequestHeader("X-poker-token") String token) {
-    pokerUser = tokenService.getPokerUserFromToken(token);
-    if (!gameService.isGameExistById(gameId)) {
-      return new ResponseEntity(errorMessageService.responseToWrongGameId(), HttpStatus.NOT_FOUND);
-    }
-    if (!gameService.isPlayerInTheGame(gameId, pokerUser.getId())) {
       return new ResponseEntity(
-              errorMessageService.respondToPlayerNotSitingAtTheGame(pokerUser.getId(), gameId),
+              errorMessageService.respondToPlayerNotSitingAtTheGame(pokerUserDTO.getId(), gameId),
               HttpStatus.BAD_REQUEST);
     }
-    return new ResponseEntity(gameService.leaveGame(gameId, pokerUser.getId()), HttpStatus.OK);
->>>>>>> origin/NLGameLogicCycle
+    gameService.removePlayerFromGame(pokerUserDTO.getId(), gameId);
+    return new ResponseEntity(gameService.respondToLeave(pokerUserDTO.getId(), gameId),
+            HttpStatus.OK);
   }
 }
 
