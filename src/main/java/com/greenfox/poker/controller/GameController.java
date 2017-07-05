@@ -119,9 +119,9 @@ public class GameController {
               errorMessageService.joinToGameWhereUserPlaysAlready(gameId, pokerUserDTO.getId()),
               HttpStatus.BAD_REQUEST);
     }
-    if (!dtoService.hasPlayerEnoughChipsToPlay(chips.getChips(), pokerUserDTO.getId())) {
-      return new ResponseEntity(errorMessageService.joinGameWithNotEnoughChips(),
-              HttpStatus.BAD_REQUEST);
+
+    if (!dtoService.hasPlayerEnoughChipsToPlay(chips.getChips(), pokerUserDTO)) {
+      return new ResponseEntity(errorMessageService.joinGameWithNotEnoughChips(), HttpStatus.BAD_REQUEST);
     }
     dtoService.deductChipsFromAvailableChips(chips.getChips(), pokerUserDTO.getId());
     return new ResponseEntity(gameService.joinPlayerToGame(pokerUserDTO, gameId, chips.getChips()),

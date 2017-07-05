@@ -85,13 +85,16 @@ public class GameService {
   }
 
   public boolean isPlayerInTheGame(long playerId, long gameId) {
-//    if (!hasGameAGameState(gameId)) {
-//      return false;
-//    }
-    if (getPlayersListFromGame(gameId).stream()
-        .map(player -> player.getId().equals(playerId))
-        .findFirst().isPresent()) {
-      return true;
+    if (!hasGameAGameState(gameId)) {
+      return false;
+    }
+    if (getPlayersListFromGame(gameId).isEmpty()) {
+      return false;
+    }
+    for (GamePlayer player : getPlayersListFromGame(gameId)){
+      if (player != null && player.getId() == playerId){
+        return true;
+      }
     }
   return false;
   }
@@ -130,7 +133,6 @@ public class GameService {
 
   public void removePlayerFromGame(long playerId, long gameId) {
     getPlayersListFromGame(gameId).set(getPlayerIndexFromGameState(playerId, gameId), null);
-    getGameStateById(gameId).setPlayers(getPlayersListFromGame(gameId));
   }
 
   public ResponseType respondToLeave(long playerId, long gameId) {
