@@ -80,6 +80,7 @@ public class GameController {
       return new ResponseEntity(errorMessageService.respondToPlayerNotSitingAtTheGame(pokerUserDTO.getId(), gameId), HttpStatus.BAD_REQUEST);
     }
     gameService.updateGame(pokerUserDTO.getId(), gameId, action);
+
     return new ResponseEntity(HttpStatus.OK);
   }
 
