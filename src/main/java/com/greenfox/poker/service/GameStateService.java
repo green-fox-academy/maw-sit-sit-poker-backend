@@ -13,8 +13,6 @@ public class GameStateService {
 
   GameService gameService;
 
-//  BettingCycleInEachRound bettingCycleInEachRound = new BettingCycleInEachRound(gameService);
-
   @Autowired
   public GameStateService(GameService gameService) {
     this.gameService = gameService;
@@ -24,7 +22,8 @@ public class GameStateService {
   private void bettingRound(GameState gameState){
     Betting betting = new Betting();
     Game game = gameService.getGameById(gameState.getId());
-    betting.initForBettingGameState(gameState, game);
+    int bigBlindAmount = game.getBigBlind();
+    betting.initForBettingGameState(gameState, bigBlindAmount);
   }
 
   private void flopRound(GameState gameState){
