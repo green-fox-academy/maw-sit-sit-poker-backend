@@ -99,6 +99,7 @@ public class GameController {
 >>>>>>> origin/NLGameLogicCycle
     }
     gameService.updateGame(pokerUserDTO.getId(), gameId, action);
+
     return new ResponseEntity(HttpStatus.OK);
   }
 
