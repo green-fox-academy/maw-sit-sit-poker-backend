@@ -85,6 +85,6 @@ public class UserController {
 
   @GetMapping("/leaderboard")
   public ResponseEntity<?> getLeaderboard(@RequestHeader("X-poker-token") String token) {
-    return new ResponseEntity(userService.getTopTenLeaderboard(), HttpStatus.OK);
+    return new ResponseEntity(userService.getTopTenPlayersByChipsLeaderboard(), HttpStatus.OK);
   }
 }
