@@ -92,7 +92,7 @@ public class GameService {
       return false;
     }
     for (GamePlayer player : getPlayersListFromGame(gameId)){
-      if (player.getId() == playerId){
+      if (player != null && player.getId() == playerId){
         return true;
       }
     }
@@ -133,7 +133,6 @@ public class GameService {
 
   public void removePlayerFromGame(long playerId, long gameId) {
     getPlayersListFromGame(gameId).set(getPlayerIndexFromGameState(playerId, gameId), null);
-    getGameStateById(gameId).setPlayers(getPlayersListFromGame(gameId));
   }
 
   public ResponseType respondToLeave(long playerId, long gameId) {

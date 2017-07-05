@@ -141,7 +141,6 @@ public class GameControlTest {
     Mockito.when(gameRepo.findOneByName("Table")).thenReturn(game);
     dtoService.makePokerUserDTO(player);
     gameService.createNewGame(game);
-    gameService.createGameState(game);
 
     mockMvc.perform(post("/game/1/join")
         .content(join)
@@ -181,7 +180,7 @@ public class GameControlTest {
         .andExpect(jsonPath("$.result", is("fail")))
         .andExpect(jsonPath("$.message", is(mockUser.getUsername() + " already joined game: " + game.getName())));
 
-//    gameService.removePlayerFromGame(pokerUserDTO.getId(), game.getId());
+    gameService.removePlayerFromGame(pokerUserDTO.getId(), game.getId());
   }
 
   @Test
