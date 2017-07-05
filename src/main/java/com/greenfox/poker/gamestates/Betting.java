@@ -37,7 +37,6 @@ public class Betting {
     for (GamePlayer gamePlayer : gameState.getPlayers()) {
       if (gamePlayer.getChips() < bigBlindAmount) {
         gameState.getPlayers().remove(gamePlayer);
-
       }
     }
   }

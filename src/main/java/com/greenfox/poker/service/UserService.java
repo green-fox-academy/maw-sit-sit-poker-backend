@@ -92,7 +92,7 @@ public class UserService {
     }
   }
 
-  public List<PokerUserDTO> getTopTenLeaderboard() {
+  public List<PokerUserDTO> getTopTenPlayersByChipsLeaderboard() {
     List<PokerUser> topTenList = pokerUserRepo.findTop10ByOrderByChipsDesc();
     List<PokerUserDTO> topTenDTO = new ArrayList<>();
     for (PokerUser user : topTenList) {
