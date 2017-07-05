@@ -65,7 +65,6 @@ public class GameController {
   }
 
   @PutMapping("/game/{id}")
-
   public ResponseEntity<?> updateGameState(
           @PathVariable("id") long gameId,
           @RequestBody @Valid PlayerAction action, BindingResult bindingResult,
