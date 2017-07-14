@@ -59,9 +59,8 @@ public class UserControllerTest {
   }
 
   private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
-      MediaType.APPLICATION_JSON.getSubtype(),
-      Charset.forName("utf8"));
-
+          MediaType.APPLICATION_JSON.getSubtype(),
+          Charset.forName("utf8"));
 
   @Test
   public void testPokerUserLoginWithValidData() throws Exception {
@@ -79,6 +78,7 @@ public class UserControllerTest {
         .andExpect(jsonPath("$.token").exists())
         .andExpect(jsonPath("$.id").exists());
   }
+
 
   @Test
   public void testPokerUserLoginWithMissingPassword() throws Exception {
@@ -149,11 +149,11 @@ public class UserControllerTest {
   public void testRegisterWithMissingUsername() throws Exception {
     String register = "{\"password\" : \"password123\", \"email\" :\"pisti@pisti.com\"}";
     this.mockMvc.perform(post("/register")
-        .content(register)
-        .contentType(contentType))
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.result", is("fail")))
-        .andExpect(jsonPath("$.message", is("Missing parameter(s): username!")));
+            .content(register)
+            .contentType(contentType))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.result", is("fail")))
+            .andExpect(jsonPath("$.message", is("Missing parameter(s): username!")));
   }
 
   @Test
@@ -172,22 +172,22 @@ public class UserControllerTest {
   public void testRegisterWithMissingPassword() throws Exception {
     String register = "{\"username\" : \"Pisti\", \"email\" : \"pisti@pisti.com\"}";
     this.mockMvc.perform(post("/register")
-        .content(register)
-        .contentType(contentType))
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.result", is("fail")))
-        .andExpect(jsonPath("$.message", is("Missing parameter(s): password!")));
+            .content(register)
+            .contentType(contentType))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.result", is("fail")))
+            .andExpect(jsonPath("$.message", is("Missing parameter(s): password!")));
   }
 
   @Test
   public void testRegisterWithMissingEmail() throws Exception {
     String register = "{\"username\" : \"Pisti\", \"password\" : \"password123\"}";
     this.mockMvc.perform(post("/register")
-        .content(register)
-        .contentType(contentType))
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.result", is("fail")))
-        .andExpect(jsonPath("$.message", is("Missing parameter(s): email!")));
+            .content(register)
+            .contentType(contentType))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.result", is("fail")))
+            .andExpect(jsonPath("$.message", is("Missing parameter(s): email!")));
   }
 
   @Test
@@ -248,3 +248,4 @@ public class UserControllerTest {
         .andExpect(jsonPath("$.[1].username", is("Pisti")));
   }
 }
+

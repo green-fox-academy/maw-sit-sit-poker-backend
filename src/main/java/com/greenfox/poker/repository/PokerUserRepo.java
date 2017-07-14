@@ -14,8 +14,10 @@ public interface PokerUserRepo extends CrudRepository<PokerUser, Long> {
   PokerUser findByUsername(String username);
   PokerUser findByToken(String token);
   boolean existsByUsername(String username);
-  boolean existsByPassword(String password);
+
   boolean existsByEmail(String email);
   boolean existsByToken(String token);
   void deleteByUsername(String username);
 }
+
+
