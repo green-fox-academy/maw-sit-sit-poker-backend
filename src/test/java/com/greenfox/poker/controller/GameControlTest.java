@@ -11,6 +11,7 @@ import com.greenfox.poker.PokergameApplication;
 import com.greenfox.poker.mockbuilder.MockGameBuilder;
 import com.greenfox.poker.mockbuilder.MockPokerUserBuilder;
 import com.greenfox.poker.model.Game;
+import com.greenfox.poker.model.GamePlayer;
 import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.model.PokerUserDTO;
 import com.greenfox.poker.repository.GameRepo;
@@ -170,7 +171,8 @@ public class GameControlTest {
     PokerUserDTO pokerUserDTO = dtoService.makePokerUserDTO(mockUser);
     gameService.createNewGame(game);
     gameService.createGameState(game);
-    gameService.createNewPlayerAndAddToGame(pokerUserDTO, game.getId(), 5000);
+    GamePlayer mockPlayer = gameService.createNewPlayer(pokerUserDTO, 5000);
+    gameService.addPlayerToGame(game.getId(), mockPlayer);
 
     mockMvc.perform(post("/game/{id}/join", 1l)
         .content(join)

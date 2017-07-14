@@ -4,7 +4,6 @@ import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.model.PokerUserDTO;
 import com.greenfox.poker.repository.PokerUserRepo;
 import java.util.HashMap;
-import java.util.function.DoubleToIntFunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

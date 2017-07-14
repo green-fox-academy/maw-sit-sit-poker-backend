@@ -1,7 +1,6 @@
 package com.greenfox.poker.model;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 
