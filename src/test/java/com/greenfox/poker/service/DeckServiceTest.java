@@ -4,8 +4,11 @@ import static org.junit.Assert.*;
 
 import com.greenfox.poker.model.Card;
 import com.greenfox.poker.model.Deck;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 
@@ -14,10 +17,12 @@ public class DeckServiceTest {
   private Deck testDeck;
   private List<Card> cardsInTestDeck;
   private List<String> validCardList;
+  private DeckService deckService;
 
 
-  private void createTestDeckAndCardsList() {
-    DeckService deckService = new DeckService();
+  @Before
+  public void createTestDeckAndCardsList() {
+    deckService = new DeckService();
     testDeck = deckService.getNewDeck();
     cardsInTestDeck = testDeck.getCards();
     validCardList = Arrays
@@ -28,23 +33,60 @@ public class DeckServiceTest {
             );
   }
 
-  private void setDeckAndCardsListToNull() {
+  @After
+  public void setDeckAndCardsListToNull() {
     testDeck = null;
     cardsInTestDeck = null;
   }
 
-
   @Test
   public void TestIfDeckContainsTheRightAmountOfCards() throws Exception {
-    createTestDeckAndCardsList();
     assertEquals(52, cardsInTestDeck.size());
-    setDeckAndCardsListToNull();
   }
 
-  public void TestIfAllCardsAreDifferent() throws Exception {
-    createTestDeckAndCardsList();
+  @Test
+  public void TestIfDeckContainsAllTheCards() throws Exception {
+    List<String> validatedListOfCards = validCardList;
+    List<String> actualListOfCards = new ArrayList<>();
+    for (Card card : cardsInTestDeck) {
+      actualListOfCards.add(card.toString());
+    }
+    java.util.Collections.sort(validatedListOfCards);
+    java.util.Collections.sort(actualListOfCards);
 
-    setDeckAndCardsListToNull();
+    for (int i = 0; i < 52; i++) {
+      assertEquals(validatedListOfCards.get(i), actualListOfCards.get(i));
+    }
   }
 
+  @Test
+  public void TestShuffleMethod() throws Exception {
+    DeckService deckService = new DeckService();
+    Deck originalDeck = testDeck;
+    deckService.shuffleDeck(testDeck);
+    List<Card> originalCards = originalDeck.getCards();
+    List<Card> shuffledCards = testDeck.getCards();
+    List<String> originalCardsString = new ArrayList<>();
+    List<String> shuffledCardsString = new ArrayList<>();
+    for (Card card : originalCards) {
+      originalCardsString.add(card.toString());
+    }
+    for (Card card : shuffledCards) {
+      shuffledCardsString.add(card.toString());
+    }
+    java.util.Collections.sort(originalCardsString);
+    java.util.Collections.sort(shuffledCardsString);
+    for (int i = 0; i < 52; i++) {
+      assertEquals(originalCardsString.get(i), shuffledCardsString.get(i));
+    }
+  }
+
+  @Test
+  public void TestDrawCardMethod() throws Exception {
+    for (int i = 51; i != 0; i--) {
+      String topCardInTheDeck = validCardList.get(i);
+      Card drawnCard = deckService.drawCardFromDeck(testDeck);
+      assertEquals(topCardInTheDeck, drawnCard.toString());
+    }
+  }
 }

@@ -1,5 +1,6 @@
 package com.greenfox.poker.service;
 
+import com.greenfox.poker.model.GamePlayer;
 import com.greenfox.poker.model.LoginRequest;
 import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.model.PokerUserDTO;
@@ -9,34 +10,41 @@ import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.repository.PokerUserRepo;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 
 @Component
 public class UserService {
 
-  @Autowired
   PokerUserRepo pokerUserRepo;
-
-  @Autowired
+  PokerUser pokerUser;
+  TokenService tokenService;
   DtoService dtoService;
 
-  @Autowired
-  TokenService tokenService;
+  public UserService(PokerUserRepo pokerUserRepo, PokerUser pokerUser,
+      TokenService tokenService, DtoService dtoService) {
+    this.pokerUserRepo = pokerUserRepo;
+    this.pokerUser = pokerUser;
+    this.tokenService = tokenService;
+    this.dtoService = dtoService;
+  }
 
   public ResponseType responseToSuccessfulRegister(PokerUser pokerUser) {
     pokerUserRepo.save(pokerUser);
-    String token = tokenService.generateToken(pokerUser);
+    PokerUser pokerUserFromDatabase = pokerUserRepo.findByUsername(pokerUser.getUsername());
+    String token = tokenService.generateToken(pokerUserFromDatabase);
+    pokerUserFromDatabase.setToken(token);
+    pokerUserRepo.save(pokerUserFromDatabase);
+    dtoService.makePokerUserDTO(pokerUserFromDatabase);
     return new UserTokenResponse("success", token, pokerUser.getId());
   }
 
   public ResponseType responseToSuccessfulLogin(LoginRequest loginRequest) {
-    PokerUser pokerUserFromDatabase = pokerUserRepo.findByUsername(loginRequest.getUsername())
-            .get(0);
+    PokerUser pokerUserFromDatabase = pokerUserRepo.findByUsername(loginRequest.getUsername());
     String token = tokenService.generateToken(pokerUserFromDatabase);
+    pokerUserFromDatabase.setToken(token);
+    pokerUserRepo.save(pokerUserFromDatabase);
+    dtoService.makePokerUserDTO(pokerUserFromDatabase);
     return new UserTokenResponse("success", token, pokerUserFromDatabase.getId());
   }
 
@@ -49,13 +57,9 @@ public class UserService {
   }
 
   public boolean isLoginValid(LoginRequest loginRequest) {
-    List<PokerUser> users = pokerUserRepo.findByUsername(loginRequest.getUsername());
-    int sizeOfValidUsersListFromUserRepo = users.size();
-    if (sizeOfValidUsersListFromUserRepo == 1) {
-      long userId = users.get(0).getId();
-      if (loginRequest.getPassword().equals(pokerUserRepo.findOne(userId).getPassword())) {
-        return true;
-      }
+    if (pokerUserRepo.existsByUsername(loginRequest.getUsername()) &&
+            pokerUserRepo.existsByPassword(loginRequest.getPassword())) {
+      return true;
     }
     return false;
   }
@@ -77,7 +81,7 @@ public class UserService {
   }
 
   public long getUserIdFromUsername(String username) {
-    return pokerUserRepo.findByUsername(username).get(0).getId();
+    return pokerUserRepo.findByUsername(username).getId();
   }
 
   public boolean isUserExistsInDB(long id) {
@@ -88,12 +92,16 @@ public class UserService {
     }
   }
 
-  public List<PokerUserDTO> getTopTenLeaderboard() {
+  public List<PokerUserDTO> getTopTenPlayersByChipsLeaderboard() {
     List<PokerUser> topTenList = pokerUserRepo.findTop10ByOrderByChipsDesc();
     List<PokerUserDTO> topTenDTO = new ArrayList<>();
     for (PokerUser user : topTenList) {
-      topTenDTO.add(dtoService.makePokerUserDTO(user.getId()));
+      topTenDTO.add(dtoService.makePokerUserDTO(user));
     }
     return topTenDTO;
+  }
+
+  public void updatePokerUserChipsInDBAfterEndOfGame(long chipsDifference, long playerId) {
+    pokerUserRepo.findOne(playerId).setChips(chipsDifference);
   }
 }

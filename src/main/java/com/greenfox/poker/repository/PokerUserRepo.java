@@ -4,17 +4,20 @@ package com.greenfox.poker.repository;
 import com.greenfox.poker.model.PokerUser;
 import java.util.List;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Component;
+
 
 public interface PokerUserRepo extends CrudRepository<PokerUser, Long> {
 
   List<PokerUser> findAll();
-
   List<PokerUser> findTop10ByOrderByChipsDesc();
-  List<PokerUser> findByUsername(String username);
-
+  PokerUser findByUsername(String username);
+  PokerUser findByToken(String token);
   boolean existsByUsername(String username);
-
+  boolean existsByPassword(String password);
   boolean existsByEmail(String email);
+  boolean existsByToken(String token);
+  void deleteByUsername(String username);
 }
 
 

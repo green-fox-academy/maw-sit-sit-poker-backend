@@ -7,11 +7,11 @@ import com.greenfox.poker.model.Suit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
 
 public class DeckService {
+
 
   private static AtomicLong nextId = new AtomicLong(0);
 
@@ -40,7 +40,7 @@ public class DeckService {
     return newCard;
   }
 
-  public void shuffleDeck(Deck deck){
+  public void shuffleDeck(Deck deck) {
     List<Card> cardsToShuffle = deck.getCards();
     Collections.shuffle(cardsToShuffle);
     deck.setCards(cardsToShuffle);

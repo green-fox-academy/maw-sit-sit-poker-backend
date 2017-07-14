@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Email;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,7 @@ public class PokerUser {
 
   private String avatar;
   private long chips;
+  private String token;
 
   public PokerUser() {
     this.chips = 10000;
@@ -87,5 +89,13 @@ public class PokerUser {
 
   public void setChips(long chips) {
     this.chips = chips;
+  }
+
+  public String getToken() {
+    return token;
+  }
+
+  public void setToken(String token) {
+    this.token = token;
   }
 }

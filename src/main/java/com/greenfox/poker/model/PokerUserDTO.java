@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PokerUserDTO implements ResponseType {
 
-  private long id;
+  private Long id;
   private String username;
   private String avatar;
   private long chips;
@@ -13,11 +13,15 @@ public class PokerUserDTO implements ResponseType {
   public PokerUserDTO() {
   }
 
-  public long getId() {
+  public PokerUserDTO(long chips){
+    this.chips = chips;
+  }
+
+  public Long getId() {
     return id;
   }
 
-  public void setId(long id) {
+  public void setId(Long id) {
     this.id = id;
   }
 

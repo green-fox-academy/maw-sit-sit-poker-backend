@@ -1,19 +1,44 @@
 package com.greenfox.poker.model;
 
 
+
+import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 
 public class GameState {
-
   private long id;
   private List<GamePlayer> players;
-  private long actorPlayerId;
-  private long dealerPlayerId;
+  private Long actorPlayerId;
+  private Long dealerPlayerId;
   private Round round;
   private List<Card> cardsOnTable;
   private int pot;
 
+  @JsonIgnore
+  private Long smallBlindPlayerId;
+
+  @JsonIgnore
+  private Long bigBlindPlayerId;
+
+  @JsonIgnore
+  private Deck deckInGameState;
+
   public GameState() {
+    this.players = new ArrayList<>();
+  }
+
+  public GameState(long id) {
+    this.id = id;
+    this.players = new ArrayList<>();
+  }
+
+  public Deck getDeckInGameState() {
+    return deckInGameState;
+  }
+
+  public void setDeckInGameState(Deck deckInGameState) {
+    this.deckInGameState = deckInGameState;
   }
 
   public long getId() {
@@ -40,19 +65,19 @@ public class GameState {
     this.round = round;
   }
 
-  public long getActorPlayerId() {
+  public Long getActorPlayerId() {
     return actorPlayerId;
   }
 
-  public void setActorPlayerId(long actorPlayerId) {
+  public void setActorPlayerId(Long actorPlayerId) {
     this.actorPlayerId = actorPlayerId;
   }
 
-  public long getDealerPlayerId() {
+  public Long getDealerPlayerId() {
     return dealerPlayerId;
   }
 
-  public void setDealerPlayerId(long dealerPlayerId) {
+  public void setDealerPlayerId(Long dealerPlayerId) {
     this.dealerPlayerId = dealerPlayerId;
   }
 
@@ -70,5 +95,21 @@ public class GameState {
 
   public void setPot(int pot) {
     this.pot = pot;
+  }
+
+  public Long getSmallBlindPlayerId() {
+    return smallBlindPlayerId;
+  }
+
+  public void setSmallBlindPlayerId(Long smallBlindPlayerId) {
+    this.smallBlindPlayerId = smallBlindPlayerId;
+  }
+
+  public Long getBigBlindPlayerId() {
+    return bigBlindPlayerId;
+  }
+
+  public void setBigBlindPlayerId(Long bigBlindPlayerId) {
+    this.bigBlindPlayerId = bigBlindPlayerId;
   }
 }

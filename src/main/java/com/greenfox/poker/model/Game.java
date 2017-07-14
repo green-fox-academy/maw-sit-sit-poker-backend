@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
 @Entity
-public class Game {
+public class Game implements ResponseType {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,20 +25,13 @@ public class Game {
   @JsonProperty("max_players")
   private Integer maxPlayers;
 
-  @NotNull
-  @JsonProperty("gamestate_id")
-  private long gamestateId;
-
-
   public Game() {
   }
 
-  public long getGamestateId() {
-    return gamestateId;
-  }
-
-  public void setGamestateId(long gamestateId) {
-    this.gamestateId = gamestateId;
+  public Game(String name, Integer bigBlind, Integer maxPlayers) {
+    this.name = name;
+    this.bigBlind = bigBlind;
+    this.maxPlayers = maxPlayers;
   }
 
   public long getId() {
@@ -73,6 +66,15 @@ public class Game {
     this.maxPlayers = maxPlayers;
   }
 
+  @Override
+  public String toString() {
+    return "Game{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", bigBlind=" + bigBlind +
+            ", maxPlayers=" + maxPlayers +
+            '}';
+  }
 }
 
 

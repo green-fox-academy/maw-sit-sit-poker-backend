@@ -3,11 +3,15 @@ package com.greenfox.poker.service;
 import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.model.PokerUserDTO;
 import com.greenfox.poker.repository.PokerUserRepo;
+import java.util.HashMap;
+import java.util.function.DoubleToIntFunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DtoService {
+
+  HashMap<Long, PokerUserDTO> pokerUserDTOs = new HashMap<>();
 
   @Autowired
   PokerUserDTO pokerUserDTO;
@@ -15,12 +19,28 @@ public class DtoService {
   @Autowired
   PokerUserRepo pokerUserRepo;
 
-  public PokerUserDTO makePokerUserDTO(long id) {
-    PokerUser pokerUser = pokerUserRepo.findOne(id);
-    pokerUserDTO.setId(id);
-    pokerUserDTO.setUsername(pokerUser.getUsername());
-    pokerUserDTO.setAvatar(pokerUser.getAvatar());
-    pokerUserDTO.setChips(pokerUser.getChips());
+  public boolean hasPlayerEnoughChipsToPlay(long chipsToPlayWith, PokerUserDTO user){
+    if (user.getChips() < chipsToPlayWith){
+      return false;
+    }
+    return true;
+  }
+
+  public void deductChipsFromAvailableChips(long chipsToPlayWith, long playerId){
+    long chipsAvailableToDTOAfterJoiningTable = pokerUserDTOs.get(playerId).getChips() - chipsToPlayWith;
+    pokerUserDTOs.get(playerId).setChips(chipsAvailableToDTOAfterJoiningTable);
+  }
+
+  public PokerUserDTO makePokerUserDTO(PokerUser pUser) {
+    pokerUserDTO.setId(pUser.getId());
+    pokerUserDTO.setUsername(pUser.getUsername());
+    pokerUserDTO.setAvatar(pUser.getAvatar());
+    pokerUserDTO.setChips(pUser.getChips());
+    pokerUserDTOs.put(pokerUserDTO.getId(), pokerUserDTO);
     return pokerUserDTO;
+  }
+
+  public void removePokerUserDTO(long playerId){
+    pokerUserDTOs.remove(playerId);
   }
 }

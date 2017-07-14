@@ -2,6 +2,7 @@ package com.greenfox.poker.service;
 
 import com.greenfox.poker.model.PokerUser;
 
+import com.greenfox.poker.model.PokerUserDTO;
 import com.greenfox.poker.repository.PokerUserRepo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Component;
 public class TokenService {
 
   @Autowired
-  PokerUserRepo pokerUserRepo;
+  DtoService dtoService;
 
   private Key key;
 
@@ -36,7 +37,7 @@ public class TokenService {
     this.key = MacProvider.generateKey();
     String token = Jwts.builder()
         .setClaims(claims)
-        .signWith(SignatureAlgorithm.HS256, key)
+        .signWith(SignatureAlgorithm.HS256, this.key)
         .compact();
     return token;
   }
@@ -44,7 +45,7 @@ public class TokenService {
   private Claims getClaimsFromToken(String token) {
     Claims claims;
     claims = Jwts.parser()
-        .setSigningKey(key)
+        .setSigningKey(this.key)
         .parseClaimsJws(token)
         .getBody();
     return claims;
@@ -55,17 +56,16 @@ public class TokenService {
     long id;
     try {
       Claims claims = getClaimsFromToken(token);
-      id = (Integer) claims.get("id");
+      id = new Long((Integer) claims.get("id"));
     } catch (MissingClaimException e) {
       id = -1L;
     }
     return id;
   }
 
-  public PokerUser getPokerUserFromToken(String token) {
+  public PokerUserDTO getPokerUserDTOFromToken(String token) {
     long idFromToken = getIdFromToken(token);
-    PokerUser pokerUserFromToken = pokerUserRepo.findOne(idFromToken);
-    return pokerUserFromToken;
+    return dtoService.pokerUserDTOs.get(idFromToken);
   }
 }
 
