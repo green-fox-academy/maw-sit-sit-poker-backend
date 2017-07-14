@@ -12,12 +12,15 @@ import com.greenfox.poker.repository.GameRepo;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.text.html.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class GameService {
+  private final static Logger logger = Logger.getLogger(GameService.class.getName());
 
   ErrorMessageService errorMessageService;
   DtoService dtoService;
@@ -47,6 +50,7 @@ public class GameService {
   }
 
   public Game createNewGame(Game game) {
+    logger.log(Level.INFO, "New GAME created and saved. gameName: " +game.getName() + ", game ID: " + game.getId() );
     newGame = new Game(game.getName(), game.getBigBlind(), game.getMaxPlayers());
     gameRepo.save(newGame);
     return newGame;
