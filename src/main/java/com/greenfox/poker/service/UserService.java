@@ -57,13 +57,9 @@ public class UserService {
   }
 
   public boolean isLoginValid(LoginRequest loginRequest) {
-    List<PokerUser> users = pokerUserRepo.findByUsername(loginRequest.getUsername());
-    int sizeOfValidUsersListFromUserRepo = users.size();
-    if (sizeOfValidUsersListFromUserRepo == 1) {
-      long userId = users.get(0).getId();
-      if (loginRequest.getPassword().equals(pokerUserRepo.findOne(userId).getPassword())) {
-        return true;
-      }
+    if (pokerUserRepo.existsByUsername(loginRequest.getUsername()) &&
+            pokerUserRepo.existsByPassword(loginRequest.getPassword())) {
+      return true;
     }
     return false;
   }
