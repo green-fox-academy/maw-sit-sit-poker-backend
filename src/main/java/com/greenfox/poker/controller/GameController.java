@@ -108,7 +108,7 @@ public class GameController {
   public ResponseEntity<?> joinTable(
           @PathVariable("id") long gameId,
           @RequestBody ChipsToJoinGame chips,
-          @RequestHeader("X-poker - token") String token) {
+          @RequestHeader("X-poker-token") String token) {
     pokerUserDTO = tokenService.getPokerUserDTOFromToken(token);
     if (!gameService.isGameExistById(gameId)) {
       return new ResponseEntity(errorMessageService.responseToWrongGameId(), HttpStatus.NOT_FOUND);
