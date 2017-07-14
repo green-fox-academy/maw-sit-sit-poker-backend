@@ -153,7 +153,7 @@ public class GameControlTest {
 
   //
   @Test
-  public void testJoinWithPlayerAlreadySittigAtTable() throws Exception {
+  public void testJoinWithPlayerAlreadySittingAtTable() throws Exception {
     PokerUser mockUser = mockPokerUserBuilder.build();
     Game game = mockGameBuilder.build();
     String token = tokenService.generateToken(mockUser);
