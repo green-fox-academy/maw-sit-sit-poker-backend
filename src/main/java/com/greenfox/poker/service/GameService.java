@@ -6,7 +6,6 @@ import com.greenfox.poker.model.GamePlayer;
 import com.greenfox.poker.model.GameState;
 import com.greenfox.poker.model.GamesList;
 import com.greenfox.poker.model.PlayerAction;
-import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.model.ResponseType;
 import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.model.PokerUserDTO;
@@ -102,6 +101,15 @@ public class GameService {
   return false;
   }
 
+  public boolean isThereEmptySeatAtTheGame(long gameId) {
+    if (getGameStateById(gameId).getPlayers().contains(null)) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
   public boolean isGameExistById(long id) {
     return gameRepo.exists(id);
   }
@@ -113,14 +121,31 @@ public class GameService {
     return false;
   }
 
-  public void createNewPlayerAndAddToGame(PokerUserDTO user, long gameId, long chipsToPlayWith) {
+  public List<Integer> getEmptySeatIndexesAtGame(long gameId) {
+    List<Integer> nulls = new ArrayList<>();
+    List<GamePlayer> playerList = getGameStateById(gameId).getPlayers();
+    for (int i = 0; i < playerList.size() -1; i++) {
+      if (playerList.get(i) == null) {
+        nulls.add(i);
+      }
+    }
+    return nulls;
+  }
+
+  public GamePlayer createNewPlayer(PokerUserDTO user, long chipsToPlayWith) {
     gamePlayer = new GamePlayer(chipsToPlayWith, user);
-    gameStates.get(gameId).getPlayers().add(gamePlayer);
+    return gamePlayer;
+  }
+
+  public void addPlayerToGame(long gameId, GamePlayer gamePlayer) {
+      int numberOfEmptySeats = getEmptySeatIndexesAtGame(gameId).size();
+      int randomSeatIndex = (int) (Math.random()*numberOfEmptySeats + 1);
+      gameStates.get(gameId).getPlayers().add(getEmptySeatIndexesAtGame(gameId).get(randomSeatIndex), gamePlayer);
   }
 
   public ResponseType joinPlayerToGame(PokerUserDTO user, long gameId, long chipsToPlayWith) {
     createGameState(gameRepo.findOne(gameId));
-    createNewPlayerAndAddToGame(user, gameId, chipsToPlayWith);
+    addPlayerToGame(gameId, createNewPlayer(user, chipsToPlayWith));
     return respondToJoinTable(user, gameId);
   }
 
