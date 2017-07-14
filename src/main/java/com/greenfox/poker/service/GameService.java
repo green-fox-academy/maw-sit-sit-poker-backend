@@ -1,18 +1,19 @@
 package com.greenfox.poker.service;
 
+import com.greenfox.poker.model.Card;
 import com.greenfox.poker.model.Game;
 import com.greenfox.poker.model.GamePlayer;
 import com.greenfox.poker.model.GameState;
 import com.greenfox.poker.model.GamesList;
 import com.greenfox.poker.model.PlayerAction;
+import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.model.ResponseType;
 import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.model.PokerUserDTO;
 import com.greenfox.poker.repository.GameRepo;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
-import javax.swing.text.html.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,14 +24,16 @@ public class GameService {
   DtoService dtoService;
   GamePlayer gamePlayer;
   GameRepo gameRepo;
+  Card card;
 
   @Autowired
   public GameService(ErrorMessageService errorMessageService,
-      DtoService dtoService, GamePlayer gamePlayer, GameRepo gameRepo) {
+      DtoService dtoService, GamePlayer gamePlayer, GameRepo gameRepo, Card card) {
     this.errorMessageService = errorMessageService;
     this.dtoService = dtoService;
     this.gamePlayer = gamePlayer;
     this.gameRepo = gameRepo;
+    this.card = card;
   }
 
   private Game newGame = new Game();
@@ -168,5 +171,18 @@ public class GameService {
     gamePlayer = getPlayersListFromGame(gameId).get(getPlayerIndexFromGameState(pokerUserDTO.getId(), gameId));
     gamePlayer.setLastAction(playerAction.getAction());
     gamePlayer.setBet(gamePlayer.getBet() + (int) playerAction.getValue());
+  }
+
+  public List<Card> getPlayersCards(PokerUserDTO pokerUserDTO, long gameId) {
+    int playerIndex = getPlayerIndexFromGameState(pokerUserDTO.getId(), gameId);
+    return getPlayersListFromGame(gameId).get(playerIndex).getPlayersHand();
+  }
+
+  public List<String> getPlayersHandFromTable(PokerUserDTO pokerUserDTO, long gameId) {
+    List<String> cardsAsString = new ArrayList<>();
+    for (Card c : getPlayersCards(pokerUserDTO, gameId)) {
+     cardsAsString.add(c.toString());
+    }
+    return cardsAsString;
   }
 }
