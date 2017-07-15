@@ -51,8 +51,9 @@ public class ShowDownService {
     Card[] chosenCardsArray = new Card[5];
     combinationsOf5(sevenCard, 5, 0, chosenCardsArray);
     System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXxx");
-    for (String item : resultList) {
-      System.out.println(item.toString());
+    for (Card[] item : resultList) {
+  //    System.out.println(item[0] + " " + item[1] + " " + item[2] + " " + item[3] + " " + item[4]);
+      System.out.println(Arrays.toString(item));
 
     }
     List<Card> chosenCards = new ArrayList<>();
@@ -61,13 +62,12 @@ public class ShowDownService {
     return chosenCards;
   }
 
-  private static List<String> resultList = new ArrayList<>();
+  private static List<Card[]> resultList = new ArrayList<>();
 
   private void combinationsOf5(Card[] input, int len, int startPosition, Card[] result) {
     if (len == 0) {
-      resultList.add(Arrays.toString(result));
-  //    resultList=Arrays.asList(Arrays.toString(result));
-     System.out.println(Arrays.toString(result));
+      resultList.add(Arrays.copyOf(result,5));
+      System.out.println(Arrays.toString(result));
       return;
     }
     for (int i = startPosition; i <= input.length - len; i++) {
