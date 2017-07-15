@@ -5,7 +5,9 @@ package com.greenfox.poker.model;
 import java.util.ArrayList;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
+import org.springframework.stereotype.Component;
 
+@Component
 public class GameState {
   private long id;
   private List<GamePlayer> players;

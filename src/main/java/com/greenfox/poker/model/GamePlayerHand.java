@@ -2,7 +2,9 @@ package com.greenfox.poker.model;
 
 
 import java.util.List;
+import org.springframework.stereotype.Component;
 
+@Component
 public class GamePlayerHand {
 
   private long gameStateId;
