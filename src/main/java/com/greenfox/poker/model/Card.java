@@ -2,7 +2,6 @@ package com.greenfox.poker.model;
 
 import org.springframework.stereotype.Component;
 
-@Component
 public class Card {
 
   private String suit;

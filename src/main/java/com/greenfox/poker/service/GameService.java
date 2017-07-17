@@ -23,16 +23,14 @@ public class GameService {
   DtoService dtoService;
   GamePlayer gamePlayer;
   GameRepo gameRepo;
-  Card card;
 
   @Autowired
   public GameService(ErrorMessageService errorMessageService,
-      DtoService dtoService, GamePlayer gamePlayer, GameRepo gameRepo, Card card) {
+      DtoService dtoService, GamePlayer gamePlayer, GameRepo gameRepo) {
     this.errorMessageService = errorMessageService;
     this.dtoService = dtoService;
     this.gamePlayer = gamePlayer;
     this.gameRepo = gameRepo;
-    this.card = card;
   }
 
   private Game newGame = new Game();
@@ -57,7 +55,11 @@ public class GameService {
   public void createGameState(Game game) {
     if (!hasGameAGameState(game.getId())) {
       long commonIdwithGame = gameRepo.findOneByName(game.getName()).getId();
-      gameStates.put(commonIdwithGame, new GameState(commonIdwithGame));
+      GameState newState = new GameState(commonIdwithGame);
+      for (int i = 0; i < game.getMaxPlayers(); i++) {
+        newState.getPlayers().add(null);
+      }
+      gameStates.put(commonIdwithGame, newState);
     }
   }
 
@@ -124,7 +126,7 @@ public class GameService {
   public List<Integer> getEmptySeatIndexesAtGame(long gameId) {
     List<Integer> nulls = new ArrayList<>();
     List<GamePlayer> playerList = getGameStateById(gameId).getPlayers();
-    for (int i = 0; i < playerList.size() -1; i++) {
+    for (int i = 0; i < playerList.size(); i++) {
       if (playerList.get(i) == null) {
         nulls.add(i);
       }
@@ -139,8 +141,9 @@ public class GameService {
 
   public void addPlayerToGame(long gameId, GamePlayer gamePlayer) {
       int numberOfEmptySeats = getEmptySeatIndexesAtGame(gameId).size();
-      int randomSeatIndex = (int) (Math.random()*numberOfEmptySeats + 1);
-      gameStates.get(gameId).getPlayers().add(getEmptySeatIndexesAtGame(gameId).get(randomSeatIndex), gamePlayer);
+      int randomSeatIndex = (int) (Math.random()*numberOfEmptySeats);
+      Integer emptySeat = getEmptySeatIndexesAtGame(gameId).get(randomSeatIndex);
+      gameStates.get(gameId).getPlayers().add(emptySeat, gamePlayer);
   }
 
   public ResponseType joinPlayerToGame(PokerUserDTO user, long gameId, long chipsToPlayWith) {
@@ -160,7 +163,7 @@ public class GameService {
   }
 
   public void removePlayerFromGame(long playerId, long gameId) {
-    getPlayersListFromGame(gameId).set(getPlayerIndexFromGameState(playerId, gameId), null);
+    getPlayersListFromGame(gameId).set(getPlayerIndexFromGameStateByIds(playerId, gameId), null);
   }
 
   public ResponseType respondToLeave(long playerId, long gameId) {
@@ -169,18 +172,22 @@ public class GameService {
     return new StatusError("success", playerName + " left game: " + gameName);
   }
 
-  public Integer getPlayerIndexFromGameState(long playerId, long gameId) {
+  public Integer getPlayerIndexFromGameStateByIds(long playerId, long gameId) {
     gamePlayer = getPlayersListFromGame(gameId).stream()
         .filter(player -> player.getId().equals(playerId))
         .findFirst().get();
     return getPlayersListFromGame(gameId).indexOf(gamePlayer);
   }
 
+  public Integer getPlayerIndexFromGameStateByObjects(GamePlayer player, Game game) {
+    return getPlayersListFromGame(game.getId()).indexOf(player);
+  }
+
   public void updateGame(long playerId, long gameId, PlayerAction playerAction) {
-    gamePlayer = getPlayersListFromGame(gameId).get(getPlayerIndexFromGameState(playerId, gameId));
+    gamePlayer = getPlayersListFromGame(gameId).get(getPlayerIndexFromGameStateByIds(playerId, gameId));
     setActingPlayerIdInGameState(playerId, gameId);
     setLastActionAndBetOfPlayer(gamePlayer, gameId, playerAction);
-    getPlayersListFromGame(gameId).set(getPlayerIndexFromGameState(playerId, gameId), gamePlayer);
+    getPlayersListFromGame(gameId).set(getPlayerIndexFromGameStateByIds(playerId, gameId), gamePlayer);
     gameStates.get(gameId).setPlayers(getPlayersListFromGame(gameId));
   }
 
@@ -193,13 +200,13 @@ public class GameService {
   }
 
   public void setLastActionAndBetOfPlayer(PokerUserDTO pokerUserDTO, long gameId, PlayerAction playerAction) {
-    gamePlayer = getPlayersListFromGame(gameId).get(getPlayerIndexFromGameState(pokerUserDTO.getId(), gameId));
+    gamePlayer = getPlayersListFromGame(gameId).get(getPlayerIndexFromGameStateByIds(pokerUserDTO.getId(), gameId));
     gamePlayer.setLastAction(playerAction.getAction());
     gamePlayer.setBet(gamePlayer.getBet() + (int) playerAction.getValue());
   }
 
   public List<Card> getPlayersCards(PokerUserDTO pokerUserDTO, long gameId) {
-    int playerIndex = getPlayerIndexFromGameState(pokerUserDTO.getId(), gameId);
+    int playerIndex = getPlayerIndexFromGameStateByIds(pokerUserDTO.getId(), gameId);
     return getPlayersListFromGame(gameId).get(playerIndex).getPlayersHand();
   }
 
