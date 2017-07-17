@@ -1,4 +1,3 @@
-
 CREATE TABLE IF NOT EXISTS Poker_user (
   id       BIGSERIAL PRIMARY KEY,
   username VARCHAR(255) NOT NULL,
@@ -9,11 +8,9 @@ CREATE TABLE IF NOT EXISTS Poker_user (
 );
 
 CREATE TABLE IF NOT EXISTS game (
-  id           BIGSERIAL PRIMARY KEY,
-  NAME         VARCHAR(255) NOT NULL,
-  big_blind    INTEGER      NOT NULL,
-  max_players  INTEGER      NOT NULL,
-  gamestate_id INTEGER      NOT NULL
+  id              BIGSERIAL PRIMARY KEY,
+  NAME            VARCHAR(255) NOT NULL,
+  big_blind       INTEGER      NOT NULL,
+  max_players     INTEGER      NOT NULL
 );
-
 
