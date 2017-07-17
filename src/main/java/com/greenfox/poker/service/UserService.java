@@ -10,11 +10,15 @@ import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.repository.PokerUserRepo;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UserService {
+
+  private final static Logger logger = Logger.getLogger(TokenService.class.getName());
 
   PokerUserRepo pokerUserRepo;
   PokerUser pokerUser;
@@ -22,7 +26,7 @@ public class UserService {
   DtoService dtoService;
 
   public UserService(PokerUserRepo pokerUserRepo, PokerUser pokerUser,
-      TokenService tokenService, DtoService dtoService) {
+          TokenService tokenService, DtoService dtoService) {
     this.pokerUserRepo = pokerUserRepo;
     this.pokerUser = pokerUser;
     this.tokenService = tokenService;
@@ -36,6 +40,7 @@ public class UserService {
     pokerUserFromDatabase.setToken(token);
     pokerUserRepo.save(pokerUserFromDatabase);
     dtoService.makePokerUserDTO(pokerUserFromDatabase);
+    logger.log(Level.INFO, "successful registration for username: " + pokerUser.getUsername());
     return new UserTokenResponse("success", token, pokerUser.getId());
   }
 
@@ -45,26 +50,30 @@ public class UserService {
     pokerUserFromDatabase.setToken(token);
     pokerUserRepo.save(pokerUserFromDatabase);
     dtoService.makePokerUserDTO(pokerUserFromDatabase);
+    logger.log(Level.INFO, "successful login for username: " + pokerUser.getUsername());
     return new UserTokenResponse("success", token, pokerUserFromDatabase.getId());
   }
 
   public ResponseType registerWithOccupiedEmail() {
+    logger.log(Level.WARNING, "registration error, email occupied already");
     return new StatusError("fail", "email address already exists");
   }
 
   public ResponseType registerWithOccupiedUsername() {
+    logger.log(Level.WARNING, "registration error, username occupied already");
     return new StatusError("fail", "username already exists");
   }
 
   public boolean isLoginValid(LoginRequest loginRequest) {
     if (pokerUserRepo.existsByUsername(loginRequest.getUsername()) &&
-        pokerUserRepo.existsByPassword(loginRequest.getPassword())) {
+            pokerUserRepo.existsByPassword(loginRequest.getPassword())) {
       return true;
     }
     return false;
   }
 
   public ResponseType loginWithInvalidUsernameOrPassword() {
+    logger.log(Level.WARNING, "login error, invalid username or password");
     return new StatusError("fail", "invalid username or password");
   }
 

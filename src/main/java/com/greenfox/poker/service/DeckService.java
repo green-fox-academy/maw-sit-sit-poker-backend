@@ -8,10 +8,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class DeckService {
 
+  private final static Logger logger = Logger.getLogger(DeckService.class.getName());
 
   private static AtomicLong nextId = new AtomicLong(0);
 
@@ -19,6 +22,8 @@ public class DeckService {
     Deck newDeck = new Deck();
     newDeck.setId(nextId.incrementAndGet());
     newDeck.setCards(setNewDeckCards());
+    logger.log(Level.INFO,
+            "new deck created. Deck id: " + newDeck.getId());
     return newDeck;
   }
 
@@ -44,6 +49,8 @@ public class DeckService {
     List<Card> cardsToShuffle = deck.getCards();
     Collections.shuffle(cardsToShuffle);
     deck.setCards(cardsToShuffle);
+    logger.log(Level.INFO,
+            "deck shuffled. Deck id: " + deck.getId());
   }
 
   public Card drawCardFromDeck(Deck deck) {
@@ -53,6 +60,9 @@ public class DeckService {
     topCardToDraw = cardsInDeck.get(listSize - 1);
     cardsInDeck.remove(listSize - 1);
     deck.setCards(cardsInDeck);
+    logger.log(Level.INFO,
+            "card is drawn from the deck id: " + deck.getId() + " card type: " + topCardToDraw
+                    .toString());
     return topCardToDraw;
   }
 
