@@ -5,6 +5,7 @@ import com.greenfox.poker.model.Card;
 import com.greenfox.poker.model.Deck;
 import com.greenfox.poker.model.GamePlayerHand;
 import com.greenfox.poker.model.GameState;
+import com.greenfox.poker.model.Rank;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,7 +35,11 @@ public class ShowDownService {
         deckService.drawCardFromDeck(myDeck),
         deckService.drawCardFromDeck(myDeck),
         deckService.drawCardFromDeck(myDeck))));
-
+    for (Card item: all7Cards) {
+     switch (item.getRank()){
+       case "A" :item.setRank(Rank.ACE14);
+     }
+    }
     return all7Cards;
   }
 
@@ -49,6 +54,7 @@ public class ShowDownService {
     for (Card[] item : chosen5Cards) {
       //    System.out.println(item[0] + " " + item[1] + " " + item[2] + " " + item[3] + " " + item[4]);
       System.out.println(Arrays.toString(item));
+      System.out.println(item[2].getSuit() + "  " + item[2].getRank());
     }
     System.out.println(chosen5Cards.size());
     return chosen5Cards;
