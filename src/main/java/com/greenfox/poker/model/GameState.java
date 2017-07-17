@@ -112,4 +112,20 @@ public class GameState {
   public void setBigBlindPlayerId(Long bigBlindPlayerId) {
     this.bigBlindPlayerId = bigBlindPlayerId;
   }
+
+  @Override
+  public String toString() {
+    return "GameState{" +
+            "id=" + id +
+            ", players=" + players +
+            ", actorPlayerId=" + actorPlayerId +
+            ", dealerPlayerId=" + dealerPlayerId +
+            ", round=" + round +
+            ", cardsOnTable=" + cardsOnTable +
+            ", pot=" + pot +
+            ", smallBlindPlayerId=" + smallBlindPlayerId +
+            ", bigBlindPlayerId=" + bigBlindPlayerId +
+            ", deckInGameState=" + deckInGameState +
+            '}';
+  }
 }
