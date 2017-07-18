@@ -170,7 +170,6 @@ public class GameControlTest {
     Mockito.when(gameRepo.findOneByName("Table")).thenReturn(mockGame);
     PokerUserDTO pokerUserDTO = dtoService.makePokerUserDTO(mockUser);
     gameService.createNewGame(mockGame);
-    gameService.createGameState(mockGame);
     GamePlayer mockPlayer = gameService.createNewPlayer(pokerUserDTO, 5000);
     gameService.addPlayerToGame(mockGame.getId(), mockPlayer);
 

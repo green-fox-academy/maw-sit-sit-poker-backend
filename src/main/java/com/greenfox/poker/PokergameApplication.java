@@ -1,8 +1,6 @@
 package com.greenfox.poker;
 
-import com.greenfox.poker.model.Game;
 import com.greenfox.poker.repository.GameRepo;
-import com.greenfox.poker.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

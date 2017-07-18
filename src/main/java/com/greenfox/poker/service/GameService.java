@@ -50,14 +50,30 @@ public class GameService {
     this.gameStates = gameStates;
   }
 
+  private void saveOneGameToRepo(String name, Integer blind, Integer maxPlayer) {
+    newGame = new Game(name, blind, maxPlayer);
+    gameRepo.save(newGame);
+    logger.log(Level.INFO, "New GAME created and saved. game: " + newGame.toString());
+    createGameState(newGame);
+  }
+
+  public void initDefaultGames() {
+    if (!isThereAnyGameInRepo()) {
+      saveOneGameToRepo("Green Table", 10, 4);
+      saveOneGameToRepo("Red Table", 20, 4);
+      saveOneGameToRepo("Blue Table", 50, 4);
+    }
+  }
+
   public Game createNewGame(Game game) {
     newGame = new Game(game.getName(), game.getBigBlind(), game.getMaxPlayers());
     gameRepo.save(newGame);
+    createGameState(newGame);
     logger.log(Level.INFO, "New GAME created and saved. game: " + newGame.toString());
     return newGame;
   }
 
-  public void createGameState(Game game) {
+  private void createGameState(Game game) {
     if (!hasGameAGameState(game.getId())) {
       long commonIdwithGame = gameRepo.findOneByName(game.getName()).getId();
       gameStates.put(commonIdwithGame, new GameState(commonIdwithGame));
@@ -71,7 +87,7 @@ public class GameService {
     }
   }
 
-  public boolean hasGameAGameState(long gameId) {
+  private boolean hasGameAGameState(long gameId) {
     if (gameStates.containsKey(gameId)) {
       return true;
     }
@@ -98,12 +114,6 @@ public class GameService {
   }
 
   public boolean isPlayerInTheGame(long playerId, long gameId) {
-    if (!hasGameAGameState(gameId)) {
-      logger.log(Level.WARNING,
-              "Checking if player is in the game / this game has got no gamestate: " + getGameById(
-                      gameId));
-      return false;
-    }
     if (getPlayersListFromGame(gameId).isEmpty()) {
       logger.log(Level.WARNING,
               "Checking if player is in the game / nobody is in this game: " + getGameById(gameId));
@@ -120,7 +130,7 @@ public class GameService {
     return false;
   }
 
-  public boolean isThereEmptySeatAtTheGame(long gameId) {
+  private boolean isThereEmptySeatAtTheGame(long gameId) {
     if (getGameStateById(gameId).getPlayers().contains(null)) {
       return true;
     }
@@ -140,7 +150,16 @@ public class GameService {
     return false;
   }
 
-  public List<Integer> getEmptySeatIndexesAtGame(long gameId) {
+  private boolean isThereAnyGameInRepo () {
+    if (gameRepo.findAll().size() == 0) {
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+
+  private List<Integer> getEmptySeatIndexesAtGame(long gameId) {
     List<Integer> nulls = new ArrayList<>();
     List<GamePlayer> playerList = getGameStateById(gameId).getPlayers();
     for (int i = 0; i < playerList.size(); i++) {
@@ -167,20 +186,19 @@ public class GameService {
   }
 
   public ResponseType joinPlayerToGame(PokerUserDTO user, long gameId, long chipsToPlayWith) {
-    createGameState(gameRepo.findOne(gameId));
     addPlayerToGame(gameId, createNewPlayer(user, chipsToPlayWith));
     logger.log(Level.INFO,
         "join pokerUserDTO to game");
     return respondToJoinTable(user, gameId);
   }
 
-  public ResponseType respondToJoinTable(PokerUserDTO user, long gameId) {
+  private ResponseType respondToJoinTable(PokerUserDTO user, long gameId) {
     String gameName = gameRepo.findOne(gameId).getName();
     String playerName = user.getUsername();
     return new StatusError("success", playerName + " joined game: " + gameName);
   }
 
-  public int getTableBigBlind(long gameId) {
+  private int getTableBigBlind(long gameId) {
     return gameRepo.findOne(gameId).getBigBlind();
   }
 
@@ -196,14 +214,14 @@ public class GameService {
     return new StatusError("success", playerName + " left game: " + gameName);
   }
 
-  public Integer getPlayerIndexFromGameStateByIds(long playerId, long gameId) {
+  private Integer getPlayerIndexFromGameStateByIds(long playerId, long gameId) {
     List<GamePlayer> playersList = getPlayersListFromGame(gameId);
     gamePlayer = playersList.stream().filter(gamePlayer -> gamePlayer.getId().equals(playerId))
         .findFirst().get();
     return playersList.indexOf(gamePlayer);
   }
 
-  public Integer getPlayerIndexFromGameStateByObjects(GamePlayer player, Game game) {
+  private Integer getPlayerIndexFromGameStateByObjects(GamePlayer player, Game game) {
     return getPlayersListFromGame(game.getId()).indexOf(player);
   }
 
@@ -217,17 +235,17 @@ public class GameService {
             "update game");
   }
 
-  public List<GamePlayer> getPlayersListFromGame(long gameId) {
+  private List<GamePlayer> getPlayersListFromGame(long gameId) {
     return getGameStateById(gameId).getPlayers();
   }
 
-  public void setActingPlayerIdInGameState(long playerId, long gameId) {
+  private void setActingPlayerIdInGameState(long playerId, long gameId) {
     gameStates.get(gameId).setActorPlayerId(playerId);
     logger.log(Level.INFO,
             "set acting player id in game state for the following player id:" + playerId);
   }
 
-  public void setLastActionAndBetOfPlayer(PokerUserDTO pokerUserDTO, long gameId, PlayerAction playerAction) {
+  private void setLastActionAndBetOfPlayer(PokerUserDTO pokerUserDTO, long gameId, PlayerAction playerAction) {
     gamePlayer = getPlayersListFromGame(gameId).get(getPlayerIndexFromGameStateByIds(pokerUserDTO.getId(), gameId));
     gamePlayer.setLastAction(playerAction.getAction());
     gamePlayer.setBet(gamePlayer.getBet() + (int) playerAction.getValue());
@@ -235,7 +253,7 @@ public class GameService {
             "set last actions and bet");
   }
 
-  public List<Card> getPlayersCards(PokerUserDTO pokerUserDTO, long gameId) {
+  private List<Card> getPlayersCards(PokerUserDTO pokerUserDTO, long gameId) {
     int playerIndex = getPlayerIndexFromGameStateByIds(pokerUserDTO.getId(), gameId);
     return getPlayersListFromGame(gameId).get(playerIndex).getPlayersHand();
   }
