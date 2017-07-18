@@ -215,10 +215,13 @@ public class GameService {
   }
 
   private Integer getPlayerIndexFromGameStateByIds(long playerId, long gameId) {
-    List<GamePlayer> playersList = getPlayersListFromGame(gameId);
-    gamePlayer = playersList.stream().filter(gamePlayer -> gamePlayer.getId().equals(playerId))
-        .findFirst().get();
-    return playersList.indexOf(gamePlayer);
+    if (!getPlayersListFromGame(gameId).isEmpty()) {
+      List<GamePlayer> playersList = getPlayersListFromGame(gameId);
+      gamePlayer = playersList.stream().filter(gamePlayer -> gamePlayer.getId().equals(playerId))
+          .findFirst().get();
+      return playersList.indexOf(gamePlayer);
+    }
+    else return null;
   }
 
   private Integer getPlayerIndexFromGameStateByObjects(GamePlayer player, Game game) {
