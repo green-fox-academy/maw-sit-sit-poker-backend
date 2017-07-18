@@ -24,9 +24,7 @@ public class PokergameApplication implements CommandLineRunner{
 
 	@Override
 	public void run(String... args) throws Exception {
-		gameRepo.save(new Game("Green", 10, 5));
-		gameRepo.save(new Game("Blue", 20, 5));
-		gameRepo.save(new Game("Red", 50, 5));
-
 	}
+
+
 }
