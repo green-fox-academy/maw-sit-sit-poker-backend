@@ -13,6 +13,7 @@ import com.greenfox.poker.repository.GameRepo;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -173,10 +174,10 @@ public class GameService {
   }
 
   public Integer getPlayerIndexFromGameStateByIds(long playerId, long gameId) {
-    gamePlayer = getPlayersListFromGame(gameId).stream()
-        .filter(player -> player.getId().equals(playerId))
+    List<GamePlayer> playersList = getPlayersListFromGame(gameId);
+    gamePlayer = playersList.stream().filter(gamePlayer -> gamePlayer.getId().equals(playerId))
         .findFirst().get();
-    return getPlayersListFromGame(gameId).indexOf(gamePlayer);
+    return playersList.indexOf(gamePlayer);
   }
 
   public Integer getPlayerIndexFromGameStateByObjects(GamePlayer player, Game game) {
