@@ -11,6 +11,7 @@ import com.greenfox.poker.PokergameApplication;
 import com.greenfox.poker.mockbuilder.MockGameBuilder;
 import com.greenfox.poker.mockbuilder.MockPokerUserBuilder;
 import com.greenfox.poker.model.Game;
+import com.greenfox.poker.model.GamePlayer;
 import com.greenfox.poker.model.PokerUser;
 import com.greenfox.poker.model.PokerUserDTO;
 import com.greenfox.poker.repository.GameRepo;
@@ -155,7 +156,7 @@ public class GameControlTest {
   @Test
   public void testJoinWithPlayerAlreadySittingAtTable() throws Exception {
     PokerUser mockUser = mockPokerUserBuilder.build();
-    Game game = mockGameBuilder.build();
+    Game mockGame = mockGameBuilder.build();
     String token = tokenService.generateToken(mockUser);
     String join = "{\"chips\" : \"2000\"}";
     Mockito.when(pokerUserRepo.findByUsername("Pisti")).thenReturn(mockUser);
@@ -165,12 +166,13 @@ public class GameControlTest {
     Mockito.when(pokerUserRepo.existsByToken(token)).thenReturn(true);
     Mockito.when(gameRepo.exists(1l)).thenReturn(true);
     Mockito.when(gameRepo.exists(2l)).thenReturn(false);
-    Mockito.when(gameRepo.findOne(1l)).thenReturn(game);
-    Mockito.when(gameRepo.findOneByName("Table")).thenReturn(game);
+    Mockito.when(gameRepo.findOne(1l)).thenReturn(mockGame);
+    Mockito.when(gameRepo.findOneByName("Table")).thenReturn(mockGame);
     PokerUserDTO pokerUserDTO = dtoService.makePokerUserDTO(mockUser);
-    gameService.createNewGame(game);
-    gameService.createGameState(game);
-    gameService.createNewPlayerAndAddToGame(pokerUserDTO, game.getId(), 5000);
+    gameService.createNewGame(mockGame);
+    gameService.createGameState(mockGame);
+    GamePlayer mockPlayer = gameService.createNewPlayer(pokerUserDTO, 5000);
+    gameService.addPlayerToGame(mockGame.getId(), mockPlayer);
 
     mockMvc.perform(post("/game/{id}/join", 1l)
         .content(join)
@@ -178,9 +180,9 @@ public class GameControlTest {
         .contentType(contentType))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.result", is("fail")))
-        .andExpect(jsonPath("$.message", is(mockUser.getUsername() + " already joined game: " + game.getName())));
+        .andExpect(jsonPath("$.message", is(mockUser.getUsername() + " already joined game: " + mockGame.getName())));
 
-    gameService.removePlayerFromGame(pokerUserDTO.getId(), game.getId());
+    gameService.removePlayerFromGame(mockPlayer.getId(), mockGame.getId());
   }
 
   @Test

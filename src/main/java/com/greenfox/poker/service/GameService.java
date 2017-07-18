@@ -1,5 +1,6 @@
 package com.greenfox.poker.service;
 
+import com.greenfox.poker.model.Card;
 import com.greenfox.poker.model.Game;
 import com.greenfox.poker.model.GamePlayer;
 import com.greenfox.poker.model.GameState;
@@ -9,6 +10,7 @@ import com.greenfox.poker.model.ResponseType;
 import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.model.PokerUserDTO;
 import com.greenfox.poker.repository.GameRepo;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -59,8 +61,13 @@ public class GameService {
     if (!hasGameAGameState(game.getId())) {
       long commonIdwithGame = gameRepo.findOneByName(game.getName()).getId();
       gameStates.put(commonIdwithGame, new GameState(commonIdwithGame));
+      GameState newState = new GameState(commonIdwithGame);
+      for (int i = 0; i < game.getMaxPlayers(); i++) {
+        newState.getPlayers().add(null);
+      }
       logger.log(Level.INFO,
-              "New GAMESTATE created: " + gameStates.get(commonIdwithGame).toString());
+          "New GAMESTATE created: " + gameStates.get(commonIdwithGame).toString());
+      gameStates.put(commonIdwithGame, newState);
     }
   }
 
@@ -113,6 +120,15 @@ public class GameService {
     return false;
   }
 
+  public boolean isThereEmptySeatAtTheGame(long gameId) {
+    if (getGameStateById(gameId).getPlayers().contains(null)) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
   public boolean isGameExistById(long id) {
     return gameRepo.exists(id);
   }
@@ -124,19 +140,37 @@ public class GameService {
     return false;
   }
 
-  public void createNewPlayerAndAddToGame(PokerUserDTO user, long gameId, long chipsToPlayWith) {
+  public List<Integer> getEmptySeatIndexesAtGame(long gameId) {
+    List<Integer> nulls = new ArrayList<>();
+    List<GamePlayer> playerList = getGameStateById(gameId).getPlayers();
+    for (int i = 0; i < playerList.size(); i++) {
+      if (playerList.get(i) == null) {
+        nulls.add(i);
+      }
+    }
+    return nulls;
+  }
+
+  public GamePlayer createNewPlayer(PokerUserDTO user, long chipsToPlayWith) {
     gamePlayer = new GamePlayer(chipsToPlayWith, user);
-    gameStates.get(gameId).getPlayers().add(gamePlayer);
-    logger.log(Level.INFO,
-            "New gameplayer created and added to the game: gameplayer username: " + gamePlayer
-                    .getUsername() + ", game id:" + gameStates.get(gameId));
+    return gamePlayer;
+  }
+
+  public void addPlayerToGame(long gameId, GamePlayer gamePlayer) {
+      int numberOfEmptySeats = getEmptySeatIndexesAtGame(gameId).size();
+      int randomSeatIndex = (int) (Math.random()*numberOfEmptySeats);
+      Integer emptySeat = getEmptySeatIndexesAtGame(gameId).get(randomSeatIndex);
+      gameStates.get(gameId).getPlayers().add(emptySeat, gamePlayer);
+      logger.log(Level.INFO,
+        "New gameplayer created and added to the game: gameplayer username: " + gamePlayer
+            .getUsername() + ", game id:" + gameStates.get(gameId));
   }
 
   public ResponseType joinPlayerToGame(PokerUserDTO user, long gameId, long chipsToPlayWith) {
     createGameState(gameRepo.findOne(gameId));
-    createNewPlayerAndAddToGame(user, gameId, chipsToPlayWith);
+    addPlayerToGame(gameId, createNewPlayer(user, chipsToPlayWith));
     logger.log(Level.INFO,
-            "join pokerUserDTO to game");
+        "join pokerUserDTO to game");
     return respondToJoinTable(user, gameId);
   }
 
@@ -151,9 +185,9 @@ public class GameService {
   }
 
   public void removePlayerFromGame(long playerId, long gameId) {
-    getPlayersListFromGame(gameId).set(getPlayerIndexFromGameState(playerId, gameId), null);
     logger.log(Level.INFO,
             "remove player (playerId " + playerId + " from the game: " + gameId);
+    getPlayersListFromGame(gameId).set(getPlayerIndexFromGameStateByIds(playerId, gameId), null);
   }
 
   public ResponseType respondToLeave(long playerId, long gameId) {
@@ -162,18 +196,22 @@ public class GameService {
     return new StatusError("success", playerName + " left game: " + gameName);
   }
 
-  public Integer getPlayerIndexFromGameState(long playerId, long gameId) {
-    gamePlayer = getPlayersListFromGame(gameId).stream()
-            .filter(player -> player.getId().equals(playerId))
-            .findFirst().get();
-    return getPlayersListFromGame(gameId).indexOf(gamePlayer);
+  public Integer getPlayerIndexFromGameStateByIds(long playerId, long gameId) {
+    List<GamePlayer> playersList = getPlayersListFromGame(gameId);
+    gamePlayer = playersList.stream().filter(gamePlayer -> gamePlayer.getId().equals(playerId))
+        .findFirst().get();
+    return playersList.indexOf(gamePlayer);
+  }
+
+  public Integer getPlayerIndexFromGameStateByObjects(GamePlayer player, Game game) {
+    return getPlayersListFromGame(game.getId()).indexOf(player);
   }
 
   public void updateGame(long playerId, long gameId, PlayerAction playerAction) {
-    gamePlayer = getPlayersListFromGame(gameId).get(getPlayerIndexFromGameState(playerId, gameId));
+    gamePlayer = getPlayersListFromGame(gameId).get(getPlayerIndexFromGameStateByIds(playerId, gameId));
     setActingPlayerIdInGameState(playerId, gameId);
     setLastActionAndBetOfPlayer(gamePlayer, gameId, playerAction);
-    getPlayersListFromGame(gameId).set(getPlayerIndexFromGameState(playerId, gameId), gamePlayer);
+    getPlayersListFromGame(gameId).set(getPlayerIndexFromGameStateByIds(playerId, gameId), gamePlayer);
     gameStates.get(gameId).setPlayers(getPlayersListFromGame(gameId));
     logger.log(Level.INFO,
             "update game");
@@ -189,13 +227,24 @@ public class GameService {
             "set acting player id in game state for the following player id:" + playerId);
   }
 
-  public void setLastActionAndBetOfPlayer(PokerUserDTO pokerUserDTO, long gameId,
-          PlayerAction playerAction) {
-    gamePlayer = getPlayersListFromGame(gameId)
-            .get(getPlayerIndexFromGameState(pokerUserDTO.getId(), gameId));
+  public void setLastActionAndBetOfPlayer(PokerUserDTO pokerUserDTO, long gameId, PlayerAction playerAction) {
+    gamePlayer = getPlayersListFromGame(gameId).get(getPlayerIndexFromGameStateByIds(pokerUserDTO.getId(), gameId));
     gamePlayer.setLastAction(playerAction.getAction());
     gamePlayer.setBet(gamePlayer.getBet() + (int) playerAction.getValue());
     logger.log(Level.INFO,
             "set last actions and bet");
+  }
+
+  public List<Card> getPlayersCards(PokerUserDTO pokerUserDTO, long gameId) {
+    int playerIndex = getPlayerIndexFromGameStateByIds(pokerUserDTO.getId(), gameId);
+    return getPlayersListFromGame(gameId).get(playerIndex).getPlayersHand();
+  }
+
+  public List<String> getPlayersHandFromTable(PokerUserDTO pokerUserDTO, long gameId) {
+    List<String> cardsAsString = new ArrayList<>();
+    for (Card c : getPlayersCards(pokerUserDTO, gameId)) {
+     cardsAsString.add(c.toString());
+    }
+    return cardsAsString;
   }
 }

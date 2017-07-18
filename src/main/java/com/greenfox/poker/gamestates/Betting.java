@@ -5,7 +5,6 @@ import com.greenfox.poker.model.Action;
 import com.greenfox.poker.model.Card;
 import com.greenfox.poker.model.Deck;
 import com.greenfox.poker.model.GamePlayer;
-import com.greenfox.poker.model.GamePlayerHand;
 import com.greenfox.poker.model.GameState;
 import com.greenfox.poker.model.Round;
 import com.greenfox.poker.service.DeckService;
@@ -126,13 +125,10 @@ public class Betting {
   private void setPlayerHandsForAllPlayers(GameState gameState) {
     DeckService deckService = new DeckService();
     for (GamePlayer gamePlayer : gameState.getPlayers()) {
-      GamePlayerHand gamePlayerHand = new GamePlayerHand();
-      gamePlayerHand.setGameStateId(gameState.getId());
       for (int i = 0; i < 2; i++) {
         Card drawnCard = deckService.drawCardFromDeck(gameState.getDeckInGameState());
-        gamePlayerHand.addCardToGamePlayerHand(drawnCard);
+        gamePlayer.getPlayersHand().add(drawnCard);
       }
-      gamePlayer.setGamePlayerHand(gamePlayerHand);
     }
   }
 }

@@ -3,7 +3,6 @@ package com.greenfox.poker.service;
 import com.greenfox.poker.model.PokerUser;
 
 import com.greenfox.poker.model.PokerUserDTO;
-import com.greenfox.poker.repository.PokerUserRepo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MissingClaimException;
@@ -13,9 +12,12 @@ import io.jsonwebtoken.impl.crypto.MacProvider;
 import java.security.Key;
 import java.util.*;
 import java.lang.*;
+<<<<<<< HEAD
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.validation.constraints.Null;
+=======
+>>>>>>> origin/gabor
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

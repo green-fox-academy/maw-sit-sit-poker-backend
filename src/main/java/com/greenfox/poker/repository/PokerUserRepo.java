@@ -4,7 +4,6 @@ package com.greenfox.poker.repository;
 import com.greenfox.poker.model.PokerUser;
 import java.util.List;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Component;
 
 
 public interface PokerUserRepo extends CrudRepository<PokerUser, Long> {
@@ -19,3 +18,5 @@ public interface PokerUserRepo extends CrudRepository<PokerUser, Long> {
   boolean existsByToken(String token);
   void deleteByUsername(String username);
 }
+
+
