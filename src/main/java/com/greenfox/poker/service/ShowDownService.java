@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 public class ShowDownService {
 
 
-
   @Autowired
   GameState gameState;
 
@@ -48,7 +47,7 @@ public class ShowDownService {
     return all7Cards;
   }
 
-  public List<Card[]> choose5CardsOutOf7(List<Card> playerCards) {
+  private List<Card[]> choose5CardsOutOf7(List<Card> playerCards) {
     List<Card> allSevenCards = all7cards(playerCards);
     Card[] sevenCard = new Card[7];
     for (int i = 0; i < sevenCard.length; i++) {
