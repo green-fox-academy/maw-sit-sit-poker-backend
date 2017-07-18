@@ -90,7 +90,7 @@ public class GameControlTest {
     dtoService.makePokerUserDTO(mockUser);
     gameService.createNewGame(game);
 
-    mockMvc.perform(post("/game/1/join")
+    mockMvc.perform(post("/games/1/join")
         .content(join)
         .header("X-poker-token", token)
         .contentType(contentType))
@@ -117,7 +117,7 @@ public class GameControlTest {
     dtoService.makePokerUserDTO(mockUser);
     gameService.createNewGame(game);
 
-    mockMvc.perform(post("/game/2/join")
+    mockMvc.perform(post("/games/2/join")
         .content(join)
         .header("X-poker-token", token)
         .contentType(contentType))
@@ -143,7 +143,7 @@ public class GameControlTest {
     dtoService.makePokerUserDTO(mockUser);
     gameService.createNewGame(game);
 
-    mockMvc.perform(post("/game/1/join")
+    mockMvc.perform(post("/games/1/join")
         .content(join)
         .header("X-poker-token", token)
         .contentType(contentType))
@@ -174,7 +174,7 @@ public class GameControlTest {
     GamePlayer mockPlayer = gameService.createNewPlayer(pokerUserDTO, 5000);
     gameService.addPlayerToGame(mockGame.getId(), mockPlayer);
 
-    mockMvc.perform(post("/game/{id}/join", 1l)
+    mockMvc.perform(post("/games/{id}/join", 1l)
         .content(join)
         .header("X-poker-token", token)
         .contentType(contentType))
