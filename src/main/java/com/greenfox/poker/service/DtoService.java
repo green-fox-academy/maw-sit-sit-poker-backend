@@ -5,11 +5,15 @@ import com.greenfox.poker.model.PokerUserDTO;
 import com.greenfox.poker.repository.PokerUserRepo;
 import java.util.HashMap;
 import java.util.function.DoubleToIntFunction;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DtoService {
+
+  private final static Logger logger = Logger.getLogger(DtoService.class.getName());
 
   HashMap<Long, PokerUserDTO> pokerUserDTOs = new HashMap<>();
 
@@ -21,8 +25,12 @@ public class DtoService {
 
   public boolean hasPlayerEnoughChipsToPlay(long chipsToPlayWith, PokerUserDTO user){
     if (user.getChips() < chipsToPlayWith){
+      logger.log(Level.INFO,
+              "player has NOT got enough chips to play. Player name: " + user.getUsername());
       return false;
     }
+    logger.log(Level.INFO,
+            "player has got enough chips to play. Player name: " + user.getUsername());
     return true;
   }
 
@@ -42,5 +50,8 @@ public class DtoService {
 
   public void removePokerUserDTO(long playerId){
     pokerUserDTOs.remove(playerId);
+    logger.log(Level.INFO,
+            "Player is removed from the table. Player id: " + playerId);
   }
+
 }

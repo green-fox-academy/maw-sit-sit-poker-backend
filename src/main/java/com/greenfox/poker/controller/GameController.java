@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,19 +53,28 @@ public class GameController {
     return new ResponseEntity(gameService.getAllGamesOrderedByBigBlind(), HttpStatus.OK);
   }
 
-
   @RequestMapping(value = "/game/{id}", method = RequestMethod.GET)
-
-  public ResponseEntity<?> gameState(
-          @PathVariable("id") long gameId,
-          @RequestHeader("X-poker-token") String token) {
+  public ResponseEntity<?> getGameById(
+      @PathVariable("id") long gameId,
+      @RequestHeader("X-poker-token") String token) {
     if (gameService.isGameExistById(gameId)) {
       return new ResponseEntity(gameService.getGameById(gameId), HttpStatus.OK);
     }
     return new ResponseEntity(errorMessageService.responseToWrongGameId(), HttpStatus.NOT_FOUND);
   }
 
-  @PutMapping("/game/{id}")
+
+  @RequestMapping(value = "/games/{id}", method = RequestMethod.GET)
+  public ResponseEntity<?> getGameStateById(
+          @PathVariable("id") long gameId,
+          @RequestHeader("X-poker-token") String token) {
+    if (gameService.isGameExistById(gameId)) {
+      return new ResponseEntity(gameService.getGameStateById(gameId), HttpStatus.OK);
+    }
+    return new ResponseEntity(errorMessageService.responseToWrongGameId(), HttpStatus.NOT_FOUND);
+  }
+
+  @PutMapping("/games/{id}")
   public ResponseEntity<?> updateGameState(
           @PathVariable("id") long gameId,
           @RequestBody @Valid PlayerAction action, BindingResult bindingResult,
@@ -104,7 +114,7 @@ public class GameController {
     return new ResponseEntity(gameService.createNewGame(game), HttpStatus.OK);
   }
 
-  @PostMapping("/game/{id}/join")
+  @PostMapping("/games/{id}/join")
   public ResponseEntity<?> joinTable(
           @PathVariable("id") long gameId,
           @RequestBody ChipsToJoinGame chips,
@@ -127,7 +137,7 @@ public class GameController {
             HttpStatus.OK);
   }
 
-  @PostMapping("/game/{id}/leave")
+  @PostMapping("/games/{id}/leave")
   public ResponseEntity<?> leaveTable(
           @PathVariable("id") long gameId,
           @RequestHeader("X-poker-token") String token) {
@@ -143,6 +153,12 @@ public class GameController {
     gameService.removePlayerFromGame(pokerUserDTO.getId(), gameId);
     return new ResponseEntity(gameService.respondToLeave(pokerUserDTO.getId(), gameId),
             HttpStatus.OK);
+  }
+
+  @GetMapping("/games/{id}/hand")
+  public ResponseEntity<?> getPlayersHand(@PathVariable("id") long gameId, @RequestHeader("X-poker-token") String token) {
+    pokerUserDTO = tokenService.getPokerUserDTOFromToken(token);
+    return new ResponseEntity(gameService.getPlayersHandFromTable(pokerUserDTO, gameId), HttpStatus.OK);
   }
 }
 

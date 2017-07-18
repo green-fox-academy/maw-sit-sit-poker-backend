@@ -3,7 +3,6 @@ package com.greenfox.poker.service;
 
 import com.greenfox.poker.model.Card;
 import com.greenfox.poker.model.Deck;
-import com.greenfox.poker.model.GamePlayerHand;
 import com.greenfox.poker.model.GameState;
 import com.greenfox.poker.model.Rank;
 import com.greenfox.poker.model.Suit;
@@ -16,8 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ShowDownService {
 
-  @Autowired
-  GamePlayerHand gamePlayerHand;
+
 
   @Autowired
   GameState gameState;

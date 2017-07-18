@@ -1,5 +1,6 @@
 package com.greenfox.poker.model;
 
+import org.springframework.stereotype.Component;
 
 public class Card {
 

@@ -3,9 +3,11 @@ package com.greenfox.poker.aspect;
 
 import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.repository.PokerUserRepo;
-import com.greenfox.poker.service.LoggingService;
+import com.greenfox.poker.service.DeckService;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -21,11 +23,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 @Aspect
 public class AuthorizationAspect {
 
+  private final static Logger logger = Logger.getLogger(DeckService.class.getName());
+
   @Autowired
   PokerUserRepo pokerUserRepo;
 
-  @Autowired
-  LoggingService loggingService;
 
   @Pointcut("execution(* com.greenfox.poker.controller.*.*(..))" +
       "&& !@annotation(com.greenfox.poker.service.Accessible)")
@@ -54,7 +56,8 @@ public class AuthorizationAspect {
         if (annotation instanceof RequestHeader) {
           RequestHeader requestHeader = (RequestHeader) annotation;
           tokenFromHeader = (String) argsList[argIndex];
-          loggingService.getRequestHeaderAndItsValue(requestHeader, argsList, argIndex);
+          logger.log(Level.INFO, "accessToken " + requestHeader + ", "+ argsList + ", "+ argIndex);
+//          loggingService.getRequestHeaderAndItsValue(requestHeader, argsList, argIndex);
         }
       }
     }

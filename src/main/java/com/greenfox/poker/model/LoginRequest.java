@@ -1,7 +1,6 @@
 package com.greenfox.poker.model;
 
 import javax.validation.constraints.NotNull;
-import org.hibernate.validator.constraints.Email;
 import org.springframework.stereotype.Component;
 
 @Component
