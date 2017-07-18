@@ -3,18 +3,26 @@ package com.greenfox.poker.service;
 
 import com.greenfox.poker.model.Card;
 import com.greenfox.poker.model.Deck;
+import com.greenfox.poker.model.GamePlayer;
+import com.greenfox.poker.model.GamePlayerDTO;
 import com.greenfox.poker.model.GameState;
 import com.greenfox.poker.model.Rank;
+import com.greenfox.poker.model.ShowDownResult;
 import com.greenfox.poker.model.Suit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import javax.persistence.criteria.CriteriaBuilder.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ShowDownService {
 
+
+  @Autowired
+  GameService gameService;
 
   @Autowired
   GameState gameState;
@@ -28,12 +36,22 @@ public class ShowDownService {
     DeckService deckService = new DeckService();
     Deck myDeck = deckService.getNewDeck();
     deckService.shuffleDeck(myDeck);
-    Card c1 = new Card(); c1.setSuit(Suit.H); c1.setRank(Rank.queen);
-    Card c2 = new Card(); c2.setSuit(Suit.H); c2.setRank(Rank.jack);
-    Card c3 = new Card(); c3.setSuit(Suit.H); c3.setRank(Rank.ten);
-    Card c4 = new Card(); c4.setSuit(Suit.C); c4.setRank(Rank.nine);
-    Card c5 = new Card(); c5.setSuit(Suit.D); c5.setRank(Rank.eight);
-    all7Cards.addAll(new ArrayList<>(Arrays.asList(c1,c2, c3, c4,c5)));
+    Card c1 = new Card();
+    c1.setSuit(Suit.H);
+    c1.setRank(Rank.queen);
+    Card c2 = new Card();
+    c2.setSuit(Suit.H);
+    c2.setRank(Rank.jack);
+    Card c3 = new Card();
+    c3.setSuit(Suit.H);
+    c3.setRank(Rank.nine);
+    Card c4 = new Card();
+    c4.setSuit(Suit.C);
+    c4.setRank(Rank.nine);
+    Card c5 = new Card();
+    c5.setSuit(Suit.D);
+    c5.setRank(Rank.nine);
+    all7Cards.addAll(new ArrayList<>(Arrays.asList(c1, c2, c3, c4, c5)));
 //    all7Cards.addAll(new ArrayList<>(Arrays.asList(deckService.drawCardFromDeck(myDeck),
 //        deckService.drawCardFromDeck(myDeck),
 //        deckService.drawCardFromDeck(myDeck),
@@ -75,9 +93,9 @@ public class ShowDownService {
     }
   }
 
-  public void evaluationTheHand(List<Card> playerCards) {
+  public int evaluationTheHand(List<Card> playerCards) {
     List<Card[]> allPossibility = choose5CardsOutOf7(playerCards);
-
+    Integer[] handTypeValue = new Integer[allPossibility.size()];
     for (int i = 0; i < allPossibility.size(); i++) {
       int[] cardValue = new int[5];
       String[] cardType = new String[5];
@@ -89,10 +107,11 @@ public class ShowDownService {
       System.out.println((Arrays.toString(allPossibility.get(i))));
       System.out.println(Arrays.toString(cardValue));
 
-      handType(cardValue, cardType);
-
+      handTypeValue[i] = handType(cardValue, cardType);
     }
-
+    int maxHandTypeValue = Collections.max(Arrays.asList(handTypeValue));
+    System.out.println(maxHandTypeValue);
+    return maxHandTypeValue;
   }
 
   private int handType(int[] cardValue, String[] cardType) {
@@ -124,49 +143,69 @@ public class ShowDownService {
         System.out.println("IT 3 of Kind, HandType = 3");
         if (i == 0 && cardValue[3] == cardValue[4] || i == 2 && cardValue[0] == cardValue[1]) {
           handType = 6;
+          System.out.println("IT FullHouse, HandType = 6");
         }
-        System.out.println("IT FullHouse, HandType = 6");
       }
     }
 
     //check for 4 of a kind
-    for(int i = 0; i < 2; i++)
-      if(cardValue[i] == cardValue[i + 1] && cardValue[i + 1] == cardValue[i + 2] &&
+    for (int i = 0; i < 2; i++) {
+      if (cardValue[i] == cardValue[i + 1] && cardValue[i + 1] == cardValue[i + 2] &&
           cardValue[i + 2] == cardValue[i + 3]) {
         handType = 7;
         System.out.println("IT 4 Kind, HandType = 7");
       }
+    }
 
     //check for straight (if we haven't already found any pairs)
-    if(handType == 0)
-      if((cardValue[4] - cardValue[0] == 4) ||
+    if (handType == 0) {
+      if ((cardValue[4] - cardValue[0] == 4) ||
           (cardValue[3] - cardValue[0] == 3 && cardValue[4] == 14 && cardValue[0] == 2)) {
         handType = 4;
         System.out.println("IT Straight, HandType = 4");
       }
+    }
 
     //check for flush (if we haven't already found any pairs)
     boolean flush;
-    if(handType == 0 || handType == 4) {
+    if (handType == 0 || handType == 4) {
       flush = true;
-      for(int i = 0; i < 4; i++)
-        if(!cardType[i].contains(cardType[i+1]))
+      for (int i = 0; i < 4; i++) {
+        if (!cardType[i].contains(cardType[i + 1])) {
           flush = false;
-      if(flush && handType == 4) {
+        }
+      }
+      if (flush && handType == 4) {
         handType = 8; //straight flush!
         System.out.println("IT Straight Flush, HandType = 4");
-      }else if(flush) {
+      } else if (flush) {
         handType = 5;
         System.out.println("IT Flush, HandType = 5");
       }
     }
 
     //check for royal flush (if it's a straight flush)
-    if(handType == 8 && cardValue[4] == 14 && cardValue[0] == 10) {
+    if (handType == 8 && cardValue[4] == 14 && cardValue[0] == 10) {
       handType = 9; //royal flush!
       System.out.println("IT Royal Flush, HandType = 9");
     }
     return handType;
+  }
+
+  public ShowDownResult whoIsTheWinner(long id) {
+    List<GamePlayer> gamePlayers = gameService.getPlayersListFromGame(id);
+    List<GamePlayerDTO> gamePlayersDTO = new ArrayList<>();
+    List<Integer> handTypeValues = new ArrayList<>();
+    for (GamePlayer gamePlayer : gamePlayers) {
+      List<Card> playerCards = gamePlayer.getPlayersHand();
+      handTypeValues.add(evaluationTheHand(playerCards));
+      long userId = gamePlayer.getId();
+      gamePlayersDTO.add(new GamePlayerDTO(userId,playerCards));
+    }
+    Integer maxHandTypeValue = Collections.max(handTypeValues);
+    int winnerIndex = gamePlayers.indexOf(maxHandTypeValue);
+    long winnerId = gamePlayers.get(winnerIndex).getId();
+    return new ShowDownResult(winnerId,gamePlayersDTO);
   }
 
 }

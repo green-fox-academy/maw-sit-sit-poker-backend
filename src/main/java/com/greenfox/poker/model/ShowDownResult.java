@@ -10,12 +10,12 @@ public class ShowDownResult {
   private long winnerUserId;
 
   @JsonProperty("user_cards")
-  private List<GamePlayer> userCards;
+  private List<GamePlayerDTO> userCards;
 
   public ShowDownResult() {
   }
 
-  public ShowDownResult(long winnerUserId, List<GamePlayer> userCards) {
+  public ShowDownResult(long winnerUserId, List<GamePlayerDTO> userCards) {
     this.winnerUserId = winnerUserId;
     this.userCards = userCards;
   }
@@ -28,11 +28,11 @@ public class ShowDownResult {
     this.winnerUserId = winnerUserId;
   }
 
-  public List<GamePlayer> getUserCards() {
+  public List<GamePlayerDTO> getUserCards() {
     return userCards;
   }
 
-  public void setUserCards(List<GamePlayer> userCards) {
+  public void setUserCards(List<GamePlayerDTO> userCards) {
     this.userCards = userCards;
   }
 }

@@ -8,6 +8,7 @@ import com.greenfox.poker.model.PokerUserDTO;
 import com.greenfox.poker.service.DtoService;
 import com.greenfox.poker.service.ErrorMessageService;
 import com.greenfox.poker.service.GameService;
+import com.greenfox.poker.service.ShowDownService;
 import com.greenfox.poker.service.TokenService;
 import com.greenfox.poker.service.UserService;
 import javax.validation.Valid;
@@ -47,6 +48,9 @@ public class GameController {
 
   @Autowired
   PokerUserDTO pokerUserDTO;
+
+  @Autowired
+  ShowDownService showDownService;
 
   @RequestMapping(value = "/games", method = RequestMethod.GET)
   public ResponseEntity<?> getGamesList(@RequestHeader("X-poker-token") String token) {
@@ -165,7 +169,7 @@ public class GameController {
   @GetMapping("/games/{id}/showdown")
   public ResponseEntity<?> showDown(@PathVariable("id") long gameId,
       @RequestHeader("X-poker-token") String token) {
-    return null;
+    return new ResponseEntity(showDownService.whoIsTheWinner(gameId), HttpStatus.OK);
   }
 
 }
