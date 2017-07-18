@@ -53,7 +53,7 @@ public class GameController {
     return new ResponseEntity(gameService.getAllGamesOrderedByBigBlind(), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/games/{id}", method = RequestMethod.GET)
+  @RequestMapping(value = "/game/{id}", method = RequestMethod.GET)
   public ResponseEntity<?> getGameById(
       @PathVariable("id") long gameId,
       @RequestHeader("X-poker-token") String token) {
@@ -64,7 +64,7 @@ public class GameController {
   }
 
 
-  @RequestMapping(value = "/game/{id}", method = RequestMethod.GET)
+  @RequestMapping(value = "/games/{id}", method = RequestMethod.GET)
   public ResponseEntity<?> getGameStateById(
           @PathVariable("id") long gameId,
           @RequestHeader("X-poker-token") String token) {
