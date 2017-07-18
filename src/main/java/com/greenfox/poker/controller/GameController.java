@@ -53,14 +53,23 @@ public class GameController {
     return new ResponseEntity(gameService.getAllGamesOrderedByBigBlind(), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/games/{id}", method = RequestMethod.GET)
+  public ResponseEntity<?> getGameById(
+      @PathVariable("id") long gameId,
+      @RequestHeader("X-poker-token") String token) {
+    if (gameService.isGameExistById(gameId)) {
+      return new ResponseEntity(gameService.getGameById(gameId), HttpStatus.OK);
+    }
+    return new ResponseEntity(errorMessageService.responseToWrongGameId(), HttpStatus.NOT_FOUND);
+  }
+
 
   @RequestMapping(value = "/game/{id}", method = RequestMethod.GET)
-
-  public ResponseEntity<?> gameState(
+  public ResponseEntity<?> getGameStateById(
           @PathVariable("id") long gameId,
           @RequestHeader("X-poker-token") String token) {
     if (gameService.isGameExistById(gameId)) {
-      return new ResponseEntity(gameService.getGameById(gameId), HttpStatus.OK);
+      return new ResponseEntity(gameService.getGameStateById(gameId), HttpStatus.OK);
     }
     return new ResponseEntity(errorMessageService.responseToWrongGameId(), HttpStatus.NOT_FOUND);
   }
