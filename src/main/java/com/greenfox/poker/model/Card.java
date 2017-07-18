@@ -33,5 +33,9 @@ public class Card {
   public String toString() {
     return suit.toString().concat(rank.toString());
   }
+
+  public String printCard(){
+    return (suit.toString()+rank.getRankValue());
+  }
 }
 
