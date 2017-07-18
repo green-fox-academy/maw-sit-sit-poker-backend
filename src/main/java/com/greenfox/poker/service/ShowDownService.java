@@ -36,9 +36,8 @@ public class ShowDownService {
         deckService.drawCardFromDeck(myDeck),
         deckService.drawCardFromDeck(myDeck))));
     for (Card item: all7Cards) {
-     switch (item.getRank()){
-       case "A" :item.setRank(Rank.ACE14);
-     }
+      System.out.println(item.getRankVal());
+
     }
     return all7Cards;
   }
@@ -70,6 +69,7 @@ public class ShowDownService {
       combinationsOf5(input, len - 1, i + 1, result);
     }
   }
+
 
 
 }
