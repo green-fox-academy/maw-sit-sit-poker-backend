@@ -40,7 +40,6 @@ public class HomeController {
     c2.setSuit(Suit.H);
     c2.setRank(Rank.king);
     List<Card> playerCards = new ArrayList<>(Arrays.asList(c1,c2));
-
     showDownService.evaluationTheHand(playerCards);
     return "Hello";
   }

@@ -1,16 +1,24 @@
 package com.greenfox.poker.controller;
 
 
+import com.greenfox.poker.model.Card;
 import com.greenfox.poker.model.ChipsToJoinGame;
+import com.greenfox.poker.model.Deck;
 import com.greenfox.poker.model.Game;
 import com.greenfox.poker.model.PlayerAction;
 import com.greenfox.poker.model.PokerUserDTO;
+import com.greenfox.poker.model.Rank;
+import com.greenfox.poker.model.Suit;
+import com.greenfox.poker.service.DeckService;
 import com.greenfox.poker.service.DtoService;
 import com.greenfox.poker.service.ErrorMessageService;
 import com.greenfox.poker.service.GameService;
 import com.greenfox.poker.service.ShowDownService;
 import com.greenfox.poker.service.TokenService;
 import com.greenfox.poker.service.UserService;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -165,6 +173,7 @@ public class GameController {
     pokerUserDTO = tokenService.getPokerUserDTOFromToken(token);
     return new ResponseEntity(gameService.getPlayersHandFromTable(pokerUserDTO, gameId), HttpStatus.OK);
   }
+
 
   @GetMapping("/games/{id}/showdown")
   public ResponseEntity<?> showDown(@PathVariable("id") long gameId,

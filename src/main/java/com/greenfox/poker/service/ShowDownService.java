@@ -1,6 +1,7 @@
 package com.greenfox.poker.service;
 
 
+import com.greenfox.poker.mockbuilder.MockGamePlayer;
 import com.greenfox.poker.model.Card;
 import com.greenfox.poker.model.Deck;
 import com.greenfox.poker.model.GamePlayer;
@@ -193,20 +194,46 @@ public class ShowDownService {
   }
 
   public ShowDownResult whoIsTheWinner(long id) {
-    List<GamePlayer> gamePlayers = gameService.getPlayersListFromGame(id);
+    MockGamePlayer m1 = new MockGamePlayer();
+    // List<GamePlayer> gamePlayers = gameService.getPlayersListFromGame(id);
+//    List<GamePlayer> gamePlayers = new ArrayList<>();
+    GamePlayer[] gamePlayers = new GamePlayer[2];
+    m1.fillGamePlayer();
+    gamePlayers[0] = (m1.gamePlayer1);
+    gamePlayers[1] = (m1.gamePlayer2);
     List<GamePlayerDTO> gamePlayersDTO = new ArrayList<>();
-    List<Integer> handTypeValues = new ArrayList<>();
-    for (GamePlayer gamePlayer : gamePlayers) {
-      List<Card> playerCards = gamePlayer.getPlayersHand();
-      handTypeValues.add(evaluationTheHand(playerCards));
-      long userId = gamePlayer.getId();
-      gamePlayersDTO.add(new GamePlayerDTO(userId,playerCards));
+//    List<Integer> handTypeValues = new ArrayList<>();
+//    for (GamePlayer gamePlayer : gamePlayers) {
+//      List<Card> playerCards = gamePlayer.getPlayersHand();
+//      handTypeValues.add(evaluationTheHand(playerCards));
+//      long userId = gamePlayer.getId();
+//      gamePlayersDTO.add(new GamePlayerDTO(userId,playerCards));
+//    }
+//    Integer maxHandTypeValue = Collections.max(handTypeValues);
+    int[] handTypeValues = new int[gamePlayers.length];
+    for (int i = 0; i < gamePlayers.length; i++) {
+      List<String> playerCardsDTO = new ArrayList<>();
+      List<Card> playerCards = gamePlayers[i].getPlayersHand();
+      for (int j = 0; j < playerCards.size(); j++) {
+        playerCardsDTO.add(gamePlayers[i].getPlayersHand().get(j).toString());
+      }
+      handTypeValues[i] = evaluationTheHand(playerCards);
+      long userId = gamePlayers[i].getId();
+      gamePlayersDTO.add(new GamePlayerDTO(userId, playerCardsDTO));
     }
-    Integer maxHandTypeValue = Collections.max(handTypeValues);
-    int winnerIndex = gamePlayers.indexOf(maxHandTypeValue);
+    int maxHandTypeValue = Arrays.stream(handTypeValues).max().getAsInt();
+    //  int winnerIndex = gamePlayers.indexOf(maxHandTypeValue);
+    int winnerIndex = 0;
+    for (int i = 0; i < handTypeValues.length; i++) {
+      if (handTypeValues[i] == maxHandTypeValue) {
+        winnerIndex = i;
+      }
+    }
+
     List<Long> winnerIds = new ArrayList<>();
-    winnerIds.add(gamePlayers.get(winnerIndex).getId());
-    return new ShowDownResult(winnerIds,gamePlayersDTO);
+    //  winnerIds.add(gamePlayers.get(winnerIndex).getId());
+    winnerIds.add(gamePlayers[winnerIndex].getId());
+    return new ShowDownResult(winnerIds, gamePlayersDTO);
   }
 
 }
