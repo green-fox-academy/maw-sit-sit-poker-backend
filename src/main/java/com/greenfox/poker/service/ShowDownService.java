@@ -204,8 +204,9 @@ public class ShowDownService {
     }
     Integer maxHandTypeValue = Collections.max(handTypeValues);
     int winnerIndex = gamePlayers.indexOf(maxHandTypeValue);
-    long winnerId = gamePlayers.get(winnerIndex).getId();
-    return new ShowDownResult(winnerId,gamePlayersDTO);
+    List<Long> winnerIds = new ArrayList<>();
+    winnerIds.add(gamePlayers.get(winnerIndex).getId());
+    return new ShowDownResult(winnerIds,gamePlayersDTO);
   }
 
 }

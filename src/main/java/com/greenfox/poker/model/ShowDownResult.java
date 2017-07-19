@@ -6,8 +6,8 @@ import java.util.List;
 
 public class ShowDownResult {
 
-  @JsonProperty("winner_user_id")
-  private long winnerUserId;
+  @JsonProperty("winner_user_ids")
+  private List<Long> winnerUserIds;
 
   @JsonProperty("user_cards")
   private List<GamePlayerDTO> userCards;
@@ -15,17 +15,17 @@ public class ShowDownResult {
   public ShowDownResult() {
   }
 
-  public ShowDownResult(long winnerUserId, List<GamePlayerDTO> userCards) {
-    this.winnerUserId = winnerUserId;
+  public ShowDownResult(List<Long> winnerUserIds, List<GamePlayerDTO> userCards) {
+    this.winnerUserIds = winnerUserIds;
     this.userCards = userCards;
   }
 
-  public long getWinnerUserId() {
-    return winnerUserId;
+  public List<Long> getWinnerUserIds() {
+    return winnerUserIds;
   }
 
-  public void setWinnerUserId(long winnerUserId) {
-    this.winnerUserId = winnerUserId;
+  public void setWinnerUserIds(List<Long> winnerUserIds) {
+    this.winnerUserIds = winnerUserIds;
   }
 
   public List<GamePlayerDTO> getUserCards() {
