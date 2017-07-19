@@ -28,7 +28,7 @@ public class ShowDownService {
   @Autowired
   GameState gameState;
 
-  private static List<Card[]> chosen5Cards = new ArrayList<>();
+  private List<Card[]> chosen5Cards = new ArrayList<>();
 
   private List<Card> all7cards(List<Card> playerCards) {
     List<Card> all7Cards = new ArrayList<>();
@@ -60,7 +60,7 @@ public class ShowDownService {
 //        deckService.drawCardFromDeck(myDeck))));
 
     for (Card item : all7Cards) {
-      System.out.println(item.getRankVal());
+ //     System.out.println(item.getRankVal());
 
     }
     return all7Cards;
@@ -73,10 +73,11 @@ public class ShowDownService {
       sevenCard[i] = allSevenCards.get(i);
     }
     Card[] chosenCardsArray = new Card[5];
+    chosen5Cards.clear();
     combinationsOf5(sevenCard, 5, 0, chosenCardsArray);
     for (Card[] item : chosen5Cards) {
       //    System.out.println(item[0] + " " + item[1] + " " + item[2] + " " + item[3] + " " + item[4]);
-      System.out.println(Arrays.toString(item));
+  //    System.out.println(Arrays.toString(item));
       //     System.out.println(item[2].getSuit() + "  " + item[2].getRank());
     }
     System.out.println(chosen5Cards.size());
@@ -105,8 +106,8 @@ public class ShowDownService {
         cardType[j] = allPossibility.get(i)[j].getSuit();
       }
       Arrays.sort(cardValue);
-      System.out.println((Arrays.toString(allPossibility.get(i))));
-      System.out.println(Arrays.toString(cardValue));
+   //   System.out.println((Arrays.toString(allPossibility.get(i))));
+   //   System.out.println(Arrays.toString(cardValue));
 
       handTypeValue[i] = handType(cardValue, cardType);
     }
@@ -124,7 +125,7 @@ public class ShowDownService {
         pairIndex = j;
         handType = 1;
         j = 4;
-        System.out.println("IT IS Pair, HandType = 1");
+        System.out.println("It is Pair, HandType = 1");
       }
     }
     //check for 2 pair
@@ -132,7 +133,7 @@ public class ShowDownService {
       for (int j = pairIndex + 2; j < 4; j++) {
         if (cardValue[j] == cardValue[j + 1]) {
           handType = 2;
-          System.out.println("IT IS 2 pair, HandType = 2");
+          System.out.println("It is 2 pair, HandType = 2");
         }
       }
     }
@@ -141,10 +142,10 @@ public class ShowDownService {
     for (int i = 0; i < 3; i++) {
       if (cardValue[i] == cardValue[i + 1] && cardValue[i + 1] == cardValue[i + 2]) {
         handType = 3;
-        System.out.println("IT 3 of Kind, HandType = 3");
+        System.out.println("It is 3 of Kind, HandType = 3");
         if (i == 0 && cardValue[3] == cardValue[4] || i == 2 && cardValue[0] == cardValue[1]) {
           handType = 6;
-          System.out.println("IT FullHouse, HandType = 6");
+          System.out.println("It is FullHouse, HandType = 6");
         }
       }
     }
@@ -154,7 +155,7 @@ public class ShowDownService {
       if (cardValue[i] == cardValue[i + 1] && cardValue[i + 1] == cardValue[i + 2] &&
           cardValue[i + 2] == cardValue[i + 3]) {
         handType = 7;
-        System.out.println("IT 4 Kind, HandType = 7");
+        System.out.println("It is 4 Kind, HandType = 7");
       }
     }
 
@@ -163,7 +164,7 @@ public class ShowDownService {
       if ((cardValue[4] - cardValue[0] == 4) ||
           (cardValue[3] - cardValue[0] == 3 && cardValue[4] == 14 && cardValue[0] == 2)) {
         handType = 4;
-        System.out.println("IT Straight, HandType = 4");
+        System.out.println("It is Straight, HandType = 4");
       }
     }
 
@@ -178,17 +179,17 @@ public class ShowDownService {
       }
       if (flush && handType == 4) {
         handType = 8; //straight flush!
-        System.out.println("IT Straight Flush, HandType = 4");
+        System.out.println("It is Straight Flush, HandType = 4");
       } else if (flush) {
         handType = 5;
-        System.out.println("IT Flush, HandType = 5");
+        System.out.println("It is Flush, HandType = 5");
       }
     }
 
     //check for royal flush (if it's a straight flush)
     if (handType == 8 && cardValue[4] == 14 && cardValue[0] == 10) {
       handType = 9; //royal flush!
-      System.out.println("IT Royal Flush, HandType = 9");
+      System.out.println("It is Royal Flush, HandType = 9");
     }
     return handType;
   }
@@ -197,10 +198,11 @@ public class ShowDownService {
     MockGamePlayer m1 = new MockGamePlayer();
     // List<GamePlayer> gamePlayers = gameService.getPlayersListFromGame(id);
 //    List<GamePlayer> gamePlayers = new ArrayList<>();
-    GamePlayer[] gamePlayers = new GamePlayer[2];
+    GamePlayer[] gamePlayers = new GamePlayer[3];
     m1.fillGamePlayer();
     gamePlayers[0] = (m1.gamePlayer1);
     gamePlayers[1] = (m1.gamePlayer2);
+    gamePlayers[2] = (m1.gamePlayer3);
     List<GamePlayerDTO> gamePlayersDTO = new ArrayList<>();
 //    List<Integer> handTypeValues = new ArrayList<>();
 //    for (GamePlayer gamePlayer : gamePlayers) {
