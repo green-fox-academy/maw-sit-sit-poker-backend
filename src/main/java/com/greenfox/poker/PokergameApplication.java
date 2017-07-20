@@ -11,7 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @ComponentScan
 @SpringBootApplication
-public class PokergameApplication implements CommandLineRunner{
+public class PokergameApplication {
 
 	@Autowired
 	GameRepo gameRepo;
@@ -20,13 +20,5 @@ public class PokergameApplication implements CommandLineRunner{
 		SpringApplication.run(PokergameApplication.class, args);
 
 		System.out.println("HelloWorld");
-	}
-
-	@Override
-	public void run(String... args) throws Exception {
-		gameRepo.save(new Game("Green", 10, 5));
-		gameRepo.save(new Game("Blue", 20, 5));
-		gameRepo.save(new Game("Red", 50, 5));
-
 	}
 }
