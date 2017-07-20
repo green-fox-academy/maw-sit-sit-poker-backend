@@ -63,6 +63,15 @@ public class GameService {
       saveOneGameToRepo("Red Table", 20, 4);
       saveOneGameToRepo("Blue Table", 50, 4);
     }
+    else {
+      recreateGameStatesforGamesInDB(gameRepo.findAll());
+    }
+  }
+
+  public void recreateGameStatesforGamesInDB(List<Game> savedGames) {
+    for (Game game : savedGames) {
+      createGameState(game);
+    }
   }
 
   public Game createNewGame(Game game) {
@@ -76,14 +85,13 @@ public class GameService {
   private void createGameState(Game game) {
     if (!hasGameAGameState(game.getId())) {
       long commonIdwithGame = gameRepo.findOneByName(game.getName()).getId();
-      gameStates.put(commonIdwithGame, new GameState(commonIdwithGame));
       GameState newState = new GameState(commonIdwithGame);
+      gameStates.put(commonIdwithGame, newState);
       for (int i = 0; i < game.getMaxPlayers(); i++) {
         newState.getPlayers().add(null);
       }
       logger.log(Level.INFO,
           "New GAMESTATE created: " + gameStates.get(commonIdwithGame).toString());
-      gameStates.put(commonIdwithGame, newState);
     }
   }
 
