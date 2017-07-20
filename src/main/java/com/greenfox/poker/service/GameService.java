@@ -214,7 +214,7 @@ public class GameService {
 
   public void setRoundToBetting(GameState gameState) {
     if (isThereAtLeastTwoPlayersToPlay(gameState)) {
-      gameStates.get(gameState.getId()).setRound(Round.BETTING);
+      gameStates.get(gameState.getId()).setRound(Round.BETTING.toString());
     }
   }
 
