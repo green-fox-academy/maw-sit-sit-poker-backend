@@ -274,7 +274,7 @@ public class GameService {
             "update game");
   }
 
-  private List<GamePlayer> getPlayersListFromGame(long gameId) {
+  public List<GamePlayer> getPlayersListFromGame(long gameId) {
     return getGameStateById(gameId).getPlayers();
   }
 
