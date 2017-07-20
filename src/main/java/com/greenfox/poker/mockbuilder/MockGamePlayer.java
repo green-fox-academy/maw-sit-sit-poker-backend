@@ -5,15 +5,12 @@ import com.greenfox.poker.model.Card;
 import com.greenfox.poker.model.GamePlayer;
 import com.greenfox.poker.model.Rank;
 import com.greenfox.poker.model.Suit;
-import com.greenfox.poker.service.ShowDownService;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class MockGamePlayer {
 
-  @Autowired
-  ShowDownService showDownService;
+
 
   public List<Card> playerCards1 = new ArrayList<>();
   public List<Card> playerCards2 = new ArrayList<>();
