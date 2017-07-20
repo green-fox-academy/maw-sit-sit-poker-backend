@@ -11,7 +11,7 @@ public class GameState {
   private List<GamePlayer> players;
   private Long actorPlayerId;
   private Long dealerPlayerId;
-  private Round round;
+  private String round;
   private List<Card> cardsOnTable;
   private int pot;
 
@@ -31,7 +31,7 @@ public class GameState {
   public GameState(long id) {
     this.id = id;
     this.players = new ArrayList<>();
-    this.round = Round.IDLE;
+    this.round = Round.IDLE.toString();
   }
 
   public Deck getDeckInGameState() {
@@ -58,11 +58,11 @@ public class GameState {
     this.players = players;
   }
 
-  public Round getRound() {
+  public String getRound() {
     return round;
   }
 
-  public void setRound(Round round) {
+  public void setRound(String round) {
     this.round = round;
   }
 

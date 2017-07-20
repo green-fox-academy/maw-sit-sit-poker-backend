@@ -10,7 +10,9 @@ import com.greenfox.poker.model.GameState;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class GameStateService {
 
   private final static Logger logger = Logger.getLogger(GameStateService.class.getName());
