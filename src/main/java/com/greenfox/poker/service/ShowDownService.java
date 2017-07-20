@@ -29,6 +29,9 @@ public class ShowDownService {
     List<GamePlayer> gamePlayerList = gameService.getPlayersListFromGame(id);
     GamePlayer[] gamePlayers = new GamePlayer[gamePlayerList.size()];
     List<GamePlayerDTO> gamePlayersDTO = new ArrayList<>();
+    for (int i = 0; i < gamePlayerList.size(); i++) {
+      gamePlayers[i] = gamePlayerList.get(i);
+    }
     int[] handTypeValues = new int[gamePlayers.length];
     for (int i = 0; i < gamePlayers.length; i++) {
       List<String> playerCardsDTO = new ArrayList<>();
