@@ -8,6 +8,7 @@ import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.service.Accessible;
 import com.greenfox.poker.service.DtoService;
 import com.greenfox.poker.service.ErrorMessageService;
+import com.greenfox.poker.service.GameService;
 import com.greenfox.poker.service.TokenService;
 import com.greenfox.poker.service.UserService;
 import javax.validation.Valid;
@@ -30,6 +31,9 @@ public class UserController {
 
   @Autowired
   UserService userService;
+
+  @Autowired
+  GameService gameService;
 
   @Autowired
   TokenService tokenService;
@@ -68,6 +72,7 @@ public class UserController {
       return new ResponseEntity(userService.loginWithInvalidUsernameOrPassword(),
           HttpStatus.UNAUTHORIZED);
     }
+    gameService.initDefaultGames();
     return new ResponseEntity(userService.responseToSuccessfulLogin(loginRequest), HttpStatus.OK);
   }
 
