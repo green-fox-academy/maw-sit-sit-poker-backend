@@ -1,20 +1,15 @@
 package com.greenfox.poker.service;
 
 
-import com.greenfox.poker.mockbuilder.MockGamePlayer;
 import com.greenfox.poker.model.Card;
-import com.greenfox.poker.model.Deck;
 import com.greenfox.poker.model.GamePlayer;
 import com.greenfox.poker.model.GamePlayerDTO;
 import com.greenfox.poker.model.GameState;
-import com.greenfox.poker.model.Rank;
 import com.greenfox.poker.model.ShowDownResult;
-import com.greenfox.poker.model.Suit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import javax.persistence.criteria.CriteriaBuilder.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,69 +25,31 @@ public class ShowDownService {
 
   private List<Card[]> chosen5Cards = new ArrayList<>();
 
-  private List<Card> all7cards(List<Card> playerCards) {
-    List<Card> all7Cards = new ArrayList<>();
-    all7Cards.addAll(playerCards);
-    all7Cards.addAll(gameState.getCardsOnTable());
-//    DeckService deckService = new DeckService();
-//    Deck myDeck = deckService.getNewDeck();
-//    deckService.shuffleDeck(myDeck);
-//    Card c1 = new Card();
-//    c1.setSuit(Suit.H);
-//    c1.setRank(Rank.queen);
-//    Card c2 = new Card();
-//    c2.setSuit(Suit.H);
-//    c2.setRank(Rank.jack);
-//    Card c3 = new Card();
-//    c3.setSuit(Suit.H);
-//    c3.setRank(Rank.nine);
-//    Card c4 = new Card();
-//    c4.setSuit(Suit.C);
-//    c4.setRank(Rank.nine);
-//    Card c5 = new Card();
-//    c5.setSuit(Suit.D);
-//    c5.setRank(Rank.nine);
-//    all7Cards.addAll(new ArrayList<>(Arrays.asList(c1, c2, c3, c4, c5)));
-//    all7Cards.addAll(new ArrayList<>(Arrays.asList(deckService.drawCardFromDeck(myDeck),
-//        deckService.drawCardFromDeck(myDeck),
-//        deckService.drawCardFromDeck(myDeck),
-//        deckService.drawCardFromDeck(myDeck),
-//        deckService.drawCardFromDeck(myDeck))));
-
-    for (Card item : all7Cards) {
- //     System.out.println(item.getRankVal());
-
+  public ShowDownResult whoIsTheWinner(long id) {
+    List<GamePlayer> gamePlayerList = gameService.getPlayersListFromGame(id);
+    GamePlayer[] gamePlayers = new GamePlayer[gamePlayerList.size()];
+    List<GamePlayerDTO> gamePlayersDTO = new ArrayList<>();
+    int[] handTypeValues = new int[gamePlayers.length];
+    for (int i = 0; i < gamePlayers.length; i++) {
+      List<String> playerCardsDTO = new ArrayList<>();
+      List<Card> playerCards = gamePlayers[i].getPlayersHand();
+      for (int j = 0; j < playerCards.size(); j++) {
+        playerCardsDTO.add(gamePlayers[i].getPlayersHand().get(j).toString());
+      }
+      handTypeValues[i] = evaluationTheHand(playerCards);
+      long userId = gamePlayers[i].getId();
+      gamePlayersDTO.add(new GamePlayerDTO(userId, playerCardsDTO));
     }
-    return all7Cards;
-  }
-
-  private List<Card[]> choose5CardsOutOf7(List<Card> playerCards) {
-    List<Card> allSevenCards = all7cards(playerCards);
-    Card[] sevenCard = new Card[7];
-    for (int i = 0; i < sevenCard.length; i++) {
-      sevenCard[i] = allSevenCards.get(i);
+    int maxHandTypeValue = Arrays.stream(handTypeValues).max().getAsInt();
+    int winnerIndex = 0;
+    for (int i = 0; i < handTypeValues.length; i++) {
+      if (handTypeValues[i] == maxHandTypeValue) {
+        winnerIndex = i;
+      }
     }
-    Card[] chosenCardsArray = new Card[5];
-    chosen5Cards.clear();
-    combinationsOf5(sevenCard, 5, 0, chosenCardsArray);
-    for (Card[] item : chosen5Cards) {
-      //    System.out.println(item[0] + " " + item[1] + " " + item[2] + " " + item[3] + " " + item[4]);
-  //    System.out.println(Arrays.toString(item));
-      //     System.out.println(item[2].getSuit() + "  " + item[2].getRank());
-    }
-    System.out.println(chosen5Cards.size());
-    return chosen5Cards;
-  }
-
-  private void combinationsOf5(Card[] input, int len, int startPosition, Card[] result) {
-    if (len == 0) {
-      chosen5Cards.add(Arrays.copyOf(result, 5));
-      return;
-    }
-    for (int i = startPosition; i <= input.length - len; i++) {
-      result[result.length - len] = input[i];
-      combinationsOf5(input, len - 1, i + 1, result);
-    }
+    List<Long> winnerIds = new ArrayList<>();
+    winnerIds.add(gamePlayers[winnerIndex].getId());
+    return new ShowDownResult(winnerIds, gamePlayersDTO);
   }
 
   public int evaluationTheHand(List<Card> playerCards) {
@@ -106,14 +63,41 @@ public class ShowDownService {
         cardType[j] = allPossibility.get(i)[j].getSuit();
       }
       Arrays.sort(cardValue);
-   //   System.out.println((Arrays.toString(allPossibility.get(i))));
-   //   System.out.println(Arrays.toString(cardValue));
-
       handTypeValue[i] = handType(cardValue, cardType);
     }
     int maxHandTypeValue = Collections.max(Arrays.asList(handTypeValue));
     System.out.println(maxHandTypeValue);
     return maxHandTypeValue;
+  }
+
+  private List<Card> all7cards(List<Card> playerCards) {
+    List<Card> all7Cards = new ArrayList<>();
+    all7Cards.addAll(playerCards);
+    all7Cards.addAll(gameState.getCardsOnTable());
+    return all7Cards;
+  }
+
+  private List<Card[]> choose5CardsOutOf7(List<Card> playerCards) {
+    List<Card> allSevenCards = all7cards(playerCards);
+    Card[] sevenCard = new Card[7];
+    for (int i = 0; i < sevenCard.length; i++) {
+      sevenCard[i] = allSevenCards.get(i);
+    }
+    Card[] chosenCardsArray = new Card[5];
+    chosen5Cards.clear();
+    combinationsOf5(sevenCard, 5, 0, chosenCardsArray);
+    return chosen5Cards;
+  }
+
+  private void combinationsOf5(Card[] input, int len, int startPosition, Card[] result) {
+    if (len == 0) {
+      chosen5Cards.add(Arrays.copyOf(result, 5));
+      return;
+    }
+    for (int i = startPosition; i <= input.length - len; i++) {
+      result[result.length - len] = input[i];
+      combinationsOf5(input, len - 1, i + 1, result);
+    }
   }
 
   private int handType(int[] cardValue, String[] cardType) {
@@ -193,52 +177,6 @@ public class ShowDownService {
     }
     return handType;
   }
-
-  public ShowDownResult whoIsTheWinner(long id) {
-//    MockGamePlayer m1 = new MockGamePlayer();
-    List<GamePlayer> gamePlayerList = gameService.getPlayersListFromGame(id);
-//    List<GamePlayer> gamePlayers = new ArrayList<>();
-//    GamePlayer[] gamePlayers = new GamePlayer[3];
-    GamePlayer[] gamePlayers = new GamePlayer[gamePlayerList.size()];
- //   m1.fillGamePlayer();
- //   gamePlayers[0] = (m1.gamePlayer1);
- //   gamePlayers[1] = (m1.gamePlayer2);
- //   gamePlayers[2] = (m1.gamePlayer3);
-    List<GamePlayerDTO> gamePlayersDTO = new ArrayList<>();
-//    List<Integer> handTypeValues = new ArrayList<>();
-//    for (GamePlayer gamePlayer : gamePlayers) {
-//      List<Card> playerCards = gamePlayer.getPlayersHand();
-//      handTypeValues.add(evaluationTheHand(playerCards));
-//      long userId = gamePlayer.getId();
-//      gamePlayersDTO.add(new GamePlayerDTO(userId,playerCards));
-//    }
-//    Integer maxHandTypeValue = Collections.max(handTypeValues);
-    int[] handTypeValues = new int[gamePlayers.length];
-    for (int i = 0; i < gamePlayers.length; i++) {
-      List<String> playerCardsDTO = new ArrayList<>();
-      List<Card> playerCards = gamePlayers[i].getPlayersHand();
-      for (int j = 0; j < playerCards.size(); j++) {
-        playerCardsDTO.add(gamePlayers[i].getPlayersHand().get(j).toString());
-      }
-      handTypeValues[i] = evaluationTheHand(playerCards);
-      long userId = gamePlayers[i].getId();
-      gamePlayersDTO.add(new GamePlayerDTO(userId, playerCardsDTO));
-    }
-    int maxHandTypeValue = Arrays.stream(handTypeValues).max().getAsInt();
-    //  int winnerIndex = gamePlayers.indexOf(maxHandTypeValue);
-    int winnerIndex = 0;
-    for (int i = 0; i < handTypeValues.length; i++) {
-      if (handTypeValues[i] == maxHandTypeValue) {
-        winnerIndex = i;
-      }
-    }
-
-    List<Long> winnerIds = new ArrayList<>();
-    //  winnerIds.add(gamePlayers.get(winnerIndex).getId());
-    winnerIds.add(gamePlayers[winnerIndex].getId());
-    return new ShowDownResult(winnerIds, gamePlayersDTO);
-  }
-
 }
 
 
