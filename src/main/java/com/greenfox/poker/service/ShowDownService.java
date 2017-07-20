@@ -33,26 +33,26 @@ public class ShowDownService {
   private List<Card> all7cards(List<Card> playerCards) {
     List<Card> all7Cards = new ArrayList<>();
     all7Cards.addAll(playerCards);
-    //   all7Cards.addAll(gameState.getCardsOnTable());
-    DeckService deckService = new DeckService();
-    Deck myDeck = deckService.getNewDeck();
-    deckService.shuffleDeck(myDeck);
-    Card c1 = new Card();
-    c1.setSuit(Suit.H);
-    c1.setRank(Rank.queen);
-    Card c2 = new Card();
-    c2.setSuit(Suit.H);
-    c2.setRank(Rank.jack);
-    Card c3 = new Card();
-    c3.setSuit(Suit.H);
-    c3.setRank(Rank.nine);
-    Card c4 = new Card();
-    c4.setSuit(Suit.C);
-    c4.setRank(Rank.nine);
-    Card c5 = new Card();
-    c5.setSuit(Suit.D);
-    c5.setRank(Rank.nine);
-    all7Cards.addAll(new ArrayList<>(Arrays.asList(c1, c2, c3, c4, c5)));
+    all7Cards.addAll(gameState.getCardsOnTable());
+//    DeckService deckService = new DeckService();
+//    Deck myDeck = deckService.getNewDeck();
+//    deckService.shuffleDeck(myDeck);
+//    Card c1 = new Card();
+//    c1.setSuit(Suit.H);
+//    c1.setRank(Rank.queen);
+//    Card c2 = new Card();
+//    c2.setSuit(Suit.H);
+//    c2.setRank(Rank.jack);
+//    Card c3 = new Card();
+//    c3.setSuit(Suit.H);
+//    c3.setRank(Rank.nine);
+//    Card c4 = new Card();
+//    c4.setSuit(Suit.C);
+//    c4.setRank(Rank.nine);
+//    Card c5 = new Card();
+//    c5.setSuit(Suit.D);
+//    c5.setRank(Rank.nine);
+//    all7Cards.addAll(new ArrayList<>(Arrays.asList(c1, c2, c3, c4, c5)));
 //    all7Cards.addAll(new ArrayList<>(Arrays.asList(deckService.drawCardFromDeck(myDeck),
 //        deckService.drawCardFromDeck(myDeck),
 //        deckService.drawCardFromDeck(myDeck),
@@ -195,14 +195,15 @@ public class ShowDownService {
   }
 
   public ShowDownResult whoIsTheWinner(long id) {
-    MockGamePlayer m1 = new MockGamePlayer();
-    // List<GamePlayer> gamePlayers = gameService.getPlayersListFromGame(id);
+//    MockGamePlayer m1 = new MockGamePlayer();
+    List<GamePlayer> gamePlayerList = gameService.getPlayersListFromGame(id);
 //    List<GamePlayer> gamePlayers = new ArrayList<>();
-    GamePlayer[] gamePlayers = new GamePlayer[3];
-    m1.fillGamePlayer();
-    gamePlayers[0] = (m1.gamePlayer1);
-    gamePlayers[1] = (m1.gamePlayer2);
-    gamePlayers[2] = (m1.gamePlayer3);
+//    GamePlayer[] gamePlayers = new GamePlayer[3];
+    GamePlayer[] gamePlayers = new GamePlayer[gamePlayerList.size()];
+ //   m1.fillGamePlayer();
+ //   gamePlayers[0] = (m1.gamePlayer1);
+ //   gamePlayers[1] = (m1.gamePlayer2);
+ //   gamePlayers[2] = (m1.gamePlayer3);
     List<GamePlayerDTO> gamePlayersDTO = new ArrayList<>();
 //    List<Integer> handTypeValues = new ArrayList<>();
 //    for (GamePlayer gamePlayer : gamePlayers) {
