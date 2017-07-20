@@ -31,6 +31,7 @@ public class GameState {
   public GameState(long id) {
     this.id = id;
     this.players = new ArrayList<>();
+    this.round = Round.IDLE;
   }
 
   public Deck getDeckInGameState() {
