@@ -55,7 +55,7 @@ public class ShowDownService {
     return new ShowDownResult(winnerIds, gamePlayersDTO);
   }
 
-  public int evaluationTheHand(List<Card> playerCards) {
+  private int evaluationTheHand(List<Card> playerCards) {
     List<Card[]> allPossibility = choose5CardsOutOf7(playerCards);
     Integer[] handTypeValue = new Integer[allPossibility.size()];
     for (int i = 0; i < allPossibility.size(); i++) {
