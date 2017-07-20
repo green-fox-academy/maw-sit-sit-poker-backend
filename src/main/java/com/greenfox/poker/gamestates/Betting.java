@@ -17,9 +17,6 @@ public class Betting {
 
   public void initForBettingGameState(GameState gameState, int bigBlindAmount) {
     removeGamePlayersFromTableWithLessChipsThankBigBlind(gameState, bigBlindAmount);
-    if (!isThereAtLeastTwoPlayersToPlay(gameState)) {
-      setGameRoundToIdle(gameState);
-    }
     if (gameState.getRound() == Round.BETTING) {
       setAllPlayerAtTheTableToActive(gameState);
       setGameStateSettingsToDefault(gameState);
@@ -38,14 +35,6 @@ public class Betting {
         gameState.getPlayers().remove(gamePlayer);
       }
     }
-  }
-
-  private boolean isThereAtLeastTwoPlayersToPlay(GameState gameState) {
-    if (gameState.getPlayers().size() < 2) {
-      return false;
-    }
-    gameState.setRound(Round.BETTING);
-    return true;
   }
 
   private void setGameRoundToIdle(GameState gameState) {

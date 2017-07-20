@@ -8,6 +8,7 @@ import com.greenfox.poker.model.PokerUserDTO;
 import com.greenfox.poker.service.DtoService;
 import com.greenfox.poker.service.ErrorMessageService;
 import com.greenfox.poker.service.GameService;
+import com.greenfox.poker.service.GameStateService;
 import com.greenfox.poker.service.TokenService;
 import com.greenfox.poker.service.UserService;
 import javax.validation.Valid;
@@ -47,6 +48,9 @@ public class GameController {
 
   @Autowired
   PokerUserDTO pokerUserDTO;
+
+  @Autowired
+  GameStateService gameStateService;
 
   @RequestMapping(value = "/games", method = RequestMethod.GET)
   public ResponseEntity<?> getGamesList(@RequestHeader("X-poker-token") String token) {
@@ -133,7 +137,8 @@ public class GameController {
       return new ResponseEntity(errorMessageService.joinGameWithNotEnoughChips(), HttpStatus.BAD_REQUEST);
     }
     dtoService.deductChipsFromAvailableChips(chips.getChips(), pokerUserDTO.getId());
-    return new ResponseEntity(gameService.joinPlayerToGame(pokerUserDTO, gameId, chips.getChips()),
+    gameService.joinPlayerToGame(pokerUserDTO, gameId, chips.getChips());
+    return new ResponseEntity(gameService.respondToJoinTable(pokerUserDTO, gameId),
             HttpStatus.OK);
   }
 

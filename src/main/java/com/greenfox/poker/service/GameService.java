@@ -7,6 +7,7 @@ import com.greenfox.poker.model.GameState;
 import com.greenfox.poker.model.GamesList;
 import com.greenfox.poker.model.PlayerAction;
 import com.greenfox.poker.model.ResponseType;
+import com.greenfox.poker.model.Round;
 import com.greenfox.poker.model.StatusError;
 import com.greenfox.poker.model.PokerUserDTO;
 import com.greenfox.poker.repository.GameRepo;
@@ -102,6 +103,24 @@ public class GameService {
     return false;
   }
 
+  private Integer getNumberOfPlayersAtTable(GameState gameState) {
+    int numberOfplayers = 0;
+    for (GamePlayer player : gameState.getPlayers()) {
+      if (player != null) {
+        numberOfplayers++;
+      }
+    }
+    return numberOfplayers;
+  }
+
+  private boolean isThereAtLeastTwoPlayersToPlay(GameState gameState) {
+    if (getNumberOfPlayersAtTable(gameState) > 1) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public void deleteGame(Game game) {
     gameRepo.delete(game);
   }
@@ -193,14 +212,20 @@ public class GameService {
             .getUsername() + ", game id:" + gameStates.get(gameId));
   }
 
-  public ResponseType joinPlayerToGame(PokerUserDTO user, long gameId, long chipsToPlayWith) {
+  public void setRoundToBetting(GameState gameState) {
+    if (isThereAtLeastTwoPlayersToPlay(gameState)) {
+      gameStates.get(gameState.getId()).setRound(Round.BETTING);
+    }
+  }
+
+  public void joinPlayerToGame(PokerUserDTO user, long gameId, long chipsToPlayWith) {
     addPlayerToGame(gameId, createNewPlayer(user, chipsToPlayWith));
     logger.log(Level.INFO,
         "join pokerUserDTO to game");
-    return respondToJoinTable(user, gameId);
+    setRoundToBetting(gameStates.get(gameId));
   }
 
-  private ResponseType respondToJoinTable(PokerUserDTO user, long gameId) {
+  public ResponseType respondToJoinTable(PokerUserDTO user, long gameId) {
     String gameName = gameRepo.findOne(gameId).getName();
     String playerName = user.getUsername();
     return new StatusError("success", playerName + " joined game: " + gameName);

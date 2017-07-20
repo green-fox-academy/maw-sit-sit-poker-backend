@@ -23,7 +23,7 @@ public class GameStateService {
   }
 
 
-  private void bettingRound(GameState gameState){
+  public void bettingRound(GameState gameState){
     logger.log(Level.INFO, "entering round: Betting");
     Betting betting = new Betting();
     Game game = gameService.getGameById(gameState.getId());
@@ -31,25 +31,25 @@ public class GameStateService {
     betting.initForBettingGameState(gameState, bigBlindAmount);
   }
 
-  private void flopRound(GameState gameState){
+  public void flopRound(GameState gameState){
     logger.log(Level.INFO, "entering round: Flop");
     Flop flop = new Flop();
     flop.initForFlopGameState(gameState);
   }
 
-  private void turnRound(GameState gameState) {
+  public void turnRound(GameState gameState) {
     logger.log(Level.INFO, "entering round: Turn");
     RiverAndTurn turn  = new RiverAndTurn();
     turn.initForRiverAndTurnGameState(gameState);
   }
 
-  private void riverRound(GameState gameState) {
+  public void riverRound(GameState gameState) {
     logger.log(Level.INFO, "entering round: River");
     RiverAndTurn river = new RiverAndTurn();
     river.initForRiverAndTurnGameState(gameState);
   }
 
-  private void showdownRound(GameState gameState) {
+  public void showdownRound(GameState gameState) {
     logger.log(Level.INFO, "entering round: ShowDown");
     ShowDown showDown = new ShowDown();
     showDown.finalizeForShowDownState(gameState);
