@@ -2,9 +2,9 @@ package com.greenfox.poker.model;
 
 
 public enum Round {
-  IDLE("idle"), BETTING("Betting"), FLOP("Flop"), TURN("Turn"), RIVER("River"), SHOWDOWN("Showdown");
+  IDLE("idle"), BETTING("betting"), FLOP("flop"), TURN("turn"), RIVER("river"), SHOWDOWN("showdown");
 
-  private final String roundName;
+  public final String roundName;
 
   private Round(String s) {
     roundName = s;

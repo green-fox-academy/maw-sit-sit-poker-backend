@@ -17,10 +17,7 @@ public class Betting {
 
   public void initForBettingGameState(GameState gameState, int bigBlindAmount) {
     removeGamePlayersFromTableWithLessChipsThankBigBlind(gameState, bigBlindAmount);
-    if (!isThereAtLeastTwoPlayersToPlay(gameState)) {
-      setGameRoundToIdle(gameState);
-    }
-    if (gameState.getRound() == Round.BETTING) {
+    if (gameState.getRound().equals(Round.BETTING.toString())) {
       setAllPlayerAtTheTableToActive(gameState);
       setGameStateSettingsToDefault(gameState);
       assignDealer(gameState);
@@ -40,16 +37,8 @@ public class Betting {
     }
   }
 
-  private boolean isThereAtLeastTwoPlayersToPlay(GameState gameState) {
-    if (gameState.getPlayers().size() < 2) {
-      return false;
-    }
-    gameState.setRound(Round.BETTING);
-    return true;
-  }
-
   private void setGameRoundToIdle(GameState gameState) {
-    gameState.setRound(Round.IDLE);
+    gameState.setRound(Round.IDLE.toString());
   }
 
   private void setAllPlayerAtTheTableToActive(GameState gameState) {
@@ -78,7 +67,7 @@ public class Betting {
   private void setGameStateSettingsToDefault(GameState gameState) {
     gameState.setPot(0);
     gameState.setCardsOnTable(null);
-    gameState.setRound(Round.BETTING);
+    gameState.setRound(Round.BETTING.toString());
   }
 
   private Long findNextPlayerAtTheTable(GameState gameState, Long currentPlayerId) {
