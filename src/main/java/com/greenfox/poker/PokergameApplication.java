@@ -13,5 +13,4 @@ public class PokergameApplication {
 
 		System.out.println("HelloWorld");
 	}
-
 }

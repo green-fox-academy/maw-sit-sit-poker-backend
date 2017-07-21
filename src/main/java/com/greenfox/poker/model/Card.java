@@ -1,33 +1,42 @@
 package com.greenfox.poker.model;
 
+import org.springframework.stereotype.Component;
 
 public class Card {
 
-  private String suit;
-  private String rank;
+  private Suit suit;
+  private Rank rank;
 
   public Card() {
   }
 
   public String getSuit() {
-    return suit;
+    return suit.toString();
   }
 
   public void setSuit(Suit suit) {
-    this.suit = suit.toString();
+    this.suit = suit;
   }
 
   public String getRank() {
-    return rank;
+    return rank.toString();
+  }
+
+  public int getRankVal() {
+    return rank.getRankValue();
   }
 
   public void setRank(Rank rank) {
-    this.rank = rank.toString();
+    this.rank = rank;
   }
 
   @Override
   public String toString() {
-    return suit.concat(rank);
+    return suit.toString().concat(rank.toString());
+  }
+
+  public String printCard(){
+    return (suit.toString()+rank.getRankValue());
   }
 }
 

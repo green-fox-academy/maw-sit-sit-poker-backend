@@ -5,7 +5,6 @@ import com.greenfox.poker.model.Action;
 import com.greenfox.poker.model.Card;
 import com.greenfox.poker.model.Deck;
 import com.greenfox.poker.model.GamePlayer;
-import com.greenfox.poker.model.GamePlayerHand;
 import com.greenfox.poker.model.GameState;
 import com.greenfox.poker.model.Round;
 import com.greenfox.poker.service.DeckService;
@@ -18,10 +17,7 @@ public class Betting {
 
   public void initForBettingGameState(GameState gameState, int bigBlindAmount) {
     removeGamePlayersFromTableWithLessChipsThankBigBlind(gameState, bigBlindAmount);
-    if (!isThereAtLeastTwoPlayersToPlay(gameState)) {
-      setGameRoundToIdle(gameState);
-    }
-    if (gameState.getRound() == Round.BETTING) {
+    if (gameState.getRound().equals(Round.BETTING.toString())) {
       setAllPlayerAtTheTableToActive(gameState);
       setGameStateSettingsToDefault(gameState);
       assignDealer(gameState);
@@ -41,16 +37,8 @@ public class Betting {
     }
   }
 
-  private boolean isThereAtLeastTwoPlayersToPlay(GameState gameState) {
-    if (gameState.getPlayers().size() < 2) {
-      return false;
-    }
-    gameState.setRound(Round.BETTING);
-    return true;
-  }
-
   private void setGameRoundToIdle(GameState gameState) {
-    gameState.setRound(Round.IDLE);
+    gameState.setRound(Round.IDLE.toString());
   }
 
   private void setAllPlayerAtTheTableToActive(GameState gameState) {
@@ -79,7 +67,7 @@ public class Betting {
   private void setGameStateSettingsToDefault(GameState gameState) {
     gameState.setPot(0);
     gameState.setCardsOnTable(null);
-    gameState.setRound(Round.BETTING);
+    gameState.setRound(Round.BETTING.toString());
   }
 
   private Long findNextPlayerAtTheTable(GameState gameState, Long currentPlayerId) {
@@ -126,13 +114,10 @@ public class Betting {
   private void setPlayerHandsForAllPlayers(GameState gameState) {
     DeckService deckService = new DeckService();
     for (GamePlayer gamePlayer : gameState.getPlayers()) {
-      GamePlayerHand gamePlayerHand = new GamePlayerHand();
-      gamePlayerHand.setGameStateId(gameState.getId());
       for (int i = 0; i < 2; i++) {
         Card drawnCard = deckService.drawCardFromDeck(gameState.getDeckInGameState());
-        gamePlayerHand.addCardToGamePlayerHand(drawnCard);
+        gamePlayer.getPlayersHand().add(drawnCard);
       }
-      gamePlayer.setGamePlayerHand(gamePlayerHand);
     }
   }
 }

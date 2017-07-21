@@ -5,13 +5,15 @@ package com.greenfox.poker.model;
 import java.util.ArrayList;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
+import org.springframework.stereotype.Component;
 
+@Component
 public class GameState {
   private long id;
   private List<GamePlayer> players;
   private Long actorPlayerId;
   private Long dealerPlayerId;
-  private Round round;
+  private String round;
   private List<Card> cardsOnTable;
   private int pot;
 
@@ -31,6 +33,7 @@ public class GameState {
   public GameState(long id) {
     this.id = id;
     this.players = new ArrayList<>();
+    this.round = Round.IDLE.toString();
   }
 
   public Deck getDeckInGameState() {
@@ -57,11 +60,11 @@ public class GameState {
     this.players = players;
   }
 
-  public Round getRound() {
+  public String getRound() {
     return round;
   }
 
-  public void setRound(Round round) {
+  public void setRound(String round) {
     this.round = round;
   }
 
@@ -111,5 +114,21 @@ public class GameState {
 
   public void setBigBlindPlayerId(Long bigBlindPlayerId) {
     this.bigBlindPlayerId = bigBlindPlayerId;
+  }
+
+  @Override
+  public String toString() {
+    return "GameState{" +
+            "id=" + id +
+            ", players=" + players +
+            ", actorPlayerId=" + actorPlayerId +
+            ", dealerPlayerId=" + dealerPlayerId +
+            ", round=" + round +
+            ", cardsOnTable=" + cardsOnTable +
+            ", pot=" + pot +
+            ", smallBlindPlayerId=" + smallBlindPlayerId +
+            ", bigBlindPlayerId=" + bigBlindPlayerId +
+            ", deckInGameState=" + deckInGameState +
+            '}';
   }
 }

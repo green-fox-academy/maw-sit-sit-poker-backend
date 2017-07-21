@@ -1,6 +1,7 @@
 package com.greenfox.poker.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,7 +13,7 @@ public class GamePlayer extends PokerUserDTO {
   private boolean isWaiting;
 
   @JsonIgnore
-  private GamePlayerHand gamePlayerHand;
+  private List<Card> playersHand;
 
   public GamePlayer() {
   }
@@ -57,11 +58,11 @@ public class GamePlayer extends PokerUserDTO {
     isWaiting = waiting;
   }
 
-  public GamePlayerHand getGamePlayerHand() {
-    return gamePlayerHand;
+  public List<Card> getPlayersHand() {
+    return playersHand;
   }
 
-  public void setGamePlayerHand(GamePlayerHand gamePlayerHand) {
-    this.gamePlayerHand = gamePlayerHand;
+  public void setPlayersHand(List<Card> playersHand) {
+    this.playersHand = playersHand;
   }
 }
